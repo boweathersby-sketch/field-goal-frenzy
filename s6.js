@@ -1,0 +1,38 @@
+// ===== HOW TO PLAY (scrollable; auto-shown once on the very first launch, then only from the menu) =====
+'use strict';
+const HT={y:0,max:0,drag:null};
+if(!LS.fgfHow&&LS.fgfTut)LS.fgfHow='1';// existing players already know the game
+(function first(){if(LS.fgfHow)return;const w=()=>{if(state==='title'&&team>=0){LS.fgfHow='1';HT.y=0;state='howto'}else setTimeout(w,300)};setTimeout(w,300)})();
+const HSEC=[
+ ['🎯','CONTROLS',['Swipe UP from the kicker toward the posts.','• Swipe LENGTH and SPEED set the power: longer, faster swipes kick farther.','• Swipe DIRECTION aims left or right.','• CURVE the swipe (bend it left or right) to hook the ball, which is how you beat crosswind.','Kick before the RUSH meter fills or the defense gets a hand on it.'],'demo'],
+ ['🏈','SCORING & MAKES',['The ball must clear the crossbar between the uprights. Doink off a post and it can still go in.','Makes add points and coins, and the distance moves back. Longer kicks pay much more (60+ is big, 80 is the Legend jackpot).','In Classic, 3 misses ends the run. Pressure Kick has a shot clock on every kick.']],
+ ['✋','BLOCKED KICKS',['Wait too long or kick it low and a defender can leap up and swat it: BLOCKED!','The RUSH meter shows the danger. On a 20-yarder you have about 2 safe seconds, then the block chance climbs to about 35% by 6 seconds.','The longer the kick, the faster the rush: about 1.6x as fast at 50 yards and 2x on the 80-yard Legend kick. Set up quickly on long ones.','Sometimes the defense runs into you: ROUGHING THE KICKER gives you a re-kick.']],
+ ['🌬️','WIND',['The flag and the wind arrow show the direction; the number is the MPH.','Wind pushes the ball sideways the whole flight, and a headwind or tailwind shortens or stretches it.','Aim or curve INTO the wind. More MPH means more push.'],'wind'],
+ ['🌧️','RAIN',['A wet ball slips: shots go a little off-line (lower accuracy).','A heavier, waterlogged flight falls faster, so it travels less distance. Kick a bit harder.']],
+ ['❄️','SNOW',['Cold legs: about 7% less power off the foot.','A heavier ball drops sooner. Take extra power on long kicks.']],
+ ['💨','GUSTS',['Stronger, swirling wind (8+ MPH). Watch the flag before you swipe.']],
+ ['🌪️','STORM',['30-50 MPH winds. Big curve needed.']],
+ ['🌫️','FOG',['The posts are hard to see. Trust the distance and the wind arrow.']],
+ ['🔥','HEAT WAVE',['Thin hot air: the ball carries about 4% farther.']],
+ ['🌀','HURRICANE',['140 MPH. Aim well upwind and curve hard. Makes pay about 2x coins.']],
+ ['🏉','THE BALL',['There\'s one ball type, and it behaves the same in every mode. Weather and gear change how it flies.','Gear gives small boosts: cleats add power, gloves add accuracy, visors add aim help (3-10%).']],
+ ['🏆','MODES',['CAREER: a 16-game season (home and away vs all 7 rivals plus 2 rematches). You\'re the kicker: PATs after TDs, field goals from the sim, game-winners with seconds left. 9+ wins makes the playoffs.','DAILY CHALLENGE: one kick a day, the same for everyone. Build a streak, and use the "Challenge a friend" link to put a friend\'s score on your Daily board.','CLASSIC: 3 misses and out. TIME ATTACK: 60 seconds. PRESSURE KICK: game-winners with a shot clock.','HURRICANE: 140 MPH. CHAOS: random weather every kick. PLAY A FRIEND: pass the phone, 5 rounds then sudden death.']],
+ ['🪙','COINS & UNLOCKS',['Earn coins from makes (more for longer), Daily, the login streak, weekly challenges and achievements.','Spend them in the SHOP (cleats, gloves, visors, trails, celebrations), on new TEAMS, in MY KICKER (looks, add-ons, mascot kickers), and in MY STADIUM (backdrops, the stadium creator, turf styles).']],
+ ['💡','TIPS',['Kick early: the rush builds fast.','Check the wind every kick and curve into it.','On 50+ yarders, use a long, fast, smooth swipe.','Do the Daily every day: streaks pay.','Clutch kicks get louder and shakier. Breathe and swipe clean.','Nail the 80-yard Legend kick to unlock the Share button and save or share a video clip of it.']]];
+function wrapT(t,w,f){ctx.font=f;const out=[];let line='';for(const wd of t.split(' ')){const q=line?line+' '+wd:wd;if(ctx.measureText(q).width>w&&line){out.push(line);line=wd}else line=q}if(line)out.push(line);return out}
+function demo(x,y,w,h){const u=(T*0.7)%1;ctx.save();ctx.fillStyle='#1f6a26';ctx.beginPath();ctx.roundRect(x,y,w,h,10);ctx.fill();ctx.strokeStyle=GOLD;ctx.lineWidth=3;const px=x+w/2;ctx.beginPath();ctx.moveTo(px-26,y+28);ctx.lineTo(px-26,y+10);ctx.moveTo(px+26,y+28);ctx.lineTo(px+26,y+10);ctx.moveTo(px-26,y+28);ctx.lineTo(px+26,y+28);ctx.moveTo(px,y+28);ctx.lineTo(px,y+40);ctx.stroke();
+ const sx=px,sy=y+h-18,k=Math.min(1,u/0.45);ctx.strokeStyle='rgba(255,255,255,0.7)';ctx.lineWidth=4;ctx.setLineDash([6,6]);ctx.beginPath();ctx.moveTo(sx,sy);ctx.quadraticCurveTo(sx+30,sy-h*0.25,sx+6,sy-h*0.45*k-1);ctx.stroke();ctx.setLineDash([]);
+ const t2=u<0.45?0:Math.min(1,(u-0.45)/0.45),bxp=sx+Math.sin(t2*Math.PI)*-18*1+t2*0,byp=sy-(sy-(y+20))*t2;ctx.font=(18-t2*8)+'px system-ui';ctx.textAlign='center';ctx.fillText('🏈',bxp,byp);ctx.font='22px system-ui';const hk=u<0.45?k:1;ctx.globalAlpha=u<0.6?1:Math.max(0,1-(u-0.6)*4);ctx.fillText('👆',sx+Math.sin(hk*1.6)*20,sy-h*0.45*hk+18);ctx.restore()}
+function windDemo(x,y,w,h){ctx.save();panel(x,y,w,h);const a=Math.sin(T*0.8)*1.2;ctx.translate(x+40,y+h/2);ctx.rotate(a);ctx.strokeStyle='#7fd3ff';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-18,0);ctx.lineTo(18,0);ctx.lineTo(10,-8);ctx.moveTo(18,0);ctx.lineTo(10,8);ctx.stroke();ctx.restore();ctx.fillStyle='#fff';ctx.font='900 14px system-ui';ctx.textAlign='left';ctx.fillText(Math.round(12+Math.sin(T*0.8)*8)+' MPH',x+72,y+h/2-2);ctx.fillStyle='#bcd';ctx.font='11px system-ui';ctx.fillText('arrow = where the wind blows',x+72,y+h/2+14)}
+function drawHow(){const top=H*0.12,bot=H*0.88;txt('HOW TO PLAY',W/2,H*0.07,Math.min(30,W*0.08),GOLD,'#063');ctx.save();ctx.beginPath();ctx.rect(0,top,W,bot-top);ctx.clip();let y=top+8-HT.y;const cw=W*0.9,cx=W*0.05,f='13px system-ui';
+ for(const[ic,ti,lines,ex]of HSEC){const L=[];for(const l of lines)L.push(...wrapT(l,cw-24,f),'');L.pop();const extra=ex==='demo'?130:ex==='wind'?60:0,h=44+L.length*17+extra+8;
+  if(y+h>top-40&&y<bot+40){panel(cx,y,cw,h);ctx.font='24px system-ui';ctx.textAlign='left';ctx.fillText(ic,cx+12,y+31);ctx.fillStyle=GOLD;ctx.font='900 16px system-ui';ctx.fillText(ti,cx+48,y+28);ctx.fillStyle='#e8eef4';ctx.font=f;L.forEach((l,i)=>ctx.fillText(l,cx+12,y+52+i*17));if(ex==='demo')demo(cx+cw*0.2,y+44+L.length*17+4,cw*0.6,120);if(ex==='wind')windDemo(cx+12,y+44+L.length*17+4,cw-24,50)}
+  y+=h+10}
+ HT.max=Math.max(0,y+HT.y-(bot-top)-top);ctx.restore();
+ if(HT.max>0){const th=(bot-top)*(bot-top)/(bot-top+HT.max);ctx.fillStyle='rgba(242,194,48,0.6)';ctx.fillRect(W-5,top+(bot-top-th)*HT.y/HT.max,3,th)}
+ ctx.fillStyle='#8ab';ctx.font='11px system-ui';ctx.textAlign='center';ctx.fillText('Scroll for more ↕',W/2,bot+12);bx(W/2-90,H*0.93-16,180,40,LS.fgfTut?'◀ BACK':'GOT IT ▶',()=>{state='title';HT.y=0},true,14)}
+cv.addEventListener('pointerdown',e=>{if(state==='howto')HT.drag={y:e.clientY,s:HT.y}},true);
+cv.addEventListener('pointermove',e=>{if(state==='howto'&&HT.drag){HT.y=Math.max(0,Math.min(HT.max,HT.drag.s-(e.clientY-HT.drag.y)))}},true);
+addEventListener('pointerup',()=>{HT.drag=null},true);
+cv.addEventListener('wheel',e=>{if(state==='howto'){HT.y=Math.max(0,Math.min(HT.max,HT.y+e.deltaY));e.preventDefault()}},{passive:false});
+const oS6=S3.screen;S3.screen=function(){if(state==='howto'){BTN=[];drawHow();return true}return oS6()};
