@@ -9,12 +9,12 @@ const NOADS=[
 if(!window.FGF_APP)NOADS.forEach(p=>p.desc+=' · Coming soon on Google Play');
 // Play Console products to create (the app build reads this list)
 window.FGF_PLAY_PRODUCTS={subscriptions:[{id:'noads_monthly',period:'P1M',price:'0.99 USD'},{id:'noads_yearly',period:'P1Y',price:'4.99 USD'}],
- inapp:PACKS.filter(p=>!p.sub&&p.id!=='tester_ads').map(p=>({id:p.id,price:p.price.replace('$','')+' USD'}))};
+ inapp:PACKS.filter(p=>!p.sub&&!/^tester_/.test(p.id)).map(p=>({id:p.id,price:p.price.replace('$','')+' USD'}))};
 // entitlement: any active plan or the Pro Bundle hides ads; tester can force ads off
 window.FGF_NOADS=function(){if(LS.fgfPro==='1'||LS.fgfNoAdsLife==='1')return true;const e=+(LS.fgfNoAdsExp||0);if(e>Date.now())return true;return !!(window.TESTER&&LS.fgfTestNoAds==='1')};
 // store hooks: the app wrapper calls FGF_BILLING.onPurchased(id) after a verified purchase and
 // FGF_BILLING.onSubscription(id, expiryMs) whenever Play reports the current subscription state (expiry 0 = lapsed)
-{const oP=BILLING.onPurchased.bind(BILLING);BILLING.onPurchased=function(id){if(id==='noads_lifetime'){LS.fgfNoAdsLife='1';toast('✔ Ads removed forever');return}
+{const oP=BILLING.onPurchased.bind(BILLING);BILLING.onPurchased=function(id){if(id==='custom_field'){if(!TFO.includes('custom')){TFO.push('custom');SV('fgfTurfO',TFO)}toast('✔ Custom Field unlocked · open MY STADIUM');return}if(id==='noads_lifetime'){LS.fgfNoAdsLife='1';toast('✔ Ads removed forever');return}
   if(id==='noads_monthly'||id==='noads_yearly'){const d=id==='noads_monthly'?31:366;LS.fgfNoAdsExp=String(Date.now()+d*864e5);toast('✔ Ads removed');return}oP(id)};
  BILLING.onSubscription=function(id,exp){LS.fgfNoAdsExp=String(+exp||0)}}
 // tester toggle row (web tester mode only)
@@ -48,3 +48,6 @@ function goldify(src,row){const k=row+'_'+(src.__gid||(src.__gid=Math.random()))
 if(window.TESTER){PACKS.push({id:'tester_pro',price:'',coins:0,name:'Tester: Pro',desc:'Unlock Pro extras for testing (tester mode only)',icon:'🧪 '});const tp=PACKS[PACKS.length-1];Object.defineProperty(tp,'price',{get:()=>LS.fgfTestPro==='1'?'PRO ON':'PRO OFF'})}
 {const ob=buyPack;buyPack=function(p){if(p.id==='tester_pro'){LS.fgfTestPro=LS.fgfTestPro==='1'?'0':'1';proSync();toast(LS.fgfTestPro==='1'?'🧪 Pro ON (tester)':'🧪 Pro OFF (tester)');return}return ob(p)}}
 // mascot kicker in the My Kicker preview uses the same sheet as in game (mySheet -> mascSheet)
+
+// one bad frame must never freeze the game: log it and keep the loop running
+{const _fr=frame;frame=function(t){try{_fr(t)}catch(e){console.error(e);requestAnimationFrame(frame)}}}

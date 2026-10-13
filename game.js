@@ -1,3 +1,6 @@
+// HD: every 2D context draws images with high-quality smoothing; if a phone can't hold ~45fps at 3x, drop to 2x
+{const g=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(t,o){const c=g.call(this,t,o);if(c&&t==='2d'){c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high'}return c}}
+{let n=0,t0=0;const m=t=>{if(!t0)t0=t;if(++n===120){if((t-t0)/120>22&&(window.devicePixelRatio||1)>2&&!window.FGF_DPRCAP){window.FGF_DPRCAP=2;resize()}return}requestAnimationFrame(m)};requestAnimationFrame(m)}
 'use strict';
 /* COIN ECONOMY (per made kick; misses pay 0)
    base = round(3 * 1.08^(yards-20)), +2 on a streak; 80 yds = 500 JACKPOT (flat) + LEGEND badge.
@@ -43,9 +46,9 @@ function DIFF(){return Math.max(0,Math.min(1,(dist-40)/40))}
 function resetBall(){ball={wp:Math.random()*6.28,x:0,y:0.15,z:0,vx:0,vy:0,vz:0,ax:0,rot:0,spin:0,fly:false,done:false,res:null,hitPost:false};trail=[]}
 function newGame(m){if(m)mode=m;best=+(localStorage[BKEY(mode)]||0);score=0;streak=0;lives=mode==='pressure'?1:3;prevLives=lives;legendT=0;bannerT=0;dist=mode==='pressure'?35:20;timeLeft=mode==='time'?60:0;roundN=0;state='play';msg=null;newWind();resetBall();S3.onNew()}
 // ---------- layout / background ----------
-function resize(){DPR=Math.min(2,window.devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);F=Math.min(W,H*0.62)*1.4;HY=H*0.53;buildBg()}
+function resize(){DPR=Math.min(window.FGF_DPRCAP||3,window.devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);cv.style.width=W+'px';cv.style.height=H+'px';ctx.setTransform(cv.width/W,0,0,cv.height/H,0,0);ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';F=Math.min(W,H*0.62)*1.4;HY=H*0.53;buildBg()}
 function P(x,y,z){const d=z-CAMZ;if(d<0.3)return null;const s=F/d;return{x:W/2+x*s,y:HY-(y-CAMY)*s,s}}
-function buildBg(){bg=document.createElement('canvas');bg.width=W*DPR;bg.height=H*DPR;const b=bg.getContext('2d');b.setTransform(DPR,0,0,DPR,0,0);
+function buildBg(){bg=document.createElement('canvas');bg.width=W*DPR;bg.height=H*DPR;const b=bg.getContext('2d');b.setTransform(DPR,0,0,DPR,0,0);b.imageSmoothingEnabled=true;b.imageSmoothingQuality='high';
  let g=b.createLinearGradient(0,0,0,HY);g.addColorStop(0,'#050a18');g.addColorStop(1,'#1b2c55');b.fillStyle=g;b.fillRect(0,0,W,HY+2);
  for(let i=0;i<40;i++){b.fillStyle='rgba(255,255,255,'+Math.random()*0.6+')';b.fillRect(Math.random()*W,Math.random()*HY*0.35,1.2,1.2)}
  // stands
