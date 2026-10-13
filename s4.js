@@ -14,7 +14,7 @@ const oKick=S3.onKick;S3.onKick=function(pw){late=waitT>=4;TR=[];RP=null;// shar
 const oRes=S3.onResult;S3.onResult=function(good){oRes(good);const blk=ball.res==='BLOCKED!';
  if(good){zoomT=0.55;unlock('first');if(dist>=50)unlock('fifty');if(dist>=60)unlock('sixty');if(dist>=80)unlock('legend');if(mode==='hurricane'&&dist>=60)unlock('storm');if(streak>=10)unlock('streak10');if(!WXM.includes(weather)){WXM.push(weather);SV('fgfWx',WXM)}if(['clear','rain','snow','gust','hurricane','hlite','fog','heat'].every(w=>WXM.includes(w)))unlock('wx');if(S3.cl())unlock('clutch');
   if(late){iceN++;if(iceN>=5)unlock('ice')}else iceN=0;
-  if((dist>=50||S3.cl())&&TR.length>8&&mode!=='tut')pendNext={good,cl:S3.cl()}}else iceN=0;
+  if(dist>=80&&TR.length>8&&mode!=='tut')pendNext={good,cl:S3.cl()}}else iceN=0;
  if(mode==='daily')dailyDone(good);if(mode==='tut')tutRes(good)};
 const oNext=S3.next;S3.next=function(good){if(pendNext&&!RP){RP={t:0,good,cl:pendNext.cl};pendNext=null;state='replay';return true}if(mode==='daily'){state='dres';return true}if(mode==='tut'){tutNext();return true}return oNext(good)};
 function contAfter(good){if(!RP)return;if(RP.rec){clipEnd();return}const g=RP.good;RP=null;if(mode==='daily'){state='dres';return}if(oNext(g))return;if(lives<=0||(mode==='time'&&timeLeft<=0)){endGame();return}if(g)dist=Math.min(mode==='hurricane'?65:80,dist+(dist<40?3:dist<70?2:dist<76?2:4));state='play';newWind();resetBall()}
