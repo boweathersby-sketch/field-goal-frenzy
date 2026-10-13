@@ -51,3 +51,5 @@ drawAch=function(){txt('TROPHIES',W/2,H*0.07,Math.min(30,W*0.08),GOLD,'#063');co
  if(!open){ctx.fillStyle='#ff9a7a';ctx.font='900 12px system-ui';ctx.textAlign='center';ctx.fillText('🔒 Earn '+TIERS[t][3]+' '+TIERS[t-1][0]+' trophies to unlock ('+tierN(t-1)+'/'+TIERS[t][3]+')',W/2,yy+12);yy+=22}
  const rh=Math.min(54,(H*0.93-26-yy)/L.length);L.forEach((a,i)=>{const y=yy+i*rh,u=!!AD[a[1]];ctx.globalAlpha=u||open?1:0.55;panel(W*0.04,y,W*0.92,rh-4);medal(W*0.04+rh*0.5,y+rh*0.5-2,rh*0.3,t,u);ctx.textAlign='left';ctx.fillStyle=u?TIERS[t][1]:'#fff';ctx.font='900 '+Math.min(13,rh*0.28)+'px system-ui';ctx.fillText(a[2],W*0.04+rh+2,y+rh*0.38);ctx.fillStyle='#bcd';ctx.font=Math.min(11,rh*0.23)+'px system-ui';ctx.fillText(a[3]+(a[6]?' · 🎁 '+a[6]:''),W*0.04+rh+2,y+rh*0.7);ctx.textAlign='right';ctx.fillStyle=u?'#5f5':GOLD;ctx.font='bold 12px system-ui';ctx.fillText(u?'✔':'🪙 '+a[4].toLocaleString(),W*0.93,y+rh*0.4);ctx.globalAlpha=1});
  bx(W/2-80,H*0.94-18,160,36,'◀ BACK',()=>state='title',false,14)};
+
+window.TTL=()=>{const t=J('fgfTitles',[]);return t.length?t[t.length-1].replace(/^Title: /,''):''};
