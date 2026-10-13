@@ -40,7 +40,7 @@ function artHead(mi){if(MAH[mi])return MAH[mi];const [mx,my,mrx,mry]=MHM[mi],[ex
  x.globalAlpha=0.12;x.filter='blur(6px)';x.drawImage(c,0,0);x.filter='none';x.globalAlpha=1;
  x.strokeStyle=`rgba(${L.map(v=>v*0.5|0)},0.55)`;x.lineWidth=1.4;for(let i=0;i<14;i++){const u=(i/13-0.5)*1.7;x.beginPath();x.moveTo(cx+u*erx*0.6,cy-ery*0.85);x.quadraticCurveTo(cx+u*erx*0.75,cy,cx+u*erx*0.55,cy+ery*0.9);x.stroke()}
  x.restore();return MAH[mi]=c}
-function drawArtHead(x,mi,hx,hy){const c=artHead(mi),[mx,my,mrx,mry]=MHM[mi],[ex,ey,erx]=MHE[mi],s=Math.min(1.7,40/erx);x.drawImage(c,hx-(ex-(mx-mrx))*s,hy-(ey-(my-mry))*s,c.width*s,c.height*s)}
+function drawArtHead(x,mi,hx,hy){const c=artHead(mi),[mx,my,mrx,mry]=MHM[mi],[ex,ey,erx]=MHE[mi],s=Math.min(1.7,40/erx);const X=hx-(ex-(mx-mrx))*s,Y=hy-(ey-(my-mry))*s,W2=c.width*s;if(mi===1){x.save();x.translate(2*X+W2,0);x.scale(-1,1);x.drawImage(c,X,Y,W2,c.height*s);x.restore()}else x.drawImage(c,X,Y,W2,c.height*s)}
 function drawArtTail(x,mi,ax,ay){const t=MTL[mi];if(!t)return;const [[tx,ty,tw,th],side]=t,s=0.9;x.drawImage(MSI,mi*193+tx,ty,tw,th,side>0?ax+4:ax-tw*s-4,side>0?ay-th*s*0.35:ay-th*s*0.95,tw*s,th*s)}
 mascSheet=function(mi,ti,num){const k='mh6_'+mi+'_'+num+'_'+(MK.name||'');if(KC5[k])return KC5[k];if(!KS.complete||!KS.naturalWidth||!MSI.complete||!MSI.naturalWidth)return teamSheet(ti);
  const H=7,src=document.createElement('canvas');src.width=812;src.height=300;const sx=src.getContext('2d');sx.drawImage(KS,0,H*300,812,300,0,0,812,300);
@@ -55,19 +55,4 @@ mascSheet=function(mi,ti,num){const k='mh6_'+mi+'_'+num+'_'+(MK.name||'');if(KC5
  const nm=(MK.name||'').toUpperCase().slice(0,10);
  for(let f=0;f<4;f++){const m=KMETA[H][f];{const [L,D]=MFUR[mi],hx=MHP[f][0],hy=MHP[f][1],g=x.createLinearGradient(hx,hy,hx,hy+70);g.addColorStop(0,D);g.addColorStop(1,L);x.fillStyle=g;x.beginPath();x.ellipse(hx-6,hy+30,21,24,0,0,7);x.fill();drawArtHead(x,mi,hx,hy)}
   numOn(x,m[0],m[1],m[3],num,T.s);if(nm){x.save();x.font='900 11px system-ui';x.textAlign='center';x.lineWidth=3;x.strokeStyle='rgba(0,0,0,0.55)';x.strokeText(nm,m[0],m[1]-m[3]*0.72);x.fillStyle='#fff';x.fillText(nm,m[0],m[1]-m[3]*0.72);x.restore()}}
- return KC5[k]=c};
-// ---- FINAL: the full painted sideline mascot (body, legs, tail), opaque, in the kicker spot; its OWN right leg is cut at the hip and swung through the ball ----
-const MHIP=[[104,140],[100,150],[104,148],[112,148],[100,150],[100,150],[100,150],[96,150]];// hip pivot in the 193x200 cell (after the Gators mirror)
-const MCEL={};
-function mascCell(mi){if(MCEL[mi])return MCEL[mi];const c=document.createElement('canvas');c.width=193;c.height=200;const x=c.getContext('2d');
- if(mi===1){x.translate(193,0);x.scale(-1,1)}x.drawImage(MSI,mi*193,0,193,200,0,0,193,200);return MCEL[mi]=c}
-mascSheet=function(mi,ti,num){const k='mown4_'+mi;if(KC5[k])return KC5[k];if(!MSI.complete||!MSI.naturalWidth)return teamSheet(ti);
- const c=document.createElement('canvas');c.width=812;c.height=300;c._masc=1;const x=c.getContext('2d'),cel=mascCell(mi),[hx,hy]=MHIP[mi],LX0=hx-18,LW=72,LY0=hy-8;
- // [body lean, x shift, leg angle]  ready · wind-up (leg back) · contact (leg through the ball) · follow-through (leg high)
- const P=[[0,0,0],[-0.08,-6,0.65],[0.1,22,-1.45],[-0.16,10,-2.45]];
- P.forEach(([r,dx,a],i)=>{const h=184,s=h/200,w=193*s,fx=i*203+90+dx,fy=264;x.save();x.translate(fx,fy);x.rotate(r);x.translate(-w/2,-h);x.scale(s,s);
-  if(a===0){x.drawImage(cel,0,0)}else{
-   x.save();x.beginPath();x.rect(0,0,193,200);x.rect(LX0,LY0,LW,200-LY0);x.clip('evenodd');x.drawImage(cel,0,0);x.restore();// body without the kicking leg
-   x.save();x.translate(hx,hy);x.rotate(a);x.translate(-hx,-hy);x.beginPath();x.rect(LX0,LY0,LW,200-LY0);x.clip();x.drawImage(cel,0,0);x.restore()}// the leg, swung
-  x.restore()});
  return KC5[k]=c};
