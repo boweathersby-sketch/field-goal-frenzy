@@ -133,7 +133,7 @@ function drawMK(){txt('MY KICKER',W/2,H*0.06,Math.min(30,W*0.08),GOLD,'#063');ct
  MKS.max=Math.max(0,y+MKS.y-bot);if(MKS.max>0){const th=(bot-top)*(bot-top)/(bot-top+MKS.max);ctx.fillStyle='rgba(242,194,48,0.6)';ctx.fillRect(W-5,top+(bot-top-th)*MKS.y/MKS.max,3,th)}
  bx(W/2-90,H*0.93-20,180,40,'◀ SAVE & BACK',()=>{saveMK();state='title'},true,14)}
 const MKS={y:0,max:0,top:0,bot:0};window.MKS=MKS;
-cv.addEventListener('wheel',e=>{if(state==='mk'){MKS.y=Math.max(0,Math.min(MKS.max,MKS.y+e.deltaY));e.preventDefault()}},{passive:false});
+cv.addEventListener('wheel',e=>{if(state==='shop'&&window.PKS){PKS.y=Math.max(0,Math.min(PKS.max,PKS.y+e.deltaY));return}if(state==='mk'){MKS.y=Math.max(0,Math.min(MKS.max,MKS.y+e.deltaY));e.preventDefault()}},{passive:false});
 // ---- STADIUM screen (backdrops / creator / turf) ----
 let stTab=0;
 function drawST(){txt('MY STADIUM',W/2,H*0.06,Math.min(30,W*0.08),GOLD,'#063');ctx.fillStyle='#bcd';ctx.font='12px system-ui';ctx.textAlign='center';ctx.fillText('🪙 '+CSTR()+' · Career: choose in Settings',W/2,H*0.06+20);

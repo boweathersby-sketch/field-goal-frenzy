@@ -66,5 +66,5 @@ const oS7=S3.screen;S3.screen=function(){if(state==='cfield'){BTN=[];drawCF();re
 const MOM={v:0,o:null,lt:0,ly:0};
 addEventListener('pointermove',e=>{const now=performance.now();if(MOM.ly&&now-MOM.lt<80){MOM.v=MOM.v*0.6+(-(e.clientY-MOM.ly)/Math.max(8,now-MOM.lt)*16)*0.4}MOM.ly=e.clientY;MOM.lt=now},true);
 addEventListener('pointerdown',()=>{MOM.v=0;MOM.ly=0},true);
-addEventListener('pointerup',()=>{MOM.o=state==='mk'?MKS:state==='howto'?HT:null;if(performance.now()-MOM.lt>90)MOM.v=0;MOM.ly=0},true);
-(function mom(){if(MOM.o&&Math.abs(MOM.v)>0.3&&(state==='mk'||state==='howto')){const o=MOM.o;o.y=Math.max(0,Math.min(o.max||0,o.y+MOM.v));MOM.v*=0.94}else MOM.v=0;requestAnimationFrame(mom)})();
+addEventListener('pointerup',()=>{MOM.o=state==='mk'?MKS:state==='howto'?HT:state==='shop'&&window.PKS&&PKS.max>0?PKS:null;if(performance.now()-MOM.lt>90)MOM.v=0;MOM.ly=0},true);
+(function mom(){if(MOM.o&&Math.abs(MOM.v)>0.3&&(state==='mk'||state==='howto'||state==='shop')){const o=MOM.o;o.y=Math.max(0,Math.min(o.max||0,o.y+MOM.v));MOM.v*=0.94}else MOM.v=0;requestAnimationFrame(mom)})();
