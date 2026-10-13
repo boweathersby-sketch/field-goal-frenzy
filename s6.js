@@ -1,6 +1,6 @@
 // ===== HOW TO PLAY (scrollable; auto-shown once on the very first launch, then only from the menu) =====
 'use strict';
-const HT={y:0,max:0,drag:null};
+const HT={y:0,max:0,drag:null};window.HT=HT;
 if(!LS.fgfHow&&LS.fgfTut)LS.fgfHow='1';// existing players already know the game
 (function first(){if(LS.fgfHow)return;const w=()=>{if(state==='title'&&team>=0){LS.fgfHow='1';HT.y=0;state='howto'}else setTimeout(w,300)};setTimeout(w,300)})();
 const HSEC=[
