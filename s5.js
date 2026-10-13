@@ -7,7 +7,7 @@ const IS_WEB=!window.FGF_APP;
 window.TESTER=IS_WEB&&LS.fgfTester==='1';
 if(TESTER){coins=1e9;const oAdd=addCoins;addCoins=function(n){}}
 // ---- per-team kicker sheets (kickers.webp: 8 rows x 4 poses of 203x300) ----
-const KMETA=[[[86, 88, 40, 31, 76, 24], [270, 88, 40, 31, 256, 24], [464, 94, 42, 30, 474, 32], [657, 96, 36, 30, 666, 34]], [[69, 88, 47, 31, 78, 24], [266, 88, 46, 31, 276, 25], [470, 88, 45, 31, 480, 25], [669, 89, 46, 31, 676, 26]], [[82, 88, 50, 31, 83, 24], [270, 94, 48, 31, 270, 32], [472, 94, 46, 31, 480, 32], [660, 94, 38, 31, 672, 32]], [[73, 88, 46, 31, 82, 24], [266, 92, 44, 31, 276, 30], [468, 93, 43, 31, 478, 31], [659, 92, 37, 31, 668, 30]], [[86, 88, 50, 31, 84, 24], [264, 93, 44, 31, 274, 31], [468, 93, 44, 31, 475, 31], [659, 94, 38, 31, 693, 32]], [[90, 88, 50, 31, 82, 24], [276, 88, 53, 31, 262, 24], [523, 91, 56, 31, 524, 29], [656, 91, 36, 31, 688, 29]], [[84, 88, 48, 31, 79, 24], [291, 88, 48, 31, 286, 25], [486, 88, 49, 31, 482, 25], [665, 92, 40, 31, 685, 30]], [[72, 88, 50, 31, 78, 24], [263, 92, 45, 31, 273, 30], [466, 92, 44, 31, 478, 30], [660, 91, 38, 31, 684, 29]]]; // per team, per pose: [numCx,numCy,numW,numH,headX,headY]
+const KMETA=[[[62, 88, 40, 31, 72, 24], [284, 88, 40, 31, 297, 24], [464, 94, 42, 30, 474, 32], [657, 96, 36, 30, 666, 34]], [[69, 88, 47, 31, 78, 24], [266, 88, 46, 31, 276, 25], [470, 88, 45, 31, 480, 25], [669, 89, 46, 31, 676, 26]], [[82, 88, 50, 31, 83, 24], [270, 94, 48, 31, 270, 32], [472, 94, 46, 31, 480, 32], [660, 94, 38, 31, 672, 32]], [[73, 88, 46, 31, 82, 24], [266, 92, 44, 31, 276, 30], [468, 93, 43, 31, 478, 31], [659, 92, 37, 31, 668, 30]], [[86, 88, 50, 31, 84, 24], [264, 93, 44, 31, 274, 31], [468, 93, 44, 31, 475, 31], [659, 94, 38, 31, 693, 32]], [[66, 88, 50, 31, 76, 24], [287, 88, 53, 31, 302, 24], [523, 91, 56, 31, 524, 29], [656, 91, 36, 31, 688, 29]], [[74, 88, 48, 31, 80, 24], [278, 88, 48, 31, 283, 25], [486, 88, 49, 31, 482, 25], [665, 92, 40, 31, 685, 30]], [[72, 88, 50, 31, 78, 24], [263, 92, 45, 31, 273, 30], [466, 92, 44, 31, 478, 30], [660, 91, 38, 31, 684, 29]]]; // per team, per pose: [numCx,numCy,numW,numH,headX,headY]
 const NUMS5=[14,5,31,37,6,47,18,10]; // fixed in code: same on every device, unique per team
 const SKIN=[['Default',null,0],['Fair','#f3cfae',0],['Light','#e0ac83',0],['Tan','#c48a5c',0],['Brown','#8e5a37',0],['Deep','#5c3820',0],['Gold Chrome','#ffd36a',400],['Blue Paint','#4f86e0',800]];
 const HAIR=[['Default',null,0],['Black','#17110d',0],['Brown','#5b3a22',0],['Blond','#d6b05a',0],['Red','#a3442a',0],['Gray','#a3a3a3',0],['Platinum','#efe9da',250],['Neon Green','#4dff6a',500],['Hot Pink','#ff5fb0',500]];
@@ -65,7 +65,8 @@ const bgOwn=i=>TESTER||BGS[i].team===myT()||BGO.includes(BGS[i].id);
 const CROWD=[['Team colors',null,0],['Fire','#ff4a1a','#ffd23a',300],['Ice','#5ad0ff','#ffffff',300],['Royal','#4b2aa8','#f2c230',300],['Neon','#39ff14','#ff2bd6',500],['Mono','#222222','#dddddd',300]];
 const SKY=[['Day',0],['Sunset',300],['Night',500]],SWX=[['Clear',0,'clear'],['Snow',400,'snow'],['Rain',400,'rain']];
 const stOwn=id=>TESTER||STO.includes(id);
-function isHome(ti){return ti===myT()&&mode!=='vs'}
+// custom stadium items never apply in Career (real team stadiums there) or Play a Friend
+function isHome(ti){return ti===myT()&&mode!=='vs'&&mode!=='career'}
 // ---- turf styles: every style paints the whole field from the kicker to the end zone in one pass (no patches/seams) ----
 const TURF=[['classic','Classic Green',0,{g0:'#2c7a30',g1:'#1f6a26',st:0.07,ln:'rgba(255,255,255,0.7)',ga:0.6}],
  ['stripe','Striped Mow',300,{g0:'#2f8034',g1:'#216e28',st:0.16,ln:'rgba(255,255,255,0.75)',ga:0.5}],
@@ -134,8 +135,8 @@ const MKS={y:0,max:0,top:0,bot:0};window.MKS=MKS;
 cv.addEventListener('wheel',e=>{if(state==='mk'){MKS.y=Math.max(0,Math.min(MKS.max,MKS.y+e.deltaY));e.preventDefault()}},{passive:false});
 // ---- STADIUM screen (backdrops / creator / turf) ----
 let stTab=0;
-function drawST(){txt('MY STADIUM',W/2,H*0.06,Math.min(30,W*0.08),GOLD,'#063');ctx.fillStyle='#bcd';ctx.font='12px system-ui';ctx.textAlign='center';ctx.fillText('🪙 '+CSTR()+' · applies to your home games & menu',W/2,H*0.06+20);
- const tw=(W*0.9-8)/3;['🖼️ BACKDROP','🏟️ CREATOR','🌱 TURF'].forEach((l,i)=>bx(W*0.05+i*(tw+4),H*0.1,tw,32,l,()=>{stTab=i;P5=null},stTab===i,11));
+function drawST(){txt('MY STADIUM',W/2,H*0.06,Math.min(30,W*0.08),GOLD,'#063');ctx.fillStyle='#bcd';ctx.font='12px system-ui';ctx.textAlign='center';ctx.fillText('🪙 '+CSTR()+' · Quick Play, Daily & menu · Not used in Career mode',W/2,H*0.06+20);
+ const tw=(W*0.9-12)/4;['🖼️ BACKDROP','🏟️ CREATOR','🌱 TURF','🥅 UPRIGHTS'].forEach((l,i)=>bx(W*0.05+i*(tw+4),H*0.1,tw,32,l,()=>{stTab=i;P5=null},stTab===i,Math.min(11,tw/8.5)));
  const y0=H*0.1+42;
  if(stTab===0){const cw=(W*0.9-8)/2,ch=Math.min(92,(H*0.8-y0)/6);BGS.forEach((b,i)=>{const x=W*0.05+(i%2)*(cw+8),y=y0+(i/2|0)*(ch+4);panel(x,y,cw,ch);if(b.im&&b.im.complete&&b.im.naturalWidth){ctx.save();ctx.beginPath();ctx.roundRect(x+3,y+3,cw-6,ch-24,6);ctx.clip();ctx.drawImage(b.im,0,(b.by||600)-560,960,520,x+3,y+3,cw-6,(cw-6)*520/960);ctx.restore()}else{ctx.fillStyle='rgba(255,255,255,0.08)';ctx.fillRect(x+3,y+3,cw-6,ch-24);ctx.fillStyle='#8ab';ctx.font='900 12px system-ui';ctx.textAlign='center';ctx.fillText('COMING SOON',x+cw/2,y+ch/2-6)}
   const o=!b.soon&&bgOwn(i),eqd=(ST.bg<0?myT():ST.bg)===i;ctx.fillStyle=eqd?'#7fd38a':o?'#fff':GOLD;ctx.font='900 11px system-ui';ctx.textAlign='center';ctx.fillText((eqd?'✔ ':'')+b.name+(b.soon?'':o?'':' · 🪙 '+b.price),x+cw/2,y+ch-7);
@@ -148,8 +149,9 @@ function drawST(){txt('MY STADIUM',W/2,H*0.06,Math.min(30,W*0.08),GOLD,'#063');c
    R('END ZONE TEXT (tap)',ST.ez||TEAMS[myT()].n,'',null,null,()=>{const v=prompt('End zone text (max 18)',ST.ez||'');if(v!=null){ST.ez=v.toUpperCase().slice(0,18);S()}});
    R('STADIUM NAME (tap)',ST.name||'—','',null,null,()=>{const v=prompt('Stadium name (max 22)',ST.name||'');if(v!=null){ST.name=v.slice(0,22);S()}});
    ctx.fillStyle='#8ab';ctx.font='11px system-ui';ctx.textAlign='center';ctx.fillText('Locked options preview in 👁 but only apply once bought',W/2,y+14)}}
- else{const rh=Math.min(50,(H*0.8-y0)/8);TURF.forEach((t,i)=>{const y=y0+i*rh,o=tfOwn(t[0]),e=TFE===t[0];panel(W*0.05,y,W*0.9,rh-4);const c=t[3]||{g0:mix('#2c7a30',TEAMS[myT()].p,0.55),g1:TEAMS[myT()].p};const g=ctx.createLinearGradient(W*0.07,0,W*0.07+40,0);g.addColorStop(0,c.g0);g.addColorStop(1,c.g1);ctx.fillStyle=g;ctx.fillRect(W*0.07,y+6,40,rh-16);ctx.fillStyle='#fff';ctx.font='900 13px system-ui';ctx.textAlign='left';ctx.fillText((e?'✔ ':'')+t[1],W*0.07+50,y+rh/2+2);ctx.textAlign='right';ctx.fillStyle=o?'#7fd38a':GOLD;ctx.font='900 12px system-ui';ctx.fillText(e?'EQUIPPED':o?'TAP TO USE':'🪙 '+t[2],W*0.93,y+rh/2+2);
-  btn(W*0.05,y,W*0.9,rh-4,()=>{if(o){TFE=t[0];LS.fgfTurf=TFE}else buy5('turf_'+t[0],t[2],()=>{TFO.push(t[0]);SV('fgfTurfO',TFO);TFE=t[0];LS.fgfTurf=TFE})})})}
+else if(stTab===3)drawUP(y0);
+ else{const rh=Math.min(50,(H*0.82-y0)/TURF.length);TURF.forEach((t,i)=>{const y=y0+i*rh,o=tfOwn(t[0]),e=TFE===t[0];panel(W*0.05,y,W*0.9,rh-4);turfSwatch(t,W*0.07,y+5,40,rh-14);ctx.fillStyle='#fff';ctx.font='900 13px system-ui';ctx.textAlign='left';ctx.fillText((e?'✔ ':'')+t[1],W*0.07+50,y+rh/2+2);ctx.textAlign='right';ctx.fillStyle=o?'#7fd38a':GOLD;ctx.font='900 12px system-ui';ctx.fillText(e?'EQUIPPED':o?'TAP TO USE':t[4]?t[4]:'🪙 '+t[2],W*0.93,y+rh/2+2);
+  btn(W*0.05,y,W*0.9,rh-4,()=>{if(t[0]==='custom'){if(o)state='cfield';else toast('Coming soon on Google Play');return}if(o){TFE=t[0];LS.fgfTurf=TFE}else buy5('turf_'+t[0],t[2],()=>{TFO.push(t[0]);SV('fgfTurfO',TFO);TFE=t[0];LS.fgfTurf=TFE})})})}
  bx(W*0.05,H*0.93-20,W*0.42,40,'👁 PREVIEW',()=>{state='prev'},false,14);bx(W*0.53,H*0.93-20,W*0.42,40,'◀ BACK',()=>state='title',true,14)}
 // ---- weekly / kotw / settings / friends screens ----
 function drawWeek(){txt('WEEKLY CHALLENGES',W/2,H*0.08,Math.min(26,W*0.07),GOLD,'#063');ctx.fillStyle='#bcd';ctx.font='12px system-ui';ctx.textAlign='center';const now=new Date(),dl=(8-((now.getDay()+6)%7+1))%7||7;ctx.fillText('Same 3 for everyone · resets in '+dl+' day'+(dl>1?'s':''),W/2,H*0.08+22);

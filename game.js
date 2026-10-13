@@ -118,8 +118,9 @@ ctx.strokeStyle='rgba(255,255,255,0.75)';ctx.fillStyle='rgba(255,255,255,0.08)';
  // yard marker near ball
  const lp=P(-6,0,0);ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='bold '+(lp.s*1.2|0)+'px system-ui';ctx.fillText((dist-10>50?100-(dist-10):dist-10)+'',lp.x,lp.y)}
 function drawPosts(){const z=dist+0.2,lw=s=>Math.max(1.5,s*0.18);const b=P(0,0,z),c=P(0,BAR,z),l=P(-HALF,BAR,z),r=P(HALF,BAR,z),lt=P(-HALF,POST,z),rt=P(HALF,POST,z);
- ctx.strokeStyle='#e8b800';ctx.lineCap='round';ctx.lineWidth=lw(b.s)*1.6;ctx.beginPath();ctx.moveTo(b.x,b.y);ctx.lineTo(c.x,c.y);ctx.stroke();
- ctx.strokeStyle='#ffd21f';ctx.lineWidth=lw(b.s);ctx.beginPath();ctx.moveTo(lt.x,lt.y);ctx.lineTo(l.x,l.y);ctx.lineTo(r.x,r.y);ctx.lineTo(rt.x,rt.y);ctx.stroke();
+ // cosmetic only: geometry (and the hitbox in physics) is identical for every upright style
+ if(!(window.S5&&S5.posts(b,c,l,r,lt,rt,lw(b.s)))){ctx.strokeStyle='#e8b800';ctx.lineCap='round';ctx.lineWidth=lw(b.s)*1.6;ctx.beginPath();ctx.moveTo(b.x,b.y);ctx.lineTo(c.x,c.y);ctx.stroke();
+ ctx.strokeStyle='#ffd21f';ctx.lineWidth=lw(b.s);ctx.beginPath();ctx.moveTo(lt.x,lt.y);ctx.lineTo(l.x,l.y);ctx.lineTo(r.x,r.y);ctx.lineTo(rt.x,rt.y);ctx.stroke()}
  ctx.fillStyle='#ff7a00';ctx.fillRect(lt.x-lw(b.s),lt.y-b.s*0.9,lw(b.s)*2,b.s*0.7);ctx.fillRect(rt.x-lw(b.s),rt.y-b.s*0.9,lw(b.s)*2,b.s*0.7);
  ctx.fillStyle='rgba(255,255,255,0.6)';ctx.font='bold '+Math.max(9,b.s*0.9|0)+'px system-ui';ctx.textAlign='center';ctx.fillText(dist+' YDS',b.x,b.y+b.s*1.4+8)}
 function SP(x,y,z){const p=P(x,y,z);if(!p)return null;const t=TEE(),m=1-Math.pow(1-Math.max(0,Math.min(1,z/9)),2),ty=t.y-OFF-(y-0.15)*t.r*4;return{x:t.x+(p.x-t.x)*m,y:ty+(p.y-ty)*m,s:t.r/0.19+(p.s-t.r/0.19)*m}}
