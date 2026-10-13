@@ -132,12 +132,12 @@ function drawBall(){const p=SP(ball.x,ball.y,ball.z);if(!p)return;const sh=SP(ba
  const g=ctx.createRadialGradient(-r*0.2,-r*0.3,0,0,0,r);g.addColorStop(0,'rgba(255,200,150,0.45)');g.addColorStop(1,'rgba(0,0,0,0.3)');ctx.fillStyle=g;ctx.fill();
  ctx.strokeStyle='#fff';ctx.lineWidth=Math.max(0.6,r*0.09);ctx.beginPath();ctx.moveTo(0,-r*0.45);ctx.lineTo(0,r*0.45);ctx.stroke();for(let i=-2;i<=2;i++){ctx.beginPath();ctx.moveTo(-r*0.13,i*r*0.16);ctx.lineTo(r*0.13,i*r*0.16);ctx.stroke()}ctx.restore()}
 function limb(x1,y1,x2,y2,w,c){ctx.strokeStyle=c;ctx.lineWidth=w;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke()}
-let OFF=0,EZ=0,SCL=1,coins=+(localStorage.fgfCoins||0),paused=false,firstKick=true,prevFr=0,curFr=0,fadeT=0,camK=0,bigKick=false;const STAD=new Image();STAD.src='st3.webp';const KS=new Image();KS.src='kickers.webp';
+let OFF=0,EZ=0,SCL=1,coins=+(localStorage.fgfCoins||0),paused=false,firstKick=true,prevFr=0,curFr=0,fadeT=0,camK=0,bigKick=false;const STAD=new Image();STAD.src='st3.webp';const KS=new Image();KS.src='kickers.webp';const KS0=new Image();KS0.src='kicker.webp';
 function drawBG(){if(S3.bg())return;const b=P(0,0,dist+0.2);if(!STAD.complete||!STAD.naturalWidth||!b){ctx.drawImage(bg,0,0,W,H);drawField();return}
  const sc=Math.max(W/1280,H/720,(2*HALF*b.s)/136);let dx=W/2-640*sc,dy=b.y-414*sc;dx=Math.min(0,Math.max(W-1280*sc,dx));dy=Math.min(0,Math.max(H-720*sc,dy));
  ctx.drawImage(STAD,dx,dy,1280*sc,720*sc);{const bk=legendT>0?1.6:tension*(1-hushK);if(bk>0.05&&!paused){const ph=lastBall||legendT>0?T*2*Math.PI/0.42:T*2*Math.PI/0.58,bo=Math.abs(Math.sin(ph))*bk*2.6*sc*2.2,y0=dy+235*sc,y1=dy+398*sc;ctx.drawImage(STAD,0,235,1280,163,dx,y0-bo,1280*sc,y1-y0)}}OFF=dy+414*sc-b.y;EZ=dy+417*sc;SCL=sc;S3.turf();{const tw=Math.min(W*0.92,560*sc),fs=19*sc;ctx.save();ctx.translate(W/2,EZ);ctx.scale(1,0.55);ctx.font='900 '+fs+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';const mw=ctx.measureText('TUNDRA WOLVES').width,k=Math.min(1,tw/mw);ctx.scale(k,1);ctx.restore();ctx.save();ctx.fillStyle='rgba(10,80,32,0.92)';ctx.fillRect(0,EZ-fs*0.36,W,fs*0.72);ctx.fillStyle='rgba(255,255,255,0.7)';ctx.fillRect(0,EZ+fs*0.36,W,1.5);ctx.translate(W/2,EZ);ctx.scale(k,0.55);ctx.font='900 '+fs+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineWidth=fs*0.12;ctx.strokeStyle='#05361a';ctx.strokeText('TUNDRA WOLVES',0,0);ctx.fillStyle=GOLD;ctx.fillText('TUNDRA WOLVES',0,0);ctx.restore();ctx.textBaseline='alphabetic'}const v=ctx.createRadialGradient(W/2,H*0.45,H*0.25,W/2,H*0.5,H*0.85);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,0.4)');ctx.fillStyle=v;ctx.fillRect(0,0,W,H)}
-function KG(){const fw=203,fh=300,h=Math.min(H*0.42,W*0.76),w=h*fw/fh;return{fw,fh,h,w,x:-W*0.01,y:H*1.04-h}}
-function TEE(){const g=KG();return{x:g.x+g.w*0.875,y:g.y+g.h*0.705,r:g.h*0.065}}
+function KG(){const fw=203,fh=300,h=Math.min(H*0.34,W*0.62),w=h*fw/fh;return{fw,fh,h,w,x:W*0.02,y:H*0.995-h}}
+function TEE(){const g=KG();return{x:g.x+g.w*1.0,y:g.y+g.h*0.86,r:g.h*0.065}}
 function drawWeather(){const storm=weather==='hurricane'||weather==='hlite',wet=weather==='rain'||storm;
  if(storm){ctx.fillStyle=weather==='hurricane'?'rgba(5,10,18,0.5)':'rgba(10,15,25,0.3)';ctx.fillRect(0,0,W,(EZ||H*0.55));}
  if(weather==='fog'){const g=ctx.createLinearGradient(0,H*0.15,0,H*0.8);g.addColorStop(0,'rgba(200,210,220,0.15)');g.addColorStop(0.45,'rgba(200,210,220,0.6)');g.addColorStop(1,'rgba(200,210,220,0.12)');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);for(let i=0;i<4;i++){ctx.fillStyle='rgba(230,235,240,0.12)';ctx.beginPath();ctx.ellipse((T*20*(i%2?1:-1)+i*W*0.4)%(W*1.4)-W*0.2,H*(0.35+i*0.08),W*0.5,H*0.05,0,0,7);ctx.fill()}}
@@ -159,10 +159,9 @@ function drawFlags(){const z=dist+0.2;for(const sx of[-1,1]){const t=P(sx*HALF,P
  for(let i=0;i<=8;i++){const u=i/8;ctx.lineTo(t.x+dir*fl*u*(0.35+0.65*amp),t.y-t.s*0.9+Math.sin(T*8*gs-u*5)*t.s*0.12*u+(1-amp)*u*fl*0.6)}for(let i=8;i>=0;i--){const u=i/8;ctx.lineTo(t.x+dir*fl*u*(0.35+0.65*amp),t.y-t.s*0.9+t.s*0.6+Math.sin(T*8*gs-u*5)*t.s*0.12*u+(1-amp)*u*fl*0.6)}ctx.closePath();ctx.fill();ctx.stroke()}}
 function drawKicker(){const u=kickT>0?1-kickT/0.35:0;let fr=0;if(swipe)fr=1;else if(kickT>0)fr=u<0.35?2:3;else if(ball.fly)fr=3;
  if(fr!==curFr){prevFr=curFr;curFr=fr;fadeT=0.09}
- if(!KS.complete||!KS.naturalWidth)return;const {fw,fh,h,w,x,y}=KG();
+ if(!KS0.complete||!KS0.naturalWidth)return;const {fw,fh,h,w,x,y}=KG();
  ctx.fillStyle='rgba(0,0,0,0.4)';ctx.beginPath();ctx.ellipse(x+w*0.4,y+h*0.97,w*0.42,h*0.035,0,0,7);ctx.fill();
- const KM=S3.kimg()._masc;if(false){ctx.globalAlpha=0.18;ctx.drawImage(S3.kimg(),(fr-1)*fw,0,fw,fh,x-w*0.03,y,w,h)}
- if(fadeT>0&&!KM){ctx.globalAlpha=fadeT/0.09;ctx.drawImage(S3.kimg(),prevFr*fw,0,fw,fh,x,y,w,h);ctx.globalAlpha=1-fadeT/0.09*0.5}else ctx.globalAlpha=1;
+  ctx.globalAlpha=1;
  ctx.drawImage(S3.kimg(),fr*fw,0,fw,fh,x,y,w,h);ctx.globalAlpha=1;S3.decal(fr,x,y,w,h)}
 function drawWind(){// compact chip in the top HUD row (next to coins + yards), never over the field/uprights
  const py=62,x=200,hot=wind.mph>=100,nm=(WX[weather]&&WX[weather][1]||'').toString();ctx.font='900 13px system-ui';const t=wind.mph>0?wind.mph+' MPH':'CALM',tw=ctx.measureText(t).width;ctx.font='900 10px system-ui';const nw=ctx.measureText(nm).width,room=W-x-8;let w=26+tw+8+18+(nm?nw+6:0)+6;const showN=nm&&w<=room;if(!showN)w=26+tw+8+18+6;w=Math.min(w,room);
