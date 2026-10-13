@@ -65,6 +65,7 @@ function drawUprights(x,id,b,c,l,r,lt,rt,w){const P2=(st,lw,extra)=>{x.strokeSty
  else if(id==='ice'){x.shadowColor='#9be7ff';x.shadowBlur=10;P2('#bfefff',w);x.shadowBlur=0;P2('#ffffff',Math.max(1,w*0.3))}
  else if(id==='lava'){x.shadowColor='#ff5a00';x.shadowBlur=14;P2('#ff3d00',w);x.shadowBlur=0;x.setLineDash([w*1.5,w*2]);x.lineDashOffset=-T*30;P2('#ffc400',Math.max(1,w*0.5));x.setLineDash([])}
  else if(id==='bolt'){x.shadowColor='#7fd3ff';x.shadowBlur=12;P2('#ffe94d',w);x.shadowBlur=0;if(((T*6)|0)%3!==0){x.strokeStyle='#e8f6ff';x.lineWidth=1.5;x.shadowColor='#7fd3ff';x.shadowBlur=8;x.beginPath();const n=7;for(let i=0;i<=n;i++){const u=i/n,px=l.x+(r.x-l.x)*u,py=l.y+(r.y-l.y)*u+(i%n?(Math.sin(T*40+i*3)*w*1.5):0);i?x.lineTo(px,py):x.moveTo(px,py)}x.stroke()}}
+ else if(id==='pro_bg'){P2('#0d0d0d',w);P2(grad('#a97a08','#ffe680'),Math.max(1,w*0.42))}
  else P2('#ffd21f',w);x.restore()}
 S5.posts=function(b,c,l,r,lt,rt,w){const id=S5.isHome(stadT())&&upOwn(UPE)?UPE:'classic';if(id==='classic')return false;drawUprights(ctx,id,b,c,l,r,lt,rt,w);return true};
 function drawUP(y0){const rh=Math.min(50,(H*0.82-y0)/UPR.length);UPR.forEach((u,i)=>{const y=y0+i*rh,o=upOwn(u[0]),e=UPE===u[0];panel(W*0.05,y,W*0.9,rh-4);

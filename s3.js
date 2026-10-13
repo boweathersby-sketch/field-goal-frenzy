@@ -222,7 +222,7 @@ function drawTeams(){txt(team<0?'CHOOSE YOUR TEAM':'TEAMS',W/2,H*0.08,Math.min(3
   btn(x,y,cw,ch,()=>{if(teamOwned(i)){setTeam(i);teamPend=null}else if(team<0)toast('Pick a free starter first');else if(teamPend===i){if(coins>=TPRICE(i)){addCoins(-TPRICE(i));tOwn.push(i);SV('fgfTeams',tOwn);toast('🏟️ '+t.n+' UNLOCKED');setTeam(i)}else toast('Need 🪙 '+TPRICE(i));teamPend=null}else teamPend=i})});
  if(team>=0)bx(W/2-90,H*0.93-22,180,44,'◀ DONE',()=>state='title')}
 // ---- real-money packs (display only; Play Billing hooks in via BILLING.purchase) ----
-const PACKS=[{id:'coins_1000',price:'$0.99',coins:1000,name:'1,000 Coins'},{id:'coins_3000',price:'$2.99',coins:3000,name:'3,000 Coins'},{id:'coins_7500',price:'$4.99',coins:7500,name:'7,500 Coins',tag:'BEST VALUE'},{id:'coins_20000',price:'$9.99',coins:20000,name:'20,000 Coins'},{id:'pro_bundle',price:'$3.99',coins:2500,name:'Pro Bundle',desc:'No ads · Create Your Team · 2,500 bonus coins',tag:'PRO'}];
+const PACKS=[{id:'coins_1000',price:'$0.99',coins:1000,name:'1,000 Coins'},{id:'coins_3000',price:'$2.99',coins:3000,name:'3,000 Coins'},{id:'coins_7500',price:'$4.99',coins:7500,name:'7,500 Coins'},{id:'coins_20000',price:'$9.99',coins:20000,name:'20,000 Coins'},{id:'pro_bundle',price:'$12.99',coins:7500,name:'Pro Bundle',desc:'No ads forever · Create Your Team · 7,500 coins · Pro gold kicker look · black & gold uprights · 2× daily login coins · gold PRO badge · all cosmetic/bonus',tag:'BEST VALUE'}];
 const BILLING={available:false,// set true + implement purchase() in the Android wrapper (Play Billing)
  purchase(id){return Promise.reject('unavailable')},
  onPurchased(id){/* called by the store after a verified purchase: grant here */const p=PACKS.find(x=>x.id===id);if(p){addCoins(p.coins);if(id==='pro_bundle')LS.fgfPro='1';toast('✔ '+p.name)}}};window.FGF_BILLING=BILLING;
@@ -237,7 +237,7 @@ function drawPacks(){ctx.fillStyle='#3ddc84';ctx.font='900 12px system-ui';ctx.t
    if(p.tag){ctx.fillStyle=p.tag==='PRO'?'#7fd3ff':'#ff6a3d';ctx.beginPath();ctx.roundRect(W*0.92-W*0.25,y+4,W*0.22,15,7);ctx.fill();ctx.fillStyle='#000';ctx.font='900 9px system-ui';ctx.textAlign='center';ctx.fillText(p.tag,W*0.92-W*0.14,y+15)}
    if(vis)bx(W*0.92-W*0.26,y+(rh-6)/2-10,W*0.24,32,window.TESTER&&p.id==='custom_field'?'OPEN':p.price,()=>buyPack(p),window.TESTER&&p.id==='custom_field',14);else{ctx.save();ctx.globalAlpha=0.5;ctx.strokeStyle=GOLD;ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(W*0.92-W*0.26,y+(rh-6)/2-10,W*0.24,32,16);ctx.stroke();ctx.restore()}}
   y+=rh}
- const f=wrapP('Not available in the web version. No charges, no coins granted.',W*0.84);ctx.fillStyle='#8ab';ctx.textAlign='center';f.forEach((l,k)=>ctx.fillText(l,W/2,y+14+k*14));y+=20+f.length*14;
+ const f=wrapP('Not available in the web version. No charges, no coins granted.',W*0.84);ctx.fillStyle='#8ab';ctx.textAlign='center';f.forEach((l,k)=>ctx.fillText(l,W/2,y+14+k*14));y+=40+f.length*14;
  ctx.restore();PKS.max=Math.max(0,y+PKS.y-bot);if(PKS.y>PKS.max)PKS.y=PKS.max;
  if(PKS.max>0){const th=(bot-top)*(bot-top)/(bot-top+PKS.max);ctx.fillStyle='rgba(242,194,48,0.6)';ctx.fillRect(W-5,top+(bot-top-th)*PKS.y/PKS.max,3,th);if(PKS.y<PKS.max-2){const g=ctx.createLinearGradient(0,bot-30,0,bot);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,0.6)');ctx.fillStyle=g;ctx.fillRect(0,bot-30,W,30)}}
  ctx.fillStyle='rgba(6,14,26,0.92)';ctx.fillRect(0,bot,W,H-bot);ctx.fillStyle=GOLD;ctx.fillRect(0,bot,W,2)}
