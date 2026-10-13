@@ -23,7 +23,26 @@ function mTail(x,mi,cx,cy){const [L,D]=MFUR[mi];x.save();x.lineCap='round';
  if(mi===5){x.strokeStyle=D;x.lineWidth=7;x.beginPath();x.moveTo(cx,cy);x.lineTo(cx-10,cy+14);x.stroke()}
  x.restore()}
 const MHP=[[72,40],[266,44],[469,44],[669,39]];
-mascSheet=function(mi,ti,num){const k='mh3_'+mi+'_'+num+'_'+(MK.name||'');if(KC5[k])return KC5[k];if(!KS.complete||!KS.naturalWidth)return teamSheet(ti);
+
+// painted mascot head from the real sideline art: mask ellipse M (keeps ears/horns/spikes/hat), face ellipse E painted over with the mascot's own fur
+const MHM=[[92,55,40,55],[66,50,56,38],[104,56,42,38],[96,48,46,50],[95,70,38,36],[80,40,44,42],[88,48,52,40],[62,42,46,48]];
+const MHC=[[123,63,192],[47,179,166],[58,58,64],[154,154,162],[216,176,112],[122,34,54],[122,40,56],[34,48,106]];
+const MHE=[[95,68,24,27],[66,52,44,32],[104,58,33,31],[96,57,37,36],[95,72,30,28],[80,40,36,34],[88,54,28,30],[64,60,30,24]];
+const MTL=[null,[[118,90,75,100],1],null,[[128,92,55,75],1],[[15,0,60,52],-1],null,null,null];
+const MAH={};
+function artHead(mi){if(MAH[mi])return MAH[mi];const [mx,my,mrx,mry]=MHM[mi],[ex,ey,erx,ery]=MHE[mi],x0=mx-mrx,y0=my-mry,w=mrx*2,h=mry*2,c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');
+ x.save();x.beginPath();x.ellipse(mrx,mry,mrx,mry,0,0,7);x.clip();x.drawImage(MSI,mi*193+x0,y0,w,h,0,0,w,h);x.restore();
+ // sample the fur colour on the rim of the face
+ let L=MHC[mi];if(0)try{const d=x.getImageData(0,0,w,h).data,acc=[];for(let t=0;t<64;t++){const a=t/64*6.283,px=Math.round(ex-x0+Math.cos(a)*erx*0.92),py=Math.round(ey-y0+Math.sin(a)*ery*0.92);if(px<0||py<0||px>=w||py>=h)continue;const i=(py*w+px)*4;if(d[i+3]>200)acc.push([d[i],d[i+1],d[i+2]])}
+  if(acc.length){const lum=v=>v[0]*0.3+v[1]*0.59+v[2]*0.11;acc.sort((p,q)=>lum(p)-lum(q));L=acc[acc.length>>1]}}catch(e){}
+ const cx=ex-x0,cy=ey-y0;x.save();x.globalCompositeOperation='source-atop';x.beginPath();x.ellipse(cx,cy,erx*0.97,ery*0.97,0,0,7);x.clip();
+ const g=x.createRadialGradient(cx-erx*0.35,cy-ery*0.45,2,cx,cy,Math.max(erx,ery)*1.1);g.addColorStop(0,`rgb(${L.map(v=>Math.min(255,v*1.25+12)|0)})`);g.addColorStop(0.6,`rgb(${L.map(v=>v|0)})`);g.addColorStop(1,`rgb(${L.map(v=>v*0.55|0)})`);x.fillStyle=g;x.fillRect(0,0,w,h);
+ x.globalAlpha=0.12;x.filter='blur(6px)';x.drawImage(c,0,0);x.filter='none';x.globalAlpha=1;
+ x.strokeStyle=`rgba(${L.map(v=>v*0.5|0)},0.55)`;x.lineWidth=1.4;for(let i=0;i<14;i++){const u=(i/13-0.5)*1.7;x.beginPath();x.moveTo(cx+u*erx*0.6,cy-ery*0.85);x.quadraticCurveTo(cx+u*erx*0.75,cy,cx+u*erx*0.55,cy+ery*0.9);x.stroke()}
+ x.restore();return MAH[mi]=c}
+function drawArtHead(x,mi,hx,hy){const c=artHead(mi),[mx,my,mrx,mry]=MHM[mi],[ex,ey,erx]=MHE[mi],s=Math.min(1.7,40/erx);x.drawImage(c,hx-(ex-(mx-mrx))*s,hy-(ey-(my-mry))*s,c.width*s,c.height*s)}
+function drawArtTail(x,mi,ax,ay){const t=MTL[mi];if(!t)return;const [[tx,ty,tw,th],side]=t,s=0.9;x.drawImage(MSI,mi*193+tx,ty,tw,th,side>0?ax+4:ax-tw*s-4,side>0?ay-th*s*0.35:ay-th*s*0.95,tw*s,th*s)}
+mascSheet=function(mi,ti,num){const k='mh6_'+mi+'_'+num+'_'+(MK.name||'');if(KC5[k])return KC5[k];if(!KS.complete||!KS.naturalWidth||!MSI.complete||!MSI.naturalWidth)return teamSheet(ti);
  const H=7,src=document.createElement('canvas');src.width=812;src.height=300;const sx=src.getContext('2d');sx.drawImage(KS,0,H*300,812,300,0,0,812,300);
  let d;try{d=sx.getImageData(0,0,812,300)}catch(e){return teamSheet(ti)}const a=d.data,T=TEAMS[mi],P=rgb(T.p),S=rgb(T.s),F=rgb(MFUR[mi][0]);
  for(let i=0;i<a.length;i+=4){if(a[i+3]<8)continue;const [h,s,v]=hsv(a[i],a[i+1],a[i+2]);
@@ -31,9 +50,9 @@ mascSheet=function(mi,ti,num){const k='mh3_'+mi+'_'+num+'_'+(MK.name||'');if(KC5
   else if(h>=8&&h<=40&&s>0.18&&s<0.75&&v>0.25){const k2=v/0.75;a[i]=Math.min(255,F[0]*k2);a[i+1]=Math.min(255,F[1]*k2);a[i+2]=Math.min(255,F[2]*k2)}}// skin -> fur
  sx.putImageData(d,0,0);
  const c=document.createElement('canvas');c.width=812;c.height=300;c._masc=1;const x=c.getContext('2d');
- for(let f=0;f<4;f++){const m=KMETA[H][f];mTail(x,mi,m[0],m[1]+70)}
+ for(let f=0;f<4;f++){const m=KMETA[H][f];drawArtTail(x,mi,m[0]+(MTL[mi]&&MTL[mi][1]>0?14:-26),m[1]+(MTL[mi]&&MTL[mi][1]>0?72:40))}
  x.drawImage(src,0,0);
  const nm=(MK.name||'').toUpperCase().slice(0,10);
- for(let f=0;f<4;f++){const m=KMETA[H][f];{const [L,D]=MFUR[mi],hx=MHP[f][0],hy=MHP[f][1],g=x.createLinearGradient(hx,hy,hx,hy+70);g.addColorStop(0,D);g.addColorStop(1,L);x.fillStyle=g;x.beginPath();x.ellipse(hx-6,hy+30,21,24,0,0,7);x.fill();mHead(x,mi,hx,hy,29)}
+ for(let f=0;f<4;f++){const m=KMETA[H][f];{const [L,D]=MFUR[mi],hx=MHP[f][0],hy=MHP[f][1],g=x.createLinearGradient(hx,hy,hx,hy+70);g.addColorStop(0,D);g.addColorStop(1,L);x.fillStyle=g;x.beginPath();x.ellipse(hx-6,hy+30,21,24,0,0,7);x.fill();drawArtHead(x,mi,hx,hy)}
   numOn(x,m[0],m[1],m[3],num,T.s);if(nm){x.save();x.font='900 11px system-ui';x.textAlign='center';x.lineWidth=3;x.strokeStyle='rgba(0,0,0,0.55)';x.strokeText(nm,m[0],m[1]-m[3]*0.72);x.fillStyle='#fff';x.fillText(nm,m[0],m[1]-m[3]*0.72);x.restore()}}
  return KC5[k]=c};

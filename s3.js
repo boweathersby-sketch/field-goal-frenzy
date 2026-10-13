@@ -233,7 +233,7 @@ function drawPacks(){ctx.fillStyle='#3ddc84';ctx.font='900 12px system-ui';ctx.t
  const top=H*0.14+58,bot=H-62,tw=W*0.92-W*0.26-W*0.1;PKS.top=top;PKS.bot=bot;let y=top-PKS.y;
  ctx.save();ctx.beginPath();ctx.rect(0,top,W,bot-top);ctx.clip();
  for(const p of PACKS){const d=wrapP((p.desc||'Coins for gear, teams & more')+(p.id==='pro_bundle'?' · Not available in the web version.':'')+(window.TESTER&&p.id==='custom_field'?' · 🧪 Tester: unlocked':''),tw),rh=Math.max(70,44+d.length*14);const vis=y>=top-1&&y+rh-6<=bot+1;
-  if(y+rh>top&&y<bot){panel(W*0.04,y,W*0.92,rh-6);ctx.textAlign='left';ctx.fillStyle=GOLD;ctx.font='900 16px system-ui';ctx.fillText((p.id==='pro_bundle'?'⭐ ':'🪙 ')+p.name,W*0.08,y+28);ctx.fillStyle='#bcd';ctx.font='11px system-ui';d.forEach((l,k)=>ctx.fillText(l,W*0.08,y+46+k*14));
+  if(y+rh>top&&y<bot){panel(W*0.04,y,W*0.92,rh-6);ctx.textAlign='left';ctx.fillStyle=GOLD;ctx.font='900 16px system-ui';ctx.fillText((p.icon||(p.id==='pro_bundle'?'⭐ ':'🪙 '))+p.name,W*0.08,y+28);ctx.fillStyle='#bcd';ctx.font='11px system-ui';d.forEach((l,k)=>ctx.fillText(l,W*0.08,y+46+k*14));
    if(p.tag){ctx.fillStyle=p.tag==='PRO'?'#7fd3ff':'#ff6a3d';ctx.beginPath();ctx.roundRect(W*0.92-W*0.25,y+4,W*0.22,15,7);ctx.fill();ctx.fillStyle='#000';ctx.font='900 9px system-ui';ctx.textAlign='center';ctx.fillText(p.tag,W*0.92-W*0.14,y+15)}
    if(vis)bx(W*0.92-W*0.26,y+(rh-6)/2-10,W*0.24,32,window.TESTER&&p.id==='custom_field'?'OPEN':p.price,()=>buyPack(p),window.TESTER&&p.id==='custom_field',14);else{ctx.save();ctx.globalAlpha=0.5;ctx.strokeStyle=GOLD;ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(W*0.92-W*0.26,y+(rh-6)/2-10,W*0.24,32,16);ctx.stroke();ctx.restore()}}
   y+=rh}
