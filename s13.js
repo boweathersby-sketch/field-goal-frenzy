@@ -23,7 +23,6 @@ function cmCell0(){if(!MSI.complete||!MSI.naturalWidth)return null;const c=docum
  const A=CMA[B],T=TEAMS[myT()],mx=A[0],top=A[1],mrx=A[2]/2,ex=A[3],ey=A[4],erx=A[5]*2,nkx=A[6],nky=A[7],nkw=A[8],tl=A[9]||0;x.lineJoin='round';
  const H=CM.hat;if(cmOwn(H)&&H!=='none'){x.save();x.translate(mx,top);x.rotate(tl);x.translate(-mx,-top);x.strokeStyle='#111';x.lineWidth=2;
   if(H==='cap'){x.fillStyle=T.p;x.beginPath();x.ellipse(mx,top+12,mrx*0.75,14,0,Math.PI,0);x.fill();x.stroke();x.fillStyle=T.s;x.beginPath();x.ellipse(mx+mrx*0.55,top+12,mrx*0.45,5,0,0,7);x.fill();x.stroke()}
-  else if(H==='witch'){x.fillStyle='#2a1238';x.beginPath();x.ellipse(mx,top+14,mrx*1.05,8,0,0,6.29);x.fill();x.stroke();x.beginPath();x.moveTo(mx-mrx*0.55,top+12);x.lineTo(mx+mrx*1.0,Math.max(1,top-30));x.lineTo(mx+mrx*0.55,top+12);x.closePath();x.fill();x.stroke();x.fillStyle='#ff8a1c';x.fillRect(mx-mrx*0.5,top+3,mrx*1.02,6)}
   else if(H==='beanie'){x.fillStyle=T.p;x.beginPath();x.ellipse(mx,top+12,mrx*0.72,17,0,Math.PI,0);x.fill();x.stroke();x.fillStyle=T.s;x.fillRect(mx-mrx*0.74,top+9,mrx*1.48,7);x.strokeRect(mx-mrx*0.74,top+9,mrx*1.48,7);x.beginPath();x.arc(mx,top-7,6,0,7);x.fill();x.stroke()}
   else if(H==='cowboy'){x.fillStyle='#8a5a2b';x.beginPath();x.ellipse(mx,top+10,mrx*1.05,7,0,0,7);x.fill();x.stroke();x.beginPath();x.moveTo(mx-mrx*0.5,top+8);x.quadraticCurveTo(mx-mrx*0.5,top-18,mx,top-14);x.quadraticCurveTo(mx+mrx*0.5,top-18,mx+mrx*0.5,top+8);x.closePath();x.fill();x.stroke();x.fillStyle=T.s;x.fillRect(mx-mrx*0.5,top+1,mrx,5)}
   else if(H==='top'){x.fillStyle='#151515';x.beginPath();x.ellipse(mx,top+10,mrx*0.85,6,0,0,7);x.fill();x.stroke();x.fillRect(mx-mrx*0.45,top-24,mrx*0.9,34);x.strokeRect(mx-mrx*0.45,top-24,mrx*0.9,34);x.fillStyle=T.p;x.fillRect(mx-mrx*0.45,top+1,mrx*0.9,6)}
@@ -37,6 +36,12 @@ function cmCell0(){if(!MSI.complete||!MSI.naturalWidth)return null;const c=docum
  const C=CM.ch;if(cmOwn(C)&&C!=='none'){x.save();const ny=nky,cx=nkx,cr=nkw/2;x.strokeStyle='#e5b416';x.lineWidth=4;x.beginPath();x.ellipse(cx,ny-cr*0.3,cr,cr*0.6,0,0.25,Math.PI-0.25);x.stroke();x.strokeStyle='#8a6a00';x.lineWidth=1;x.setLineDash([3,3]);x.stroke();x.setLineDash([]);
   if(C==='medal'){x.fillStyle='#ffd23f';x.strokeStyle='#8a6a00';x.lineWidth=2;x.beginPath();x.arc(cx,ny+cr*0.3,8,0,7);x.fill();x.stroke();x.fillStyle='#8a6a00';x.font='900 9px system-ui';x.textAlign='center';x.fillText('1',cx,ny+cr*0.3+3)}
   else{x.fillStyle='#ffd23f';x.font='900 11px system-ui';x.textAlign='center';x.fillText('$',cx,ny+cr*0.3+4)}x.restore()}
+ if(H==='witch'&&cmOwn(H)){const k=0.78,ox=193*(1-k)/2,oy=200*(1-k),c2=document.createElement('canvas');c2.width=193;c2.height=200;const y=c2.getContext('2d');y.imageSmoothingQuality='high';y.drawImage(c,ox,oy,193*k,200*k);
+  const hx=ox+mx*k,hy=oy+top*k+4,r=Math.max(26,mrx*k*1.15),tip=Math.max(3,hy-58);y.save();y.translate(hx,hy);y.rotate(tl);y.translate(-hx,-hy);y.lineJoin='round';y.strokeStyle='#111';y.lineWidth=2;
+  y.fillStyle='#2a1238';y.beginPath();y.ellipse(hx,hy,r*1.25,r*0.28,0,0,6.29);y.fill();y.stroke();
+  y.beginPath();y.moveTo(hx-r*0.62,hy-2);y.quadraticCurveTo(hx-r*0.3,hy-(hy-tip)*0.6,hx+r*0.15,tip+6);y.quadraticCurveTo(hx+r*0.55,tip,hx+r*0.95,tip+12);y.quadraticCurveTo(hx+r*0.45,tip+14,hx+r*0.35,tip+22);y.quadraticCurveTo(hx+r*0.5,hy-(hy-tip)*0.4,hx+r*0.62,hy-2);y.closePath();y.fill();y.stroke();
+  y.fillStyle='#ff8a1c';y.beginPath();y.moveTo(hx-r*0.6,hy-4);y.lineTo(hx+r*0.6,hy-4);y.lineTo(hx+r*0.52,hy-12);y.lineTo(hx-r*0.5,hy-12);y.closePath();y.fill();y.stroke();
+  y.fillStyle='#ffd23f';y.fillRect(hx-5,hy-12,10,8);y.strokeRect(hx-5,hy-12,10,8);y.restore();return CMC=c2}
  return CMC=c}
 window.cmCell=cmCell;
 // MSI proxy: while building/drawing the custom mascot, reads from the base animal's cell come from the custom cell instead
