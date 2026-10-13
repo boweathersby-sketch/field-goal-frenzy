@@ -1,19 +1,46 @@
-// ===== Stage 10: mascot kickers in BACK view (same spot + same 4-frame motion as human kickers) =====
+// ===== Stage 10: mascot kickers in BACK view — true mascot art at full opacity, back-of-head overlay hides the face,
+// jersey back in the MASCOT's team colours with the player's name + number. Same spot + same 4-frame motion as human kickers.
 'use strict';
 const MBK={};
-function mascBack(mi,ti,num){const k=mi+'_'+ti+'_'+num;if(MBK[k])return MBK[k];const cw=193,c=document.createElement('canvas');c.width=cw;c.height=200;const x=c.getContext('2d');x.drawImage(MSI,mi*cw,0,cw,200,0,0,cw,200);
- // average body colour of the upper half -> paint over the front (face, belly, details) so it reads as the back
- let d;try{d=x.getImageData(0,0,cw,200)}catch(e){return c}const a=d.data;let r=0,g=0,b=0,n=0;for(let i=0;i<a.length;i+=4){const y=(i/4/cw)|0;if(a[i+3]>200&&y<110){r+=a[i];g+=a[i+1];b+=a[i+2];n++}}if(n){r/=n;g/=n;b/=n}
- x.globalCompositeOperation='source-atop';x.globalAlpha=0.82;const gr=x.createLinearGradient(0,0,cw,0);gr.addColorStop(0,`rgb(${r*0.65|0},${g*0.65|0},${b*0.65|0})`);gr.addColorStop(0.5,`rgb(${Math.min(255,r*1.08)|0},${Math.min(255,g*1.08)|0},${Math.min(255,b*1.08)|0})`);gr.addColorStop(1,`rgb(${r*0.6|0},${g*0.6|0},${b*0.6|0})`);x.fillStyle=gr;x.fillRect(0,0,cw,200);
- // jersey back: team colour over the torso with name + number
- x.globalAlpha=1;const T=TEAMS[ti];x.fillStyle=T.p;x.beginPath();x.roundRect(cw*0.27,200*0.36,cw*0.46,200*0.34,14);x.fill();x.fillStyle=T.s;x.fillRect(cw*0.27,200*0.36,cw*0.46,5);x.globalCompositeOperation='source-over';
- const nm=(MK.name||'').slice(0,10);if(nm){x.fillStyle='#fff';x.font='900 13px system-ui';x.textAlign='center';x.fillText(nm,cw/2,200*0.43)}numOn(x,cw/2,200*0.56,30,num,T.s);
+// per mascot: head [cx,cy,rx,ry], head colour [light,dark], torso [x,y,w,h] (in the 193x200 cell)
+const MBH=[
+ [[95,68,24,27],['#9a4fd0','#5a1f8a'],[62,86,68,58]],
+ [[66,52,44,32],['#3cc2b4','#1d7a72'],[66,84,84,66]],
+ [[104,58,33,31],['#4a4a52','#232328'],[48,90,72,56]],
+ [[96,57,37,36],['#a9a9b0','#6a6a72'],[44,92,80,54]],
+ [[95,72,30,28],['#d9b273','#9a7238'],[58,98,78,54]],
+ [[80,40,36,34],['#8a2d40','#561524'],[46,80,96,62]],
+ [[88,54,28,30],['#86303e','#4e1520'],[52,86,84,60]],
+ [[76,55,33,27],['#2a3a78','#141d44'],[56,90,82,58]]];
+function mascBack(mi,num){const nm=(MK.name||'').toUpperCase().slice(0,10),k=mi+'_'+num+'_'+nm;if(MBK[k])return MBK[k];
+ const cw=193,c=document.createElement('canvas');c.width=cw;c.height=200;const x=c.getContext('2d');x.drawImage(MSI,mi*cw,0,cw,200,0,0,cw,200);
+ const [hd,hc,tb]=MBH[mi]||MBH[0],T=TEAMS[mi]||TEAMS[0];
+ x.globalCompositeOperation='source-atop';
+ // back of head: opaque, shaded like the painted art, only on the mascot's own pixels (keeps horns/ears/hat silhouettes)
+ let g=x.createRadialGradient(hd[0]-hd[2]*0.3,hd[1]-hd[3]*0.4,2,hd[0],hd[1],Math.max(hd[2],hd[3])*1.15);g.addColorStop(0,hc[0]);g.addColorStop(1,hc[1]);
+ x.fillStyle=g;x.beginPath();x.ellipse(hd[0],hd[1],hd[2],hd[3],0,0,7);x.fill();
+ x.strokeStyle='rgba(0,0,0,0.22)';x.lineWidth=2;for(let i=-1;i<=1;i++){x.beginPath();x.moveTo(hd[0]+i*hd[2]*0.35,hd[1]-hd[3]*0.7);x.quadraticCurveTo(hd[0]+i*hd[2]*0.45,hd[1],hd[0]+i*hd[2]*0.3,hd[1]+hd[3]*0.8);x.stroke()}
+ // jersey back in team colours, shaded, clipped to the body so it wraps the silhouette
+ const [tx,ty,tw,th]=tb;g=x.createLinearGradient(tx,0,tx+tw,0);g.addColorStop(0,'rgba(0,0,0,0.28)');g.addColorStop(0.3,'rgba(0,0,0,0)');g.addColorStop(0.7,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,0.3)');
+ x.fillStyle=T.p;x.beginPath();x.roundRect(tx,ty,tw,th,[16,16,8,8]);x.fill();x.fillStyle=g;x.fill();
+ x.fillStyle=T.s;x.fillRect(tx,ty,tw,4);x.fillRect(tx,ty+th-6,tw,6);
+ x.strokeStyle='rgba(0,0,0,0.35)';x.lineWidth=1.5;x.stroke();
+ x.globalCompositeOperation='source-over';x.textAlign='center';x.textBaseline='middle';
+ if(nm){let fs=12;x.font=`900 ${fs}px system-ui`;while(x.measureText(nm).width>tw-8&&fs>7){fs--;x.font=`900 ${fs}px system-ui`}x.lineWidth=3;x.strokeStyle='rgba(0,0,0,0.5)';x.strokeText(nm,tx+tw/2,ty+12);x.fillStyle='#fff';x.fillText(nm,tx+tw/2,ty+12)}
+ numOn(x,tx+tw/2,ty+th*0.6,Math.min(30,th*0.55),num,T.s);
  return MBK[k]=c}
-mascSheet=function(mi,ti,num){const k='mb'+mi+'_'+ti+'_'+num+'_'+(MK.name||'');if(KC5[k])return KC5[k];if(!MSI.complete||!MSI.naturalWidth)return teamSheet(ti);const c=document.createElement('canvas');c.width=812;c.height=300;const x=c.getContext('2d'),bk=mascBack(mi,ti,num),T=TEAMS[ti];
- // same frame roles/timing as the human sheet: 0 ready, 1 wind-up, 2 contact, 3 follow-through; feet on the same baseline, same spot by the ball
- const P=[[0,1,1,0,null],[-0.08,1.03,0.97,-4,0.55],[0.06,0.97,1.04,4,-1.25],[0.16,0.95,1.06,8,-2.2]];
- P.forEach(([r,sx,sy,dx,leg],i)=>{const h=245,w=h*0.965,fx=i*203+78+dx,fy=297;x.save();x.translate(fx,fy);x.rotate(r);x.scale(sx,sy);
-  x.drawImage(bk,-w/2,-h,w,h);
-  if(leg!=null){// kicking leg swinging through toward the posts (drawn in front, team colour + boot)
-   x.save();x.translate(w*0.16,-h*0.3);x.rotate(leg);x.fillStyle=T.p;x.strokeStyle='rgba(0,0,0,0.35)';x.lineWidth=2;x.beginPath();x.roundRect(-11,0,22,h*0.34,10);x.fill();x.stroke();x.fillStyle='#fff';x.fillRect(-11,h*0.22,22,h*0.07);x.fillStyle='#111';x.beginPath();x.ellipse(5,h*0.35,17,9,0,0,7);x.fill();x.restore()}
-  x.restore()});return KC5[k]=c};
+mascSheet=function(mi,ti,num){const k='mb2_'+mi+'_'+num+'_'+(MK.name||'');if(KC5[k])return KC5[k];if(!MSI.complete||!MSI.naturalWidth)return teamSheet(ti);
+ const c=document.createElement('canvas');c.width=812;c.height=300;c._masc=1;const x=c.getContext('2d'),bk=mascBack(mi,num),T=TEAMS[mi]||TEAMS[ti];
+ // frames: 0 ready, 1 wind-up (leg back), 2 contact, 3 follow-through — feet on the human baseline, same spot by the ball
+ // frame-space targets (203x300 cell) for the boot: wind-up behind, CONTACT exactly on the tee/ball, follow-through high toward the posts
+ const P=[[0,0,null],[-0.04,-3,[40,250]],[0.03,2,[175,206]],[0.08,5,[178,80]]];
+ P.forEach(([r,dx,tg],i)=>{const h=218,w=h*0.965,fx=i*203+76+dx,fy=297;
+  let L=null;if(tg){const hx=fx+w*0.2,hy=fy-h*0.36;let vx=tg[0]+i*203-hx,vy=tg[1]-hy;const d=Math.hypot(vx,vy),Lm=Math.min(d,h*0.42);L=[hx,hy,Math.atan2(-vx,vy),Lm]}
+  if(L&&i===1)drawLeg(x,L,T);
+  x.save();x.translate(fx,fy);x.rotate(r);x.drawImage(bk,-w/2,-h,w,h);x.restore();
+  if(L&&i>1)drawLeg(x,L,T)});return KC5[k]=c};
+function drawLeg(x,[hx,hy,a,L],T){x.save();x.translate(hx,hy);x.rotate(a);
+ const g=x.createLinearGradient(-13,0,13,0);g.addColorStop(0,'rgba(0,0,0,0.28)');g.addColorStop(0.5,'rgba(255,255,255,0.10)');g.addColorStop(1,'rgba(0,0,0,0.28)');
+ x.fillStyle=T.p;x.beginPath();x.roundRect(-13,-6,26,L*0.62,12);x.fill();x.fillStyle=g;x.fill();
+ x.fillStyle='#f4f4f4';x.beginPath();x.roundRect(-10,L*0.55,20,L*0.36,8);x.fill();x.fillStyle=T.s;x.fillRect(-10,L*0.55,20,5);
+ x.fillStyle='#141414';x.beginPath();x.ellipse(3,L*0.94,12,17,0,0,7);x.fill();x.fillStyle='rgba(255,255,255,0.22)';x.fillRect(-4,L*0.86,9,3);x.restore()}

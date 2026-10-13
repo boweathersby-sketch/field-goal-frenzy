@@ -22,12 +22,13 @@ function buildCFC(){if(!CFI)return;CFA=cfAsp();const w=1024,h=Math.round(w/CFA),
 function loadCF(){idbGet('cf').then(b=>{if(!b)return;decodeImg(b).then(im=>{CFI=im;buildCFC()}).catch(()=>{})}).catch(()=>{})}
 // decode any photo: EXIF orientation honored (createImageBitmap 'from-image', <img> fallback, which modern browsers also auto-rotate)
 function decodeImg(blob){if(window.createImageBitmap){return createImageBitmap(blob,{imageOrientation:'from-image'}).catch(()=>imgDecode(blob))}return imgDecode(blob)}
+function toastNow(t){toastQ.length=0;toastT=0;toast(t)}
 function imgDecode(blob){return new Promise((ok,no)=>{const im=new Image();im.onload=()=>ok(im);im.onerror=no;im.src=URL.createObjectURL(blob)})}
 loadCF();
 function pickImage(){const f=document.createElement('input');f.type='file';f.accept='image/*,.heic,.heif,.webp';f.onchange=()=>{const file=f.files&&f.files[0];if(!file)return;toast('🖼️ Loading photo…');
  decodeImg(file).then(im=>{const iw=im.width,ih=im.height;if(!iw||!ih)throw 0;const MAX=2048,k=Math.min(1,MAX/Math.max(iw,ih)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(iw*k));c.height=Math.max(1,Math.round(ih*k));const x=c.getContext('2d');x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';x.fillStyle='#1f6a26';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);if(im.close)try{im.close()}catch(e){}
-  c.toBlob(bl=>{if(!bl){toast('Could not process that photo');return}idbPut('cf',bl).then(ok=>{if(!ok){toast('Could not save image');return}decodeImg(bl).then(i2=>{CFI=i2;CF.x=0.5;CF.y=0.5;CF.z=1;buildCFC();toast('🖼️ Photo loaded · drag & zoom to position')})})},'image/jpeg',0.88)})
- .catch(()=>{const heic=/hei[cf]$/i.test(file.name)||/hei[cf]/i.test(file.type);toast(heic?'HEIC photos aren\'t supported in this browser · save it as JPG or PNG and try again':'Sorry, that file type isn\'t supported · try a JPG, PNG or WebP')})};f.click()}
+  c.toBlob(bl=>{if(!bl){toastNow('Could not process that photo');return}idbPut('cf',bl).then(ok=>{if(!ok){toastNow('Could not save image');return}decodeImg(bl).then(i2=>{CFI=i2;CF.x=0.5;CF.y=0.5;CF.z=1;buildCFC();toastNow('🖼️ Photo loaded · drag & zoom to position')})})},'image/jpeg',0.88)})
+ .catch(()=>{const heic=/hei[cf]$/i.test(file.name)||/hei[cf]/i.test(file.type);toastNow(heic?'HEIC not supported · save as JPG/PNG':'File type not supported · use JPG/PNG')})};f.click()}
 // flat, faithful draw: cover-fit into the field area only (clipped, so nothing bleeds into the stadium)
 function customBands(){if(!CFC)return;const y0=Math.max(0,fieldTop(dist+0.2)),fh=H-y0;if(fh<4)return;const sa=W/fh,ca=CFC.width/CFC.height;let sw=CFC.width,sh=CFC.height,sx=0,sy=0;if(ca>sa){sw=sh*sa;sx=(CFC.width-sw)/2}else{sh=sw/sa;sy=CFC.height-sh}
  ctx.save();ctx.beginPath();ctx.rect(0,y0,W,fh);ctx.clip();ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(CFC,sx,sy,sw,sh,0,y0,W,fh);ctx.restore()}
