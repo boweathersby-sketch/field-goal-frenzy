@@ -129,7 +129,7 @@ const S3={
 window.S3=S3;
 let setOpen=false;function pauseMenu(){BTN=[];ctx.fillStyle='rgba(3,8,20,0.85)';ctx.fillRect(0,0,W,H);txt(setOpen?'SETTINGS':'PAUSED',W/2,H*0.25,40,'#fff');const bw=Math.min(280,W*0.8),x=W/2-bw/2;
  if(!setOpen){bx(x,H*0.36,bw,52,'▶ RESUME',()=>{paused=false},true);bx(x,H*0.36+66,bw,52,'💾 SAVE & QUIT',()=>{saveRun();paused=false;state='title';toast('Game saved · tap CONTINUE')});bx(x,H*0.36+132,bw,52,'⚙️ SETTINGS',()=>setOpen=true)}
- else{const m=LS.fgfMute==='1',v=LS.fgfVib!=='0';bx(x,H*0.36,bw,52,'🔊 SOUND: '+(m?'OFF':'ON'),()=>{LS.fgfMute=m?'0':'1';if(AC){if(m)AC.resume();else AC.suspend()}},!m);bx(x,H*0.36+66,bw,52,'📳 VIBRATION: '+(v?'ON':'OFF'),()=>{LS.fgfVib=v?'0':'1';vib(40)},v);bx(x,H*0.36+132,bw,52,'📖 REPLAY TUTORIAL',()=>{setOpen=false;paused=false;S4.tut()});bx(x,H*0.36+198,bw,52,'◀ BACK',()=>setOpen=false)}}let BGT=null,mz=0;
+ else{const m=LS.fgfMute==='1',v=LS.fgfVib!=='0';bx(x,H*0.36,bw,52,'🔊 SOUND: '+(m?'OFF':'ON'),()=>{LS.fgfMute=m?'0':'1';if(AC){AC.resume();OUT(AC)}},!m);bx(x,H*0.36+66,bw,52,'📳 VIBRATION: '+(v?'ON':'OFF'),()=>{LS.fgfVib=v?'0':'1';vib(40)},v);bx(x,H*0.36+132,bw,52,'📖 REPLAY TUTORIAL',()=>{setOpen=false;paused=false;S4.tut()});bx(x,H*0.36+198,bw,52,'◀ BACK',()=>setOpen=false)}}let BGT=null,mz=0;
 // pass rush speeds up with distance: 1x at <=20 yds, ~1.6x at 50, 2x at 80 (Legend)
 function RUSHK(){if(mode==='tut')return 0.6;const d=dist;return 1+Math.max(0,Math.min(1,(d-20)/30))*0.6+Math.max(0,Math.min(1,(d-50)/30))*0.4}
 function stadT(){if(mode==='career'&&CG)return CG.home?myT():CG.o;return myT()}
