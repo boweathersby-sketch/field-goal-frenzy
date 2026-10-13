@@ -39,16 +39,17 @@ function recolor(ti){if(KC[ti])return KC[ti];if(!KS.complete||!KS.naturalWidth)r
  x.putImageData(d,0,0);return KC[ti]=c}
 const HELM=[[96,30],[88,38],[92,38],[82,36]];
 // ---- career sim ----
-let CAR=J('fgfCar',null);function newCar(){const st=CAR?CAR.st:{att:0,made:0,long:0,leg:0,w:0,l:0,ti:0,pw:0,seasons:0};const others=[0,1,2,3,4,5,6,7].filter(i=>i!==myT()).sort(()=>Math.random()-0.5);CAR={season:(CAR?CAR.season:0)+1,wk:0,opp:others,res:[],po:[],st,done:false};SV('fgfCar',CAR)}
+let CAR=J('fgfCar',null),carScroll=0;function newCar(){const st=CAR?CAR.st:{att:0,made:0,long:0,leg:0,w:0,l:0,ti:0,pw:0,seasons:0};const others=[0,1,2,3,4,5,6,7].filter(i=>i!==myT()).sort(()=>Math.random()-0.5);const sch=[];others.forEach(o=>{sch.push({o,h:1},{o,h:0})});for(let i=0;i<2;i++)sch.push({o:others[Math.random()*7|0],h:Math.random()<0.5?1:0,rv:1});sch.sort(()=>Math.random()-0.5);CAR={season:(CAR?CAR.season:0)+1,wk:0,opp:others,sched:sch,res:[],po:[],st,done:false};carScroll=0;SV('fgfCar',CAR)}
+if(CAR&&!CAR.sched)CAR=null;
 function myT(){return Math.max(0,team)}
 const RANKS=[['ROOKIE',0],['STARTER',40],['PRO',120],['ALL-PRO',300],['LEGEND',600]];
 function xp(){const s=CAR.st;return s.w*10+s.pw*20+s.ti*60+s.leg*25}
 function rank(){let r=RANKS[0];for(const k of RANKS)if(xp()>=k[1])r=k;return r}
 let CG=null;
-function oppOf(){const c=CAR;if(c.wk<7)return c.opp[c.wk];return c.po[c.wk-7]}
-function startCareerGame(){const c=CAR;if(c.wk>=7&&c.po[c.wk-7]==null){const pool=c.opp.filter((o,i)=>c.res[i]==='W'||true);c.po[c.wk-7]=pool[Math.random()*pool.length|0];SV('fgfCar',c)}
- const o=oppOf(),wk=c.wk;CG={o,wk,my:0,op:0,q:1,clock:900,d:0,nd:12,poss:Math.random()<0.5?0:1,kick:null,log:[],ot:false,missed:false,made:0,att:0,end:false};mode='career';newGame('career');simAdvance()}
-function fgDist(){return Math.min(65,Math.round(24+Math.random()*(14+CG.wk*4)+(CG.wk>=7?5:0)))}
+function oppOf(){const c=CAR;if(c.wk<16)return c.sched[c.wk].o;return c.po[c.wk-16]}
+function startCareerGame(){const c=CAR;if(c.wk>=16&&c.po[c.wk-16]==null){const pool=c.opp;c.po[c.wk-16]=pool[Math.random()*pool.length|0];SV('fgfCar',c)}
+ const o=oppOf(),wk=c.wk,home=wk<16?!!c.sched[wk].h:false;CG={o,wk,home,lv:Math.min(8,wk/2),my:0,op:0,q:1,clock:900,d:0,nd:12,poss:Math.random()<0.5?0:1,kick:null,log:[],ot:false,missed:false,made:0,att:0,end:false};mode='career';newGame('career');simAdvance()}
+function fgDist(){return Math.min(65,Math.round(24+Math.random()*(14+CG.lv*4)+(CG.wk>=16?5:0)))}
 function clockStr(){const m=Math.floor(CG.clock/60),s=CG.clock%60;return m+':'+(s<10?'0':'')+s}
 function simAdvance(){const L=[],T=TEAMS;CG.kick=null;
  while(!CG.kick&&!CG.end){
@@ -59,14 +60,14 @@ function simAdvance(){const L=[],T=TEAMS;CG.kick=null;
    const r=Math.random();if(r<0.36){CG.my+=6;L.push(qs+'🏈 TOUCHDOWN! '+['Deep bomb','QB sneak','Screen pass','40-yd run'][Math.random()*4|0]+'. Extra point coming.');CG.kick={t:'pat',d:20,lab:'EXTRA POINT +1'}}
    else if(r<0.72){const d=fgDist();L.push(qs+'🏈 Drive stalls at the '+(d-17)+'. Field goal unit out.');CG.kick={t:'fg',d,lab:d+'-YD FIELD GOAL +3'}}
    else L.push(qs+(Math.random()<0.7?'👟 Three and out. Punt.':'❌ Interception!'))}
-  else{let pt=0.26+CG.wk*0.02+(CG.missed?0.15:0),pf=0.2;CG.missed=false;const r=Math.random();const on=T[CG.o].a;if(r<pt){CG.op+=7;L.push(qs+'😬 '+on+' touchdown. ('+CG.my+'-'+CG.op+')')}else if(r<pt+pf){CG.op+=3;L.push(qs+'😬 '+T[CG.o].rv+' drills a '+(30+Math.random()*20|0)+'-yd FG for '+on+'. ('+CG.my+'-'+CG.op+')')}else L.push(qs+'🛡️ Defense holds! '+on+' punts.')}}
+  else{let pt=0.26+CG.lv*0.02+(CG.missed?0.15:0),pf=0.2;CG.missed=false;const r=Math.random();const on=T[CG.o].a;if(r<pt){CG.op+=7;L.push(qs+'😬 '+on+' touchdown. ('+CG.my+'-'+CG.op+')')}else if(r<pt+pf){CG.op+=3;L.push(qs+'😬 '+T[CG.o].rv+' drills a '+(30+Math.random()*20|0)+'-yd FG for '+on+'. ('+CG.my+'-'+CG.op+')')}else L.push(qs+'🛡️ Defense holds! '+on+' punts.')}}
  CG.log=L;if(CG.end){finishGame();return}state='ctick';tickT=0}
 let tickT=0;
 function beginKick(){state='play';dist=CG.kick.d;newWind();resetBall();msg=null;waitT=0}
-function finishGame(){const c=CAR,w=CG.my>CG.op,po=c.wk>=7;c.st[w?'w':'l']++;if(w&&po)c.st.pw++;let rw=0;if(w){rw=po?(c.wk===8?250:80):40;if(c.wk===8)c.st.ti++;addCoins(rw);firstWin()}
- if(c.wk<7)c.res[c.wk]=w?'W':'L';else c.res[c.wk]=w?'W':'L';
+function finishGame(){const c=CAR,w=CG.my>CG.op,po=c.wk>=16;c.st[w?'w':'l']++;if(w&&po)c.st.pw++;let rw=0;if(w){rw=po?(c.wk===17?250:80):40;if(c.wk===17)c.st.ti++;addCoins(rw);firstWin()}
+ c.res[c.wk]=w?'W':'L';
  CG.rw=rw;CG.win=w;
- if(c.wk<6)c.wk++;else if(c.wk===6){const W=c.res.filter(r=>r==='W').length;if(W>=4)c.wk=7;else{c.done='Missed the playoffs ('+W+'-'+(7-W)+')';c.st.seasons++}}else if(c.wk===7){if(w)c.wk=8;else{c.done='Lost in the semifinal';c.st.seasons++}}else{c.done=w?'🏆 CHAMPIONS!':'Lost the championship';c.st.seasons++}
+ if(c.wk<15)c.wk++;else if(c.wk===15){const W=c.res.slice(0,16).filter(r=>r==='W').length;if(W>=9)c.wk=16;else{c.done='Missed the playoffs ('+W+'-'+(16-W)+') · need 9 wins';c.st.seasons++}}else if(c.wk===16){if(w)c.wk=17;else{c.done='Lost in the semifinal';c.st.seasons++}}else{c.done=w?'🏆 CHAMPIONS!':'Lost the championship';c.st.seasons++}
  SV('fgfCar',c);state='cres';clearRun()}
 // ---- versus ----
 let VS=null;
@@ -74,6 +75,7 @@ function startVS(){VS={p:0,r:0,sc:[0,0],wx:null,t2:team===0?1:0};mode='vs';newGa
 function vsDist(){return VS.r<5?25+VS.r*5:Math.min(75,50+(VS.r-5)*5)}
 function vsSet(){dist=vsDist();if(VS.p===0){newWind();VS.wx=[weather,wind]}else{weather=VS.wx[0];wind=VS.wx[1]}resetBall();msg=null;waitT=0}
 // ---- save / continue ----
+let CS=null,dragY=null;addEventListener('pointerdown',e=>{if(state==='career')dragY=e.clientY},true);addEventListener('pointermove',e=>{if(state==='career'&&dragY!=null){carScroll-=e.clientY-dragY;dragY=e.clientY}});addEventListener('pointerup',()=>dragY=null);addEventListener('wheel',e=>{if(state==='career')carScroll+=e.deltaY});
 const vib=ms=>{if(LS.fgfVib!=='0'&&navigator.vibrate)try{navigator.vibrate(ms)}catch(e){}};
 function saveRun(){if(!(state==='play'||state==='pass'||state==='ctick'))return;SV('fgfRun',{mode,lives,prevLives,dist,score,streak,timeLeft,roundN,weather,wind,st:state==='play'?'play':state,CG,VS,team});SV('fgfCar',CAR)}
 function clearRun(){delete LS.fgfRun}
@@ -120,7 +122,7 @@ window.S3=S3;
 let setOpen=false;function pauseMenu(){BTN=[];ctx.fillStyle='rgba(3,8,20,0.85)';ctx.fillRect(0,0,W,H);txt(setOpen?'SETTINGS':'PAUSED',W/2,H*0.25,40,'#fff');const bw=Math.min(280,W*0.8),x=W/2-bw/2;
  if(!setOpen){bx(x,H*0.36,bw,52,'▶ RESUME',()=>{paused=false},true);bx(x,H*0.36+66,bw,52,'💾 SAVE & QUIT',()=>{saveRun();paused=false;state='title';toast('Game saved · tap CONTINUE')});bx(x,H*0.36+132,bw,52,'⚙️ SETTINGS',()=>setOpen=true)}
  else{const m=LS.fgfMute==='1',v=LS.fgfVib!=='0';bx(x,H*0.36,bw,52,'🔊 SOUND: '+(m?'OFF':'ON'),()=>{LS.fgfMute=m?'0':'1';if(AC){if(m)AC.resume();else AC.suspend()}},!m);bx(x,H*0.36+66,bw,52,'📳 VIBRATION: '+(v?'ON':'OFF'),()=>{LS.fgfVib=v?'0':'1';vib(40)},v);bx(x,H*0.36+132,bw,52,'◀ BACK',()=>setOpen=false)}}let BGT=null,mz=0;
-function stadT(){if(mode==='career'&&CG)return CG.o;return myT()}
+function stadT(){if(mode==='career'&&CG)return CG.home?myT():CG.o;return myT()}
 // ---- linemen ----
 function man(x,y,s,c1,c2,crouch){ctx.fillStyle=c1;ctx.beginPath();ctx.roundRect(x-s*0.32,y-s*(crouch?0.55:0.8),s*0.64,s*(crouch?0.5:0.75),s*0.18);ctx.fill();ctx.fillStyle='#111';ctx.fillRect(x-s*0.26,y-s*0.08,s*0.18,s*0.12);ctx.fillRect(x+s*0.08,y-s*0.08,s*0.18,s*0.12);ctx.fillStyle=c1;ctx.beginPath();ctx.arc(x,y-s*(crouch?0.68:0.95),s*0.2,0,7);ctx.fill();ctx.fillStyle=c2;ctx.fillRect(x-s*0.05,y-s*(crouch?0.88:1.15),s*0.1,s*0.2)}
 const LNI=IMG('linemen.webp'),LCW=172,WAIST=[0.5,0.48,0.55,0.55,0.45,0.42,0.48,0.45],LTC={};
@@ -182,7 +184,7 @@ function chantTick(dt){if(state!=='play'||paused||ball.fly||msg||hushK>0.3||!AC)
 // ---- UI screens ----
 function bx(x,y,w,h,label,cb,on,sz){ctx.fillStyle=on?GOLD:'rgba(6,30,16,0.92)';ctx.strokeStyle=GOLD;ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(x,y,w,h,Math.min(16,h/2));ctx.fill();ctx.stroke();ctx.fillStyle=on?GREEN:'#fff';ctx.font='900 '+(sz||Math.min(18,h*0.42))+'px system-ui';ctx.textAlign='center';ctx.fillText(label,x+w/2,y+h/2+(sz||Math.min(18,h*0.42))*0.36);if(cb)btn(x,y,w,h,cb)}
 function logo(i,x,y,s){if(LGI.complete&&LGI.naturalWidth)ctx.drawImage(LGI,i*128,0,128,128,x-s/2,y-s/2,s,s)}
-function go(m){sfx.whistle();if(m==='career'){if(!CAR)newCar();state='career'}else if(m==='vs')startVS();else newGame(m)}
+function go(m){sfx.whistle();if(m==='career'){if(!CAR)newCar();state='career';carScroll=Math.max(0,(CAR.wk-3)*Math.min(40,H*0.052))}else if(m==='vs')startVS();else newGame(m)}
 function drawTitle(){txt('FIELD GOAL',W/2,H*0.085,Math.min(40,W*0.1),GOLD,'#063');txt('FRENZY',W/2,H*0.085+Math.min(46,W*0.12),Math.min(50,W*0.13),'#fff',GREEN);
  const ty=H*0.215;panel(W*0.06,ty-20,W*0.52,40);logo(myT(),W*0.06+22,ty,32);ctx.fillStyle='#fff';ctx.font='900 12px system-ui';ctx.textAlign='left';ctx.fillText(TEAMS[myT()].n.split(' ').slice(-1)[0],W*0.06+42,ty-2);ctx.fillStyle=GOLD;ctx.font='10px system-ui';ctx.fillText('TAP TO CHANGE TEAM',W*0.06+42,ty+12);btn(W*0.06,ty-20,W*0.52,40,()=>state='teams');
  panel(W*0.6,ty-20,W*0.34,40);ctx.textAlign='center';ctx.fillStyle=GOLD;ctx.font='900 14px system-ui';ctx.fillText('🪙 '+coins.toLocaleString(),W*0.77,ty+5);
@@ -201,13 +203,17 @@ function drawShop(){txt('COIN SHOP',W/2,H*0.075,Math.min(32,W*0.085),GOLD,'#063'
  ctx.fillStyle='#8ab';ctx.font='11px system-ui';ctx.textAlign='center';ctx.fillText('Coins only. Earn them by making kicks. Tap a price, then CONFIRM.',W/2,H*0.89);bx(W/2-90,H*0.93-20,180,40,'◀ BACK',()=>state='title')}
 function drawCareer(){const c=CAR,r=rank(),s=c.st;txt('CAREER',W/2,H*0.07,Math.min(32,W*0.085),GOLD,'#063');ctx.fillStyle='#fff';ctx.font='bold 13px system-ui';ctx.textAlign='center';ctx.fillText('SEASON '+c.season+' · '+TEAMS[myT()].n,W/2,H*0.07+22);
  panel(W*0.05,H*0.115,W*0.9,70);ctx.fillStyle=GOLD;ctx.font='900 18px system-ui';ctx.fillText('★ '+r[0],W/2,H*0.115+24);const nx=RANKS.find(k=>k[1]>xp());ctx.fillStyle='#bcd';ctx.font='11px system-ui';ctx.fillText('XP '+xp()+(nx?' / '+nx[1]+' to '+nx[0]:' · MAX'),W/2,H*0.115+40);ctx.fillStyle='#fff';ctx.font='bold 12px system-ui';ctx.fillText((s.w+'-'+s.l)+'  ·  FG '+(s.att?Math.round(s.made/s.att*100):0)+'%  ·  LONG '+s.long+'  ·  LEGEND '+s.leg+'  ·  🏆 '+s.ti,W/2,H*0.115+60);
- const rh=Math.min(40,H*0.052),y0=H*0.235;for(let i=0;i<9;i++){const y=y0+i*rh,o=i<7?c.opp[i]:c.po[i-7],lab=i<7?'WK '+(i+1):i===7?'SEMI':'FINAL',rs=c.res[i],cur=i===c.wk&&!c.done;ctx.fillStyle=cur?'rgba(242,194,48,0.22)':'rgba(6,30,16,0.8)';ctx.fillRect(W*0.05,y,W*0.9,rh-3);ctx.textAlign='left';ctx.fillStyle='#bcd';ctx.font='bold 11px system-ui';ctx.fillText(lab,W*0.07,y+rh*0.6);if(o!=null){logo(o,W*0.27,y+rh/2-1,rh-6);ctx.fillStyle='#fff';ctx.font='bold 12px system-ui';ctx.fillText('@ '+TEAMS[o].n,W*0.33,y+rh*0.45);ctx.fillStyle='#9ab';ctx.font='10px system-ui';ctx.fillText('Rival K: '+TEAMS[o].rv,W*0.33,y+rh*0.8)}else{ctx.fillStyle='#678';ctx.font='12px system-ui';ctx.fillText(i===7?'Playoffs need 4+ wins':'Championship',W*0.27,y+rh*0.6)}ctx.textAlign='right';ctx.font='900 13px system-ui';ctx.fillStyle=rs==='W'?'#5f5':rs==='L'?'#f66':GOLD;ctx.fillText(rs||(cur?'NEXT':''),W*0.93,y+rh*0.6)}
- const by=y0+9*rh+8;if(c.done){ctx.fillStyle=GOLD;ctx.font='900 15px system-ui';ctx.textAlign='center';ctx.fillText(c.done,W/2,by+12);bx(W/2-110,by+22,220,46,'NEW SEASON',()=>{newCar()},true)}else bx(W/2-110,by,220,50,'PLAY GAME',()=>{sfx.whistle();startCareerGame()},true);bx(W/2-70,H*0.94-18,140,36,'◀ BACK',()=>state='title',false,14)}
-function drawTick(){const t=TEAMS;panel(W*0.05,H*0.2,W*0.9,H*0.5);logo(myT(),W*0.2,H*0.26,40);logo(CG.o,W*0.8,H*0.26,40);txt(CG.my+' - '+CG.op,W/2,H*0.27,34,'#fff');ctx.fillStyle=GOLD;ctx.font='bold 12px system-ui';ctx.textAlign='center';ctx.fillText((CG.q==='OT'?'OVERTIME':'Q'+CG.q)+'  '+clockStr()+'  ·  @ '+t[CG.o].n,W/2,H*0.27+22);ctx.fillStyle='#9ab';ctx.font='11px system-ui';ctx.fillText('Rival kicker: '+t[CG.o].rv,W/2,H*0.27+38);
+ const rh=Math.min(40,H*0.052),y0=H*0.235,vh=H*0.5,N=18,maxS=Math.max(0,N*rh-vh);carScroll=Math.max(0,Math.min(maxS,carScroll));CS={y0,vh,maxS};ctx.save();ctx.beginPath();ctx.rect(0,y0,W,vh);ctx.clip();
+ for(let i=0;i<N;i++){const y=y0+i*rh-carScroll;if(y<y0-rh||y>y0+vh)continue;const sc=i<16?c.sched[i]:null,o=sc?sc.o:c.po[i-16],lab=i<16?'WK '+(i+1):i===16?'SEMI':'FINAL',rs=c.res[i],cur=i===c.wk&&!c.done;ctx.fillStyle=cur?'rgba(242,194,48,0.22)':'rgba(6,30,16,0.8)';ctx.fillRect(W*0.05,y,W*0.9,rh-3);ctx.textAlign='left';ctx.fillStyle='#bcd';ctx.font='bold 11px system-ui';ctx.fillText(lab,W*0.07,y+rh*0.6);
+  if(o!=null){logo(o,W*0.25,y+rh/2-1,rh-6);ctx.fillStyle='#fff';ctx.font='bold 12px system-ui';ctx.fillText((sc&&sc.h?'vs ':'@ ')+TEAMS[o].n,W*0.31,y+rh*0.45);ctx.fillStyle='#9ab';ctx.font='10px system-ui';ctx.fillText((sc?(sc.h?'HOME':'AWAY')+(sc.rv?' · RIVALRY':''):'AWAY')+' · Rival K: '+TEAMS[o].rv,W*0.31,y+rh*0.8)}else{ctx.fillStyle='#678';ctx.font='12px system-ui';ctx.fillText(i===16?'Playoffs need 9+ wins':'Championship',W*0.25,y+rh*0.6)}
+  ctx.textAlign='right';ctx.font='900 13px system-ui';ctx.fillStyle=rs==='W'?'#5f5':rs==='L'?'#f66':GOLD;ctx.fillText(rs||(cur?'NEXT':''),W*0.93,y+rh*0.6)}
+ ctx.restore();if(maxS>0){const k=carScroll/maxS;ctx.fillStyle='rgba(242,194,48,0.6)';ctx.fillRect(W*0.965,y0+k*(vh-40),3,40)}
+ const by=y0+vh+10;if(c.done){ctx.fillStyle=GOLD;ctx.font='900 15px system-ui';ctx.textAlign='center';ctx.fillText(c.done,W/2,by+12);bx(W/2-110,by+22,220,46,'NEW SEASON',()=>{newCar()},true)}else bx(W/2-110,by,220,50,'PLAY GAME',()=>{sfx.whistle();startCareerGame()},true);bx(W/2-70,H*0.94-18,140,36,'◀ BACK',()=>state='title',false,14)}
+function drawTick(){const t=TEAMS;panel(W*0.05,H*0.2,W*0.9,H*0.5);logo(myT(),W*0.2,H*0.26,40);logo(CG.o,W*0.8,H*0.26,40);txt(CG.my+' - '+CG.op,W/2,H*0.27,34,'#fff');ctx.fillStyle=GOLD;ctx.font='bold 12px system-ui';ctx.textAlign='center';ctx.fillText((CG.q==='OT'?'OVERTIME':'Q'+CG.q)+'  '+clockStr()+'  ·  '+(CG.home?'vs ':'@ ')+t[CG.o].n,W/2,H*0.27+22);ctx.fillStyle='#9ab';ctx.font='11px system-ui';ctx.fillText('Rival kicker: '+t[CG.o].rv,W/2,H*0.27+38);
  ctx.textAlign='left';ctx.font='13px system-ui';const n=Math.min(CG.log.length,Math.floor(tickT/0.7)+1);for(let i=0;i<n;i++){ctx.fillStyle=i===n-1?'#fff':'#9ab';wrap(CG.log[i],W*0.09,H*0.36+i*Math.min(38,H*0.33/Math.max(3,CG.log.length)),W*0.82)}
  if(CG.kick){txt(CG.kick.lab,W/2,H*0.66,Math.min(18,W*0.046),S3.cl()?'#ff7a5a':GOLD)}ctx.fillStyle='#bcd';ctx.font='12px system-ui';ctx.textAlign='center';ctx.fillText('Tap to take the field',W/2,H*0.74);btn(0,0,W,H,beginKick)}
 function wrap(s,x,y,mw){const w=s.split(' ');let l='',yy=y;for(const t of w){if(ctx.measureText(l+t).width>mw){ctx.fillText(l,x,yy);l='';yy+=15}l+=t+' '}ctx.fillText(l,x,yy)}
-function drawRes(){const w=CG.win;txt(w?'VICTORY!':'FINAL',W/2,H*0.22,Math.min(50,W*0.13),w?GOLD:'#ff5a4f');logo(myT(),W*0.25,H*0.34,56);logo(CG.o,W*0.75,H*0.34,56);txt(CG.my+' - '+CG.op,W/2,H*0.35,40,'#fff');ctx.fillStyle='#bcd';ctx.font='14px system-ui';ctx.textAlign='center';ctx.fillText(TEAMS[myT()].a+' @ '+TEAMS[CG.o].n,W/2,H*0.43);ctx.fillStyle='#9ab';ctx.font='12px system-ui';ctx.fillText('vs rival kicker '+TEAMS[CG.o].rv,W/2,H*0.43+18);if(CG.rw)txt('🪙 +'+CG.rw,W/2,H*0.5,24,GOLD);if(CAR.done)txt(CAR.done,W/2,H*0.57,Math.min(20,W*0.05),'#fff');bx(W/2-110,H*0.66,220,52,'CONTINUE',()=>state='career',true)}
+function drawRes(){const w=CG.win;txt(w?'VICTORY!':'FINAL',W/2,H*0.22,Math.min(50,W*0.13),w?GOLD:'#ff5a4f');logo(myT(),W*0.25,H*0.34,56);logo(CG.o,W*0.75,H*0.34,56);txt(CG.my+' - '+CG.op,W/2,H*0.35,40,'#fff');ctx.fillStyle='#bcd';ctx.font='14px system-ui';ctx.textAlign='center';ctx.fillText(TEAMS[myT()].a+(CG.home?' vs ':' @ ')+TEAMS[CG.o].n,W/2,H*0.43);ctx.fillStyle='#9ab';ctx.font='12px system-ui';ctx.fillText('vs rival kicker '+TEAMS[CG.o].rv,W/2,H*0.43+18);if(CG.rw)txt('🪙 +'+CG.rw,W/2,H*0.5,24,GOLD);if(CAR.done)txt(CAR.done,W/2,H*0.57,Math.min(20,W*0.05),'#fff');bx(W/2-110,H*0.66,220,52,'CONTINUE',()=>{state='career';carScroll=Math.max(0,(CAR.wk-3)*Math.min(40,H*0.052))},true)}
 function drawBoard(){txt('LEADERBOARD',W/2,H*0.075,Math.min(30,W*0.08),GOLD,'#063');const ms=MODES,tw=(W*0.92-16)/5;ms.forEach((m,i)=>bx(W*0.04+i*(tw+4),H*0.11,tw,30,m[1].split(' ')[0].slice(0,6),()=>lbTab=i,i===lbTab,10));const L=(J('fgfLB',{})[ms[lbTab][0]]||[]);
  for(let i=0;i<10;i++){const y=H*0.19+i*Math.min(48,H*0.064);panel(W*0.08,y,W*0.84,Math.min(42,H*0.058));ctx.textAlign='left';ctx.fillStyle=i<3?GOLD:'#bcd';ctx.font='900 15px system-ui';ctx.fillText((i+1)+'.',W*0.12,y+26);ctx.fillStyle='#fff';ctx.fillText(L[i]?L[i].i:'---',W*0.24,y+26);ctx.textAlign='right';ctx.fillText(L[i]?L[i].s.toLocaleString():'',W*0.88,y+26)}bx(W/2-80,H*0.93-20,160,40,'◀ BACK',()=>state='title',false,14)}
 const AZ='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
