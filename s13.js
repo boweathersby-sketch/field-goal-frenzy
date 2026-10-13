@@ -23,6 +23,7 @@ function cmCell0(){if(!MSI.complete||!MSI.naturalWidth)return null;const c=docum
  const A=CMA[B],T=TEAMS[myT()],mx=A[0],top=A[1],mrx=A[2]/2,ex=A[3],ey=A[4],erx=A[5]*2,nkx=A[6],nky=A[7],nkw=A[8],tl=A[9]||0;x.lineJoin='round';
  const H=CM.hat;if(cmOwn(H)&&H!=='none'){x.save();x.translate(mx,top);x.rotate(tl);x.translate(-mx,-top);x.strokeStyle='#111';x.lineWidth=2;
   if(H==='cap'){x.fillStyle=T.p;x.beginPath();x.ellipse(mx,top+12,mrx*0.75,14,0,Math.PI,0);x.fill();x.stroke();x.fillStyle=T.s;x.beginPath();x.ellipse(mx+mrx*0.55,top+12,mrx*0.45,5,0,0,7);x.fill();x.stroke()}
+  else if(H==='witch'){x.fillStyle='#2a1238';x.beginPath();x.ellipse(mx,top+14,mrx*1.05,8,0,0,6.29);x.fill();x.stroke();x.beginPath();x.moveTo(mx-mrx*0.55,top+12);x.lineTo(mx+mrx*0.35,top-46);x.lineTo(mx+mrx*0.55,top+12);x.closePath();x.fill();x.stroke();x.fillStyle='#ff8a1c';x.fillRect(mx-mrx*0.5,top+3,mrx*1.02,6)}
   else if(H==='beanie'){x.fillStyle=T.p;x.beginPath();x.ellipse(mx,top+12,mrx*0.72,17,0,Math.PI,0);x.fill();x.stroke();x.fillStyle=T.s;x.fillRect(mx-mrx*0.74,top+9,mrx*1.48,7);x.strokeRect(mx-mrx*0.74,top+9,mrx*1.48,7);x.beginPath();x.arc(mx,top-7,6,0,7);x.fill();x.stroke()}
   else if(H==='cowboy'){x.fillStyle='#8a5a2b';x.beginPath();x.ellipse(mx,top+10,mrx*1.05,7,0,0,7);x.fill();x.stroke();x.beginPath();x.moveTo(mx-mrx*0.5,top+8);x.quadraticCurveTo(mx-mrx*0.5,top-18,mx,top-14);x.quadraticCurveTo(mx+mrx*0.5,top-18,mx+mrx*0.5,top+8);x.closePath();x.fill();x.stroke();x.fillStyle=T.s;x.fillRect(mx-mrx*0.5,top+1,mrx,5)}
   else if(H==='top'){x.fillStyle='#151515';x.beginPath();x.ellipse(mx,top+10,mrx*0.85,6,0,0,7);x.fill();x.stroke();x.fillRect(mx-mrx*0.45,top-24,mrx*0.9,34);x.strokeRect(mx-mrx*0.45,top-24,mrx*0.9,34);x.fillStyle=T.p;x.fillRect(mx-mrx*0.45,top+1,mrx*0.9,6)}
@@ -50,7 +51,7 @@ function drawCM(){BTN=[];txt('CREATE A MASCOT',W/2,H*0.06,Math.min(26,W*0.068),G
  ctx.fillText(CM.own?'Your mascot · sideline + mascot kicker':'Unlock for 🪙 '+CMPRICE.toLocaleString()+' · accessories extra',W/2,H*0.06+20);
  const py=H*0.095,ph=Math.min(H*0.21,180);panel(W*0.05,py,W*0.9,ph);const c=cmCell();if(c){const h=ph*0.92,w=h*193/200;ctx.drawImage(c,0,0,193,200,W*0.27-w/2,py+ph*0.04,w,h)}
  ctx.textAlign='left';ctx.fillStyle='#fff';ctx.font='900 18px system-ui';ctx.fillText(CM.name,W*0.52,py+ph*0.42);ctx.fillStyle=GOLD;ctx.font='bold 13px system-ui';ctx.fillText('#'+CM.num+' · '+CMN[CM.base],W*0.52,py+ph*0.6);
- const acc=(L,f)=>{const it=L.find(q=>q[0]===CM[f])||L[0];return it[1]+(cmOwn(it[0])?'':' · 🪙 '+it[2].toLocaleString())};
+ const acc=(L,f)=>{const it=L.find(q=>q[0]===CM[f])||L[0];return it[1]+(window.FGF_LIMITED&&FGF_LIMITED[it[0]]?' · 🎃 LIMITED · ends '+FGF_LIMEND:'')+(cmOwn(it[0])?'':' · 🪙 '+it[2].toLocaleString())};
  const cyc=(L,f)=>d=>{const i=L.findIndex(q=>q[0]===CM[f]);CM[f]=L[(i+d+L.length)%L.length][0];cmSave()};
  const R=[['BASE ANIMAL',CMN[CM.base],d=>{CM.base=(CM.base+d+20)%20;Object.assign(CM,{hue:0,hat:'none',gl:'none',ch:'none'});if(CM.kick&&CM.own){MK.masc=cmSlot(CM.base);saveMK()}cmSave()}],['COLOUR',CM.hue?'Shift '+CM.hue+'°':'Original',d=>{CM.hue=CMHUE[(CMHUE.indexOf(CM.hue)+d+CMHUE.length)%CMHUE.length];cmSave()}],
   ['HAT',acc(CMHAT,'hat'),cyc(CMHAT,'hat'),CMHAT,'hat'],['GLASSES',acc(CMGL,'gl'),cyc(CMGL,'gl'),CMGL,'gl'],['CHAIN',acc(CMCH,'ch'),cyc(CMCH,'ch'),CMCH,'ch'],
