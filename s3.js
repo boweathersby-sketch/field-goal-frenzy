@@ -31,12 +31,20 @@ function firstWin(){if(LS.fgfFW!==today){LS.fgfFW=today;addCoins(100);toast('üè
 if(team<0)state='teams';
 // ---- kicker recolor ----
 const KC={};function hex(c){return[parseInt(c.slice(1,3),16),parseInt(c.slice(3,5),16),parseInt(c.slice(5,7),16)]}
-function recolor(ti){if(KC[ti])return KC[ti];if(!KS.complete||!KS.naturalWidth)return KS;if(ti===3)return KC[ti]=KS;
+// fixed per-team jersey numbers: random once, saved; kicker-style 1-19 / 30-49, no duplicates
+const NUMS=(()=>{let n=J('fgfNums',null);if(!n||n.length!==8||new Set(n).size!==8){const pool=[];for(let i=1;i<=19;i++)pool.push(i);for(let i=30;i<=49;i++)pool.push(i);pool.sort(()=>Math.random()-0.5);n=pool.slice(0,8);SV('fgfNums',n)}return n})();
+const NUMBOX=[[48,74,26,46],[238,81,23,47],[444,81,23,47],[642,81,28,48]];
+function renum(x,d,w,ti,o){const a=d.data,S=hex(TEAMS[ti].s);for(const[bx0,by0,bw,bh]of NUMBOX){const X0=bx0-3,X1=bx0+bw+3,Y0=by0-3,Y1=by0+bh+3;
+  const isN=(xx,yy)=>{const i=(yy*w+xx)*4,r=o[i],g=o[i+1],b=o[i+2];return o[i+3]>60&&r>100&&g>70&&b<120&&r>b+40};
+  for(let y=Y0;y<=Y1;y++){const row=[];for(let xx=X0;xx<=X1;xx++){let m=false;for(let dy=-1;dy<=1&&!m;dy++)for(let dx=-1;dx<=1&&!m;dx++)m=isN(xx+dx,y+dy);row.push(m)}
+   for(let k=0;k<row.length;k++){if(!row[k])continue;let l=k;while(l>=0&&row[l])l--;let r=k;while(r<row.length&&row[r])r++;const li=(y*w+X0+Math.max(l,0))*4,ri=(y*w+X0+Math.min(r,row.length-1))*4;for(let j=k;j<r;j++){const t=(j-l)/(r-l),pi=(y*w+X0+j)*4;for(let c=0;c<3;c++)a[pi+c]=a[li+c]*(1-t)+a[ri+c]*t}k=r}}}
+ x.putImageData(d,0,0);const n=String(NUMS[ti]);for(const[bx0,by0,bw,bh]of NUMBOX){const cx=bx0+bw/2,cy=by0+bh/2,fs=bh*1.12,sq=n.length>1?0.62:1;x.save();x.translate(cx,cy+fs*0.36);x.scale(sq,1);x.font='900 '+fs+'px Impact,Arial Black,system-ui';x.textAlign='center';x.lineWidth=3;x.strokeStyle='rgba(0,0,0,0.45)';x.strokeText(n,0,0);const gr=x.createLinearGradient(0,-fs*0.8,0,0);gr.addColorStop(0,'rgb('+S.map(v=>Math.min(255,v+40))+')');gr.addColorStop(1,'rgb('+S.map(v=>v*0.75|0)+')');x.fillStyle=gr;x.fillText(n,0,0);x.restore()}}
+function recolor(ti){if(KC[ti])return KC[ti];if(!KS.complete||!KS.naturalWidth)return KS;
  const c=document.createElement('canvas');c.width=KS.naturalWidth;c.height=KS.naturalHeight;const x=c.getContext('2d');x.drawImage(KS,0,0);let d;try{d=x.getImageData(0,0,c.width,c.height)}catch(e){return KC[ti]=KS}
- const a=d.data,P=hex(TEAMS[ti].p),S=hex(TEAMS[ti].s);
- for(let i=0;i<a.length;i+=4){if(a[i+3]<10)continue;const r=a[i],g=a[i+1],b=a[i+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b),v=mx/255,sat=mx?(mx-mn)/mx:0;if(sat<0.22)continue;let h;if(mx===r)h=((g-b)/(mx-mn)+6)%6;else if(mx===g)h=(b-r)/(mx-mn)+2;else h=(r-g)/(mx-mn)+4;h*=60;
+ const a=d.data,P=hex(TEAMS[ti].p),S=hex(TEAMS[ti].s),orig=a.slice();
+ for(let i=0;i<a.length;i+=4){if(a[i+3]<10)continue;if(ti===3)continue;const r=a[i],g=a[i+1],b=a[i+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b),v=mx/255,sat=mx?(mx-mn)/mx:0;if(sat<0.22)continue;let h;if(mx===r)h=((g-b)/(mx-mn)+6)%6;else if(mx===g)h=(b-r)/(mx-mn)+2;else h=(r-g)/(mx-mn)+4;h*=60;
   let T=null,k;if(h>85&&h<170){T=P;k=v/0.42}else if(h>=36&&h<=70&&sat>0.35&&v>0.3){T=S;k=v/0.85}if(!T)continue;const lift=T===P&&P[0]+P[1]+P[2]<150?40:0;a[i]=Math.min(255,T[0]*k+lift*v);a[i+1]=Math.min(255,T[1]*k+lift*v);a[i+2]=Math.min(255,T[2]*k+lift*v)}
- x.putImageData(d,0,0);return KC[ti]=c}
+ renum(x,d,c.width,ti,orig);return KC[ti]=c}
 const HELM=[[96,30],[88,38],[92,38],[82,36]];
 // ---- career sim ----
 let CAR=J('fgfCar',null),carScroll=0;function newCar(){const st=CAR?CAR.st:{att:0,made:0,long:0,leg:0,w:0,l:0,ti:0,pw:0,seasons:0};const others=[0,1,2,3,4,5,6,7].filter(i=>i!==myT()).sort(()=>Math.random()-0.5);const sch=[];others.forEach(o=>{sch.push({o,h:1},{o,h:0})});for(let i=0;i<2;i++)sch.push({o:others[Math.random()*7|0],h:Math.random()<0.5?1:0,rv:1});sch.sort(()=>Math.random()-0.5);CAR={season:(CAR?CAR.season:0)+1,wk:0,opp:others,sched:sch,res:[],po:[],st,done:false};carScroll=0;SV('fgfCar',CAR)}
