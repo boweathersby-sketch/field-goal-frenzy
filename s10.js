@@ -41,7 +41,7 @@ function artHead(mi){if(MAH[mi])return MAH[mi];const [mx,my,mrx,mry]=MHM[mi],[ex
  x.strokeStyle=`rgba(${L.map(v=>v*0.5|0)},0.55)`;x.lineWidth=1.4;for(let i=0;i<14;i++){const u=(i/13-0.5)*1.7;x.beginPath();x.moveTo(cx+u*erx*0.6,cy-ery*0.85);x.quadraticCurveTo(cx+u*erx*0.75,cy,cx+u*erx*0.55,cy+ery*0.9);x.stroke()}
  x.restore();return MAH[mi]=c}
 function drawArtHead(x,mi,hx,hy){const c=artHead(mi),[mx,my,mrx,mry]=MHM[mi],[ex,ey,erx]=MHE[mi],s=Math.min(1.7,40/erx);const X=hx-(ex-(mx-mrx))*s,Y=hy-(ey-(my-mry))*s,W2=c.width*s;if(mi===1){x.save();x.translate(2*X+W2,0);x.scale(-1,1);x.drawImage(c,X,Y,W2,c.height*s);x.restore()}else x.drawImage(c,X,Y,W2,c.height*s)}
-function drawArtTail(x,mi,ax,ay){const t=MTL[mi];if(!t)return;const [[tx,ty,tw,th],side]=t,s=0.9;x.drawImage(MSI,mi*193+tx,ty,tw,th,side>0?ax+4:ax-tw*s-4,side>0?ay-th*s*0.35:ay-th*s*0.95,tw*s,th*s)}
+function drawArtTail(x,mi,ax,ay){const t=MTL[mi];if(!t)return;let [[tx,ty,tw,th],side]=t,s=0.9;if(mi===1){ax+=side>0?10:-10;ay+=side>0?54:-54;side=-side;const X=side>0?ax+4:ax-tw*s-4,Y=side>0?ay-th*s*0.35:ay-th*s*0.95;x.save();x.translate(2*X+tw*s,0);x.scale(-1,1);x.drawImage(MSI,mi*193+tx,ty,tw,th,X,Y,tw*s,th*s);x.restore();return}x.drawImage(MSI,mi*193+tx,ty,tw,th,side>0?ax+4:ax-tw*s-4,side>0?ay-th*s*0.35:ay-th*s*0.95,tw*s,th*s)}
 mascSheet=function(mi,ti,num){const k='mh6_'+mi+'_'+num+'_'+(MK.name||'');if(KC5[k])return KC5[k];if(!KS.complete||!KS.naturalWidth||!MSI.complete||!MSI.naturalWidth)return teamSheet(ti);
  const H=7,src=document.createElement('canvas');src.width=812;src.height=300;const sx=src.getContext('2d');sx.drawImage(KS,0,H*300,812,300,0,0,812,300);
  let d;try{d=sx.getImageData(0,0,812,300)}catch(e){return teamSheet(ti)}const a=d.data,T=TEAMS[mi],P=rgb(T.p),S=rgb(T.s),F=rgb(MFUR[mi][0]);
@@ -56,3 +56,39 @@ mascSheet=function(mi,ti,num){const k='mh6_'+mi+'_'+num+'_'+(MK.name||'');if(KC5
  for(let f=0;f<4;f++){const m=KMETA[H][f];{const [L,D]=MFUR[mi],hx=MHP[f][0],hy=MHP[f][1],g=x.createLinearGradient(hx,hy,hx,hy+70);g.addColorStop(0,D);g.addColorStop(1,L);x.fillStyle=g;x.beginPath();x.ellipse(hx-6,hy+30,21,24,0,0,7);x.fill();drawArtHead(x,mi,hx,hy)}
   numOn(x,m[0],m[1],m[3],num,T.s);if(nm){x.save();x.font='900 11px system-ui';x.textAlign='center';x.lineWidth=3;x.strokeStyle='rgba(0,0,0,0.55)';x.strokeText(nm,m[0],m[1]-m[3]*0.72);x.fillStyle='#fff';x.fillText(nm,m[0],m[1]-m[3]*0.72);x.restore()}}
  return KC5[k]=c};
+// ---- Painted-mascot kickers (Gators, Forge, Scorpions): real painted head + tail, mascot-textured limbs, Hawks kick ----
+{const _pd=drawArtHead,_pt=drawArtTail,PM={
+ 1:{mir:1,head:[[28,0,104,92],[[30,40],[45,30],[70,14],[85,0],[118,4],[130,30],[124,60],[108,84],[80,92],[52,86],[40,64],[30,52]]],hs:0.78,
+    tail:[[128,96,65,72],[[150,150],[146,128],[160,110],[178,96],[193,98],[193,140],[180,160],[160,168]]],tp:[-62,30,0.95],limb:(px,py,v)=>{const sc=((px+(py>>2&1)*3)%6<1||py%4<1)?0.78:1;return [53*v*sc,181*v*sc,168*v*sc]}}};
+ let NOG=0;drawArtHead=function(x,mi,a,b){if(PM[mi]&&NOG)return;_pd(x,mi,a,b)};drawArtTail=function(x,mi,a,b){if(PM[mi]&&NOG)return;_pt(x,mi,a,b)};
+ const prev=mascSheet,PC={};
+ function gpart(mi,[[sx,sy,w,h],poly],mir){const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');if(mir){x.translate(w,0);x.scale(-1,1)}
+  x.beginPath();poly.forEach(([px,py],i)=>i?x.lineTo(px-sx,py-sy):x.moveTo(px-sx,py-sy));x.closePath();x.clip();x.drawImage(MSI,mi*193+sx,sy,w,h,0,0,w,h);return c}
+ // paint the BACK of the head inside the painted silhouette (no face toward the camera); keeps spikes/edge features
+ function backify(mi,c){const w=c.width,h=c.height,x=c.getContext('2d'),d=x.getImageData(0,0,w,h),a=d.data,src=new Uint8ClampedArray(a),A=(X,Y)=>X<0||Y<0||X>=w||Y>=h?0:src[(Y*w+X)*4+3];
+  let y0=h,y1=0;for(let y=0;y<h;y++)for(let X=0;X<w;X++)if(src[(y*w+X)*4+3]>8){y0=Math.min(y0,y);y1=Math.max(y1,y)}
+  for(let y=0;y<h;y++)for(let X=0;X<w;X++){const i=(y*w+X)*4;if(src[i+3]<8)continue;
+   let e=99;for(const r of [2,4,6,8])if(!A(X-r,y)||!A(X+r,y)||!A(X,y-r)||!A(X,y+r)||!A(X-r,y-r)||!A(X+r,y-r)){e=r;break}
+   const r0=src[i],g0=src[i+1],b0=src[i+2],t=(y-y0)/Math.max(1,y1-y0),sh=1.12-0.42*t-(e<=2?0.25:0);let o;
+   if(mi===1){const red=r0>150&&g0<120;if(red&&(e<=6||t<0.3)){continue}// red spikes stay
+    const sc=((X+(y>>2&1)*3)%6<1||y%5<1)?0.82:1;o=[53*sh*sc,181*sh*sc,168*sh*sc]}
+   else if(mi===2){o=[60*sh,60*sh,68*sh];if(e<=2)o=[200,95,20];if((y-y0)%14===7)o=[40*sh,40*sh,46*sh];
+    for(const [bx,by] of [[0.2,0.25],[0.8,0.25],[0.2,0.75],[0.8,0.75]]){const dx=X-bx*w,dy=y-(y0+by*(y1-y0));if(dx*dx+dy*dy<5)o=[150,150,160]}}
+   else{const cx=Math.abs(X-w/2)/w,ch=((y-y0)+cx*30)%16;o=ch<2?[208*sh,128*sh,86*sh]:[220*sh,176*sh,112*sh];if(e<=2)o=[120,60,30]}
+   a[i]=o[0];a[i+1]=o[1];a[i+2]=o[2]}
+  x.putImageData(d,0,0);return c}
+ // three-quarter turn to the right: back of head, with the right part of the painted face squeezed onto the right side
+ // full side-profile face looking right (no back plate, no seam): Scorpion art already looks right; Forge face is narrowed and turned right
+ function threeq(mi,face){if(mi!==2)return face;const w=face.width,h=face.height,c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');
+  x.setTransform(0.72,0,-0.06,1,w*0.28,0);x.drawImage(face,0,0);return c}
+ mascSheet=function(mi,ti,num){const M=PM[mi];if(!M)return prev(mi,ti,num);const k='pm3_'+mi+'_'+num+'_'+(MK.name||'');if(KC5[k])return KC5[k];if(!MSI.complete||!MSI.naturalWidth)return prev(mi,ti,num);
+  NOG=1;const base=prev(mi,ti,num);NOG=0;if(!base._masc)return base;delete KC5['mh6_'+mi+'_'+num+'_'+(MK.name||'')];
+  if(!PC[mi])PC[mi]={h:mi===1?backify(mi,gpart(mi,M.head,M.mir)):threeq(mi,gpart(mi,M.head,M.mir)),t:M.tail&&gpart(mi,M.tail,M.mir)};const G=PC[mi];
+  const c=document.createElement('canvas');c.width=812;c.height=300;c._masc=1;const x=c.getContext('2d');x.drawImage(base,0,0);
+  const d=x.getImageData(0,0,812,300),a=d.data;
+  for(let i=0;i<a.length;i+=4){if(a[i+3]<8)continue;const r=a[i],g=a[i+1],b=a[i+2],mx=Math.max(r,g,b),mn=Math.min(r,g,b);if(mx>95&&(mx-mn)<38){const p=i/4,o=M.limb(p%812,p/812|0,Math.min(1.15,mx/215));a[i]=o[0];a[i+1]=o[1];a[i+2]=o[2]}}// white pants/socks/gloves -> mascot skin
+  x.putImageData(d,0,0);
+  for(let f=0;f<4;f++){const m=KMETA[7][f],hx=MHP[f][0],hy=MHP[f][1];
+   if(G.t){const [ox,oy,ts]=M.tp,tw=G.t.width*ts,th=G.t.height*ts;x.save();x.globalCompositeOperation='destination-over';x.drawImage(G.t,m[0]+ox,m[1]+oy,tw,th);x.restore()}
+   const w=G.h.width*M.hs,h=G.h.height*M.hs;x.drawImage(G.h,hx-w*0.5+4,hy-h*0.6,w,h)}
+  return KC5[k]=c}}
