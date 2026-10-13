@@ -120,7 +120,7 @@ function priceTag(own,pr){return own||!pr?'':'🪙 '+pr.toLocaleString()+' · TA
 // ---- MY KICKER screen ----
 let mkF=0;
 function drawMK(){txt('MY KICKER',W/2,H*0.06,Math.min(30,W*0.08),GOLD,'#063');ctx.fillStyle='#bcd';ctx.font='12px system-ui';ctx.textAlign='center';ctx.fillText('🪙 '+CSTR()+' · most options free',W/2,H*0.06+20);
- const im=mySheet(myT()),ph=Math.min(H*0.2,170),pw=ph*203/300;mkF=(T*1.6|0)%4;panel(W/2-pw*0.75,H*0.095,pw*1.5,ph+8);ctx.drawImage(im,mkF*203,0,203,300,W/2-pw/2,H*0.1,pw,ph);
+ const im=portraitSheet(myT()),ph=Math.min(H*0.2,170),pw=ph*203/300;mkF=(T*1.6|0)%4;panel(W/2-pw*0.75,H*0.095,pw*1.5,ph+8);ctx.drawImage(im,mkF*203,0,203,300,W/2-pw/2,H*0.1,pw,ph);
  ctx.fillStyle=GOLD;ctx.font='900 12px system-ui';ctx.fillText((MK.name||'MY KICKER')+' #'+myNum(myT())+(MK.on?' · IN USE':' · PREVIEW'),W/2,H*0.1+ph+20);
  bx(W*0.05,H*0.1+ph+28,W*0.9,32,MK.on?'✔ USING MY KICKER (tap for team kicker)':'USE MY KICKER',()=>{MK.on=MK.on?0:1;saveMK()},!!MK.on,12);
  const top=H*0.1+ph+66,bot=H*0.93-28,rh=48;let y=top-MKS.y;const R=(l,v,s,p,n,t)=>{if(y>=top-1&&y+42<=bot+1)cyc(y,l,v,s,p,n,t);else if(y+42>top&&y<bot){ctx.save();ctx.beginPath();ctx.rect(0,top,W,bot-top);ctx.clip();cyc(y,l,v,s,null,null,null);ctx.restore()}y+=rh};const pend=()=>{KC5.my=null;MK.on=1};MKS.top=top;MKS.bot=bot;

@@ -81,7 +81,7 @@ mascSheet=function(mi,ti,num){const k='mh6_'+mi+'_'+num+'_'+(MK.name||'');if(KC5
  // full side-profile face looking right (no back plate, no seam): Scorpion art already looks right; Forge face is narrowed and turned right
  function threeq(mi,face){if(mi!==2)return face;const w=face.width,h=face.height,c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');
   x.setTransform(0.72,0,-0.06,1,w*0.28,0);x.drawImage(face,0,0);return c}
- mascSheet=function(mi,ti,num){const M=PM[mi];if(!M)return prev(mi,ti,num);const k='pm3_'+mi+'_'+num+'_'+(MK.name||'');if(KC5[k])return KC5[k];if(!MSI.complete||!MSI.naturalWidth)return prev(mi,ti,num);
+ mascSheet=function(mi,ti,num){const M=window.FGF_PORT?null:PM[mi];if(!M)return prev(mi,ti,num);const k='pm3_'+mi+'_'+num+'_'+(MK.name||'');if(KC5[k])return KC5[k];if(!MSI.complete||!MSI.naturalWidth)return prev(mi,ti,num);
   NOG=1;const base=prev(mi,ti,num);NOG=0;if(!base._masc)return base;delete KC5['mh6_'+mi+'_'+num+'_'+(MK.name||'')];
   if(!PC[mi])PC[mi]={h:mi===1?backify(mi,gpart(mi,M.head,M.mir)):threeq(mi,gpart(mi,M.head,M.mir)),t:M.tail&&gpart(mi,M.tail,M.mir)};const G=PC[mi];
   const c=document.createElement('canvas');c.width=812;c.height=300;c._masc=1;const x=c.getContext('2d');x.drawImage(base,0,0);
@@ -92,3 +92,11 @@ mascSheet=function(mi,ti,num){const k='mh6_'+mi+'_'+num+'_'+(MK.name||'');if(KC5
    if(G.t){const [ox,oy,ts]=M.tp,tw=G.t.width*ts,th=G.t.height*ts;x.save();x.globalCompositeOperation='destination-over';x.drawImage(G.t,m[0]+ox,m[1]+oy,tw,th);x.restore()}
    const w=G.h.width*M.hs,h=G.h.height*M.hs;x.drawImage(G.h,hx-w*0.5+4,hy-h*0.6,w,h)}
   return KC5[k]=c}}
+
+// ---- Portraits (My Kicker previews) keep the pre-d4cc12b look: original kickers art + old Bulldogs metrics + old mascot heads; in-game sprites unchanged ----
+const KSP=new Image();KSP.src='kickers_p.webp?v=1';const PSC={},OLD5=[[56,88,50,31,75,24],[278,88,53,31,300,24]];
+window.portraitSheet=function(ti){const key=JSON.stringify(MK)+'|'+ti;if(PSC[key])return PSC[key];if(!KSP.complete||!KSP.naturalWidth)return mySheet(ti);
+ const sv=Object.assign({},KC5);for(const k in KC5)delete KC5[k];const k5=[KMETA[5][0].slice(),KMETA[5][1].slice()];KMETA[5][0]=OLD5[0].slice();KMETA[5][1]=OLD5[1].slice();
+ const P=CanvasRenderingContext2D.prototype,od=P.drawImage;P.drawImage=function(im,...a){return od.call(this,im===KS?KSP:im,...a)};window.FGF_PORT=1;let s;
+ try{s=mySheet(ti)}finally{window.FGF_PORT=0;P.drawImage=od;KMETA[5][0]=k5[0];KMETA[5][1]=k5[1];for(const k in KC5)delete KC5[k];Object.assign(KC5,sv)}
+ return PSC[key]=s};

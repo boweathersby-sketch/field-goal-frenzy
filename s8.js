@@ -50,7 +50,7 @@ const oMy2=mySheet;mySheet=function(ti){const c=oMy2(ti);if(MK.masc>=0||c.__ex)r
   if(vz){x.save();x.fillStyle=vz==='rainbow'?'#c060ff':vz;x.strokeStyle='rgba(255,255,255,0.55)';x.lineWidth=1;for(const sd of[-1,1]){x.beginPath();x.ellipse(hx+sd*15,hy+9,2.6,5,sd*0.25,0,7);x.fill();x.stroke()}x.restore()}});c.__ex=1;return c};
 function drawMK(){txt('MY KICKER',W/2,H*0.05,Math.min(28,W*0.075),GOLD,'#063');ctx.fillStyle='#bcd';ctx.font='12px system-ui';ctx.textAlign='center';ctx.fillText('🪙 '+CSTR()+' · most options free',W/2,H*0.05+18);
  const py=H*0.075,ph=Math.min(H*0.44,W*1.05),pw=Math.min(W*0.9,ph*0.62);panel(W/2-pw/2,py,pw,ph);
- if(MK.masc>=0){const s=mySheet(myT()),h=ph*0.9,w=h*203/300;ctx.drawImage(s,0,0,203,300,W/2-w/2,py+ph*0.05,w,h)}
+ if(MK.masc>=0){const s=portraitSheet(myT()),h=ph*0.9,w=h*203/300;ctx.drawImage(s,0,0,203,300,W/2-w/2,py+ph*0.05,w,h)}
  else{const f=frontImg(myT());if(f){const h=ph*0.95,w=h*BMETA.cw/BMETA.h;ctx.drawImage(f,W/2-w/2,py+ph*0.03,w,h)}else{ctx.fillStyle='#bcd';ctx.fillText('Loading…',W/2,py+ph/2)}
   }
  ctx.fillStyle=GOLD;ctx.font='900 13px system-ui';ctx.textAlign='center';ctx.fillText((MK.name||'MY KICKER')+' #'+myNum(myT())+(MK.on?' · IN USE':' · PREVIEW'),W/2,py+ph+17);if(window.TTL&&TTL()){ctx.fillStyle='#7fe8ff';ctx.font='900 10px system-ui';ctx.fillText('🏆 '+TTL(),W/2,py+ph-6)}
