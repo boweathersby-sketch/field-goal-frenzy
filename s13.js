@@ -1,0 +1,63 @@
+// ===== Stage 13: CREATE A MASCOT (coins): base animal from the painted mascots, colour shift, accessories, name + number =====
+// usable on your sideline and as your mascot kicker (painted head on the Hawks kicker body, original kick) + My Kicker preview
+const CMN=['THUNDER','GATOR','ROBOT','WOLF','SCORPION','BULLDOG','RAM','HAWK'],CMHUE=[0,30,60,95,130,165,200,235,270,305,335],
+ CMHAT=[['none','No hat',0],['cap','Team cap',500],['beanie','Beanie',500],['cowboy','Cowboy hat',1200],['top','Top hat',1500],['crown','Gold crown',2500]],
+ CMGL=[['none','No glasses',0],['shades','Shades',500],['nerd','Big specs',500],['star','Star glasses',1500]],
+ CMCH=[['none','No chain',0],['gold','Gold chain',2000],['medal','Champ medal',1500]],CMPRICE=5000;
+const CM=Object.assign({own:0,base:7,hue:0,hat:'none',gl:'none',ch:'none',name:'MASCOT',num:1,side:0,kick:0},J('fgfCM',{}));window.CM=CM;let CMO=J('fgfCMO',['none']);
+const cmOwn=id=>window.TESTER||CMO.includes(id),cmSave=()=>{SV('fgfCM',CM);CMC=null;for(const k in CMK)delete CMK[k];if(window.PSC)for(const k in PSC)delete PSC[k];try{for(const k in PSC)delete PSC[k]}catch(e){}KC5.my=null};
+let CMC=null;const CMK={};
+let CMB=0;function cmCell(){if(CMC)return CMC;if(CMB)return null;CMB=1;try{return cmCell0()}finally{CMB=0}}
+function cmCell0(){if(!MSI.complete||!MSI.naturalWidth)return null;const c=document.createElement('canvas');c.width=193;c.height=200;const x=c.getContext('2d'),B=CM.base;x.drawImage(MSI,B*193,0,193,200,0,0,193,200);
+ if(CM.hue){const d=x.getImageData(0,0,193,200),a=d.data,cs=Math.cos(CM.hue*Math.PI/180),sn=Math.sin(CM.hue*Math.PI/180);
+  // hue rotation matrix (keeps light/dark detail of the painted art)
+  const m=[0.213+cs*0.787-sn*0.213,0.715-cs*0.715-sn*0.715,0.072-cs*0.072+sn*0.928,0.213-cs*0.213+sn*0.143,0.715+cs*0.285+sn*0.140,0.072-cs*0.072-sn*0.283,0.213-cs*0.213-sn*0.787,0.715-cs*0.715+sn*0.715,0.072+cs*0.928+sn*0.072];
+  for(let i=0;i<a.length;i+=4){if(a[i+3]<4)continue;const r=a[i],g=a[i+1],b=a[i+2];a[i]=r*m[0]+g*m[1]+b*m[2];a[i+1]=r*m[3]+g*m[4]+b*m[5];a[i+2]=r*m[6]+g*m[7]+b*m[8]}x.putImageData(d,0,0)}
+ const [mx,my,mrx,mry]=MHM[B],[ex,ey,erx]=MHE[B],T=TEAMS[myT()],top=my-mry;x.lineJoin='round';
+ const H=CM.hat;if(cmOwn(H)&&H!=='none'){x.save();x.strokeStyle='#111';x.lineWidth=2;
+  if(H==='cap'){x.fillStyle=T.p;x.beginPath();x.ellipse(mx,top+12,mrx*0.75,14,0,Math.PI,0);x.fill();x.stroke();x.fillStyle=T.s;x.beginPath();x.ellipse(mx+mrx*0.55,top+12,mrx*0.45,5,0,0,7);x.fill();x.stroke()}
+  else if(H==='beanie'){x.fillStyle=T.p;x.beginPath();x.ellipse(mx,top+12,mrx*0.72,17,0,Math.PI,0);x.fill();x.stroke();x.fillStyle=T.s;x.fillRect(mx-mrx*0.74,top+9,mrx*1.48,7);x.strokeRect(mx-mrx*0.74,top+9,mrx*1.48,7);x.beginPath();x.arc(mx,top-7,6,0,7);x.fill();x.stroke()}
+  else if(H==='cowboy'){x.fillStyle='#8a5a2b';x.beginPath();x.ellipse(mx,top+10,mrx*1.05,7,0,0,7);x.fill();x.stroke();x.beginPath();x.moveTo(mx-mrx*0.5,top+8);x.quadraticCurveTo(mx-mrx*0.5,top-18,mx,top-14);x.quadraticCurveTo(mx+mrx*0.5,top-18,mx+mrx*0.5,top+8);x.closePath();x.fill();x.stroke();x.fillStyle=T.s;x.fillRect(mx-mrx*0.5,top+1,mrx,5)}
+  else if(H==='top'){x.fillStyle='#151515';x.beginPath();x.ellipse(mx,top+10,mrx*0.85,6,0,0,7);x.fill();x.stroke();x.fillRect(mx-mrx*0.45,top-24,mrx*0.9,34);x.strokeRect(mx-mrx*0.45,top-24,mrx*0.9,34);x.fillStyle=T.p;x.fillRect(mx-mrx*0.45,top+1,mrx*0.9,6)}
+  else if(H==='crown'){const g=x.createLinearGradient(0,top-20,0,top+10);g.addColorStop(0,'#fff3a0');g.addColorStop(1,'#c99a06');x.fillStyle=g;x.beginPath();const w=mrx*0.7;x.moveTo(mx-w,top+10);x.lineTo(mx-w,top-10);x.lineTo(mx-w*0.5,top);x.lineTo(mx,top-18);x.lineTo(mx+w*0.5,top);x.lineTo(mx+w,top-10);x.lineTo(mx+w,top+10);x.closePath();x.fill();x.stroke();x.fillStyle='#e0303a';x.beginPath();x.arc(mx,top+3,3.5,0,7);x.fill()}
+  x.restore()}
+ const G=CM.gl;if(cmOwn(G)&&G!=='none'){x.save();x.strokeStyle='#111';x.lineWidth=2;const r=Math.max(6,erx*0.42),dx=erx*0.5;
+  if(G==='shades'){x.fillStyle='rgba(10,10,14,0.92)';[-1,1].forEach(k=>{x.beginPath();x.ellipse(ex+k*dx,ey,r*1.1,r*0.75,0,0,7);x.fill();x.stroke()});x.beginPath();x.moveTo(ex-dx+r,ey);x.lineTo(ex+dx-r,ey);x.stroke()}
+  else if(G==='nerd'){x.fillStyle='rgba(200,230,255,0.25)';[-1,1].forEach(k=>{x.beginPath();x.arc(ex+k*dx,ey,r,0,7);x.fill();x.lineWidth=3;x.stroke()})}
+  else{x.fillStyle='#ffcf1a';[-1,1].forEach(k=>{x.beginPath();for(let i=0;i<10;i++){const a=Math.PI/5*i-Math.PI/2,rr=i%2?r*0.55:r*1.2;x.lineTo(ex+k*dx+Math.cos(a)*rr,ey+Math.sin(a)*rr)}x.closePath();x.fill();x.stroke()})}
+  x.restore()}
+ const C=CM.ch;if(cmOwn(C)&&C!=='none'){x.save();const ny=my+mry*0.95;x.strokeStyle='#e5b416';x.lineWidth=4;x.beginPath();x.ellipse(mx,ny,mrx*0.7,mry*0.35,0,0.15,Math.PI-0.15);x.stroke();x.strokeStyle='#8a6a00';x.lineWidth=1;x.setLineDash([3,3]);x.stroke();x.setLineDash([]);
+  if(C==='medal'){x.fillStyle='#ffd23f';x.strokeStyle='#8a6a00';x.lineWidth=2;x.beginPath();x.arc(mx,ny+mry*0.38,9,0,7);x.fill();x.stroke();x.fillStyle='#8a6a00';x.font='900 9px system-ui';x.textAlign='center';x.fillText('1',mx,ny+mry*0.38+3)}
+  else{x.fillStyle='#ffd23f';x.font='900 11px system-ui';x.textAlign='center';x.fillText('$',mx,ny+mry*0.38+4)}x.restore()}
+ return CMC=c}
+window.cmCell=cmCell;
+// MSI proxy: while building/drawing the custom mascot, reads from the base animal's cell come from the custom cell instead
+let CMP=0;{const P=CanvasRenderingContext2D.prototype,od=P.drawImage;P.drawImage=function(im,...a){if(im===MSI&&a.length===8){const B=CM.base,sx=a[0];
+ const side=CM.own&&CM.side&&(state==='play'||state==='replay')&&sx===myT()*193&&a[2]===193;if(!CMB&&(CMP&&sx>=B*193&&sx<B*193+193)||!CMB&&side){const c=cmCell();if(c)return od.call(this,c,side?0:sx-B*193,a[1],a[2],a[3],a[4],a[5],a[6],a[7])}}return od.call(this,im,...a)}}
+const cmUse=()=>CM.own&&CM.kick&&MK.masc===CM.base;window.cmUse=cmUse;
+function cmWrap(fn,key){return function(...a){if(!(cmUse()&&a[0]===CM.base))return fn(...a);const k=key+JSON.stringify(CM)+'|'+a.join(',')+'|'+(MK.name||'');if(CMK[k])return CMK[k];
+ const sv=Object.assign({},KC5);for(const q in KC5)delete KC5[q];CMP=1;let s;try{s=fn(...a)}finally{CMP=0;for(const q in KC5)delete KC5[q];Object.assign(KC5,sv)}return CMK[k]=s}}
+mascSheet=cmWrap(mascSheet,'ms');frontMasc=cmWrap(frontMasc,'fm');
+// ---- editor ----
+function drawCM(){BTN=[];txt('CREATE A MASCOT',W/2,H*0.06,Math.min(26,W*0.068),GOLD,'#063');ctx.fillStyle='#bcd';ctx.font='11px system-ui';ctx.textAlign='center';
+ ctx.fillText(CM.own?'Your mascot · sideline + mascot kicker':'Unlock for 🪙 '+CMPRICE.toLocaleString()+' · accessories extra',W/2,H*0.06+20);
+ const py=H*0.095,ph=Math.min(H*0.21,180);panel(W*0.05,py,W*0.9,ph);const c=cmCell();if(c){const h=ph*0.92,w=h*193/200;ctx.drawImage(c,0,0,193,200,W*0.27-w/2,py+ph*0.04,w,h)}
+ ctx.textAlign='left';ctx.fillStyle='#fff';ctx.font='900 18px system-ui';ctx.fillText(CM.name,W*0.52,py+ph*0.42);ctx.fillStyle=GOLD;ctx.font='bold 13px system-ui';ctx.fillText('#'+CM.num+' · '+CMN[CM.base],W*0.52,py+ph*0.6);
+ const acc=(L,f)=>{const it=L.find(q=>q[0]===CM[f])||L[0];return it[1]+(cmOwn(it[0])?'':' · 🪙 '+it[2].toLocaleString())};
+ const cyc=(L,f)=>d=>{const i=L.findIndex(q=>q[0]===CM[f]);CM[f]=L[(i+d+L.length)%L.length][0];cmSave()};
+ const R=[['BASE ANIMAL',CMN[CM.base],d=>{CM.base=(CM.base+d+8)%8;if(CM.kick&&CM.own){MK.masc=CM.base;saveMK()}cmSave()}],['COLOUR',CM.hue?'Shift '+CM.hue+'°':'Original',d=>{CM.hue=CMHUE[(CMHUE.indexOf(CM.hue)+d+CMHUE.length)%CMHUE.length];cmSave()}],
+  ['HAT',acc(CMHAT,'hat'),cyc(CMHAT,'hat'),CMHAT,'hat'],['GLASSES',acc(CMGL,'gl'),cyc(CMGL,'gl'),CMGL,'gl'],['CHAIN',acc(CMCH,'ch'),cyc(CMCH,'ch'),CMCH,'ch'],
+  ['NAME',CM.name,()=>{const v=prompt('Mascot name (max 12)',CM.name);if(v!=null){const t=v.toUpperCase().replace(/[^A-Z0-9 .\'-]/g,'').trim().slice(0,12);if(t){CM.name=t;cmSave();if(cmUse()){MK.name=t;saveMK()}}}}],
+  ['NUMBER','#'+CM.num,()=>{const v=prompt('Jersey number 0-99',CM.num);if(v!=null&&/^\d{1,2}$/.test(v.trim())){CM.num=+v.trim();cmSave();if(cmUse()){MK.num=CM.num;saveMK()}}}]];
+ const y0=py+ph+8,rh=Math.min(46,(H*0.8-y0)/(R.length+1.6));
+ R.forEach(([l,v,f,L,fk],i)=>{const y=y0+i*rh;panel(W*0.05,y,W*0.9,rh-5);ctx.textAlign='left';ctx.fillStyle='#bcd';ctx.font='bold 10px system-ui';ctx.fillText(l,W*0.08,y+rh*0.34);ctx.fillStyle='#fff';ctx.font='900 13px system-ui';ctx.fillText(v,W*0.08,y+rh*0.68);
+  if(!CM.own)return;const it=L&&L.find(q=>q[0]===CM[fk]);if(it&&!cmOwn(it[0]))bx(W*0.95-158,y+rh/2-15,70,28,'BUY',()=>buy5('cm_'+it[0],it[2],()=>{CMO.push(it[0]);SV('fgfCMO',CMO);cmSave()}),true,11);
+  if(f.length){bx(W*0.95-80,y+rh/2-15,36,28,'◀',()=>f(-1),false,13);bx(W*0.95-40,y+rh/2-15,36,28,'▶',()=>f(1),false,13)}else bx(W*0.95-70,y+rh/2-15,64,28,'EDIT',f,false,12)});
+ const yb=y0+R.length*rh+4,bw=(W*0.9-8)/2;
+ if(!CM.own)bx(W*0.05,yb,W*0.9,40,'🔓 UNLOCK · 🪙 '+CMPRICE.toLocaleString(),()=>buy5('cm_unlock',CMPRICE,()=>{CM.own=1;cmSave()}),true,13);
+ else{bx(W*0.05,yb,bw,40,CM.side?'✔ ON SIDELINE':'PUT ON SIDELINE',()=>{CM.side=CM.side?0:1;cmSave()},!!CM.side,12);
+  bx(W*0.05+bw+8,yb,bw,40,cmUse()?'✔ MY KICKER':'USE AS KICKER',()=>{if(cmUse()){CM.kick=0;MK.masc=-1}else{CM.kick=1;MK.masc=CM.base;MK.on=1;MK.name=CM.name;MK.num=CM.num}cmSave();saveMK();KC5.my=null},cmUse(),12)}
+ bx(W/2-90,H*0.93-20,180,40,'◀ BACK',()=>state='teams')}
+{const oS=S3.screen;S3.screen=function(){if(state==='cm'){drawCM();return true}const r=oS();if(state==='teams'&&window.SWC==null)bx(W/2-4-W*0.44,H*0.79,W*0.44,36,'🐾 CREATE MASCOT',()=>state='cm',false,12);return r}}
+// if the base animal changes while it's the kicker, keep the kicker in sync
+setInterval(()=>{if(CM.kick&&CM.own&&MK.masc>=0&&MK.masc!==CM.base&&MK.masc!==-1){/* player picked another mascot in My Kicker */CM.kick=0;SV('fgfCM',CM)}},700);
