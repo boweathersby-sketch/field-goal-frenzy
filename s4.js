@@ -20,7 +20,7 @@ const oNext=S3.next;S3.next=function(good){if(pendNext&&!RP){RP={t:0,good,cl:pen
 function contAfter(good){if(!RP)return;if(RP.rec){clipEnd();return}const g=RP.good;RP=null;if(mode==='daily'){state='dres';return}if(oNext(g))return;if(lives<=0||(mode==='time'&&timeLeft<=0)){endGame();return}if(g)dist=Math.min(mode==='hurricane'?65:80,dist+(dist<40?3:dist<70?2:dist<76?2:4));state='play';newWind();resetBall()}
 S3.cam=function(){if(zoomT>0&&zp){const k=Math.sin(Math.min(1,zoomT/0.55)*Math.PI)*0.12;ctx.translate(zp.x,zp.y);ctx.scale(1+k,1+k);ctx.translate(-zp.x,-zp.y)}};
 const oTop=S3.top;S3.top=function(dt){if(state==='play'&&ball.fly&&!paused)TR.push({x:ball.x,y:ball.y,z:ball.z,r:ball.rot});if(zoomT>0)zoomT-=dt;{const b=P(0,BAR,dist);if(b)zp={x:b.x,y:b.y+OFF}}
- if(state==='replay'&&RP){RP.t+=dt*0.35;const i=Math.min(TR.length-1,Math.floor(RP.t*60)),p=TR[i];Object.assign(ball,{x:p.x,y:p.y,z:p.z,rot:p.r,fly:true});trail=TR.slice(Math.max(0,i-18),i+1).map(q=>({x:q.x,y:q.y,z:q.z}));if(TR[i-1]&&TR[i-1].z<dist&&p.z>=dist){zoomT=0.55;if(RP.rec){noise(1.6,800,0.5,RP.good?0.5:0.2,0.15);if(RP.good)tone(520,880,0.3,0.15)}}if(RP.rec&&CLIP&&performance.now()-CLIP.t0>6000)clipEnd();if(i>=TR.length-1&&RP.t*60>TR.length+40)contAfter()}
+ if(state==='replay'&&RP&&RP.rec){clipStep()}else if(state==='replay'&&RP){RP.t+=dt*0.35;const i=Math.min(TR.length-1,Math.floor(RP.t*60)),p=TR[i];Object.assign(ball,{x:p.x,y:p.y,z:p.z,rot:p.r,fly:true});trail=TR.slice(Math.max(0,i-18),i+1).map(q=>({x:q.x,y:q.y,z:q.z}));if(TR[i-1]&&TR[i-1].z<dist&&p.z>=dist){zoomT=0.55;if(RP.rec){noise(1.6,800,0.5,RP.good?0.5:0.2,0.15);if(RP.good)tone(520,880,0.3,0.15)}}if(RP.rec&&CLIP&&performance.now()-CLIP.t0>6000)clipEnd();if(i>=TR.length-1&&RP.t*60>TR.length+40)contAfter()}
  if(state==='play'&&mode==='tut')tutDraw();oTop(dt);
  if(CAR&&CAR.st&&CAR.st.ti>0)unlock('title');if(CAR&&CAR.res&&CAR.res.length>=16&&CAR.res.slice(0,16).every(r=>r==='W'))unlock('perfect')};
 const URL0='https://boweathersby-sketch.github.io/field-goal-frenzy/';let SH=null;
@@ -29,19 +29,39 @@ function share(txt0){try{const c=au();if(c&&c.state!=='running')c.resume();recDe
 // ---- video clip: re-render the slow-mo replay into a 720x1280 canvas, record it with game audio ----
 let CLIP=null;const VW=720,VH=1280;
 function clipMime(){const M=window.MediaRecorder;if(!M)return null;for(const m of['video/mp4;codecs=avc1,mp4a.40.2','video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/mp4;codecs=avc1.4d002a,mp4a.40.2','video/mp4;codecs=avc1,opus','video/mp4;codecs=avc1','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'])if(M.isTypeSupported&&M.isTypeSupported(m))return m;return ''}
-function makeClip(){const mt=clipMime();if(mt===null||!TR.length||!document.createElement('canvas').captureStream){toast('Video not supported here, image only');state='share';return}
- const rc=document.createElement('canvas');rc.width=VW;rc.height=VH;const rx=rc.getContext('2d');const st=rc.captureStream(30);const d=recDest();if(d)d.stream.getAudioTracks().forEach(t=>st.addTrack(t));
- let rec;try{rec=new MediaRecorder(st,mt?{mimeType:mt,videoBitsPerSecond:3e6}:{})}catch(e){try{rec=new MediaRecorder(st)}catch(e2){toast('Video not supported here, image only');state='share';return}}
+// Clip timeline is driven by the clip clock (wall time since the recorder started), not by rAF dt, so a slow phone
+// still records the whole flight. Audio is scheduled on the AudioContext clock from the same start instant.
+function sN(c,w,d,f,q,v,a){const b=c.createBuffer(1,Math.ceil(c.sampleRate*d),c.sampleRate),x=b.getChannelData(0);for(let i=0;i<x.length;i++)x[i]=Math.random()*2-1;const s=c.createBufferSource();s.buffer=b;const fl=c.createBiquadFilter();fl.type='bandpass';fl.frequency.value=f;fl.Q.value=q;const g=c.createGain();g.gain.setValueAtTime(0.0001,w);g.gain.linearRampToValueAtTime(v,w+a);g.gain.setValueAtTime(v,w+Math.max(a,d*0.45));g.gain.exponentialRampToValueAtTime(0.001,w+d);s.connect(fl).connect(g).connect(OUT(c));s.start(w);s.stop(w+d+0.05)}
+function sT(c,w,f1,f2,d,v,type){const o=c.createOscillator(),g=c.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f1,w);o.frequency.exponentialRampToValueAtTime(f2,w+d);g.gain.setValueAtTime(0.0001,w);g.gain.linearRampToValueAtTime(v,w+0.005);g.gain.exponentialRampToValueAtTime(0.001,w+d);o.connect(g).connect(OUT(c));o.start(w);o.stop(w+d+0.05)}
+async function makeClip(){const mt=clipMime();if(mt===null||TR.length<4||!document.createElement('canvas').captureStream){toast('Video not supported here, image only');state='share';return}
+ const c=au();try{if(c&&c.state!=='running')await c.resume()}catch(e){}
+ const rc=document.createElement('canvas');rc.width=VW;rc.height=VH;const rx=rc.getContext('2d');let st=rc.captureStream(0);let vt=st.getVideoTracks()[0];if(!vt||!vt.requestFrame){st=rc.captureStream(30);vt=null}const d=recDest();if(d)d.stream.getAudioTracks().forEach(t=>st.addTrack(t));
+ let rec;try{rec=new MediaRecorder(st,mt?{mimeType:mt,videoBitsPerSecond:3e6,audioBitsPerSecond:128000}:{})}catch(e){try{rec=new MediaRecorder(st)}catch(e2){toast('Video not supported here, image only');state='share';return}}
  const ch=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)ch.push(e.data)};
- CLIP={rc,rx,rec,t0:performance.now(),oldRP:RP,good:RP?RP.good:true,boom:0,ch};
- rec.onstop=()=>{const type=(rec.mimeType||mt||'video/webm').split(';')[0];const bl=new Blob(ch,{type});const ext=type.includes('mp4')?'mp4':'webm';if(SH){SH.vid=new File([bl],'field-goal-frenzy.'+ext,{type});SH.vurl=URL.createObjectURL(bl)}window.FGF_LAST_CLIP={size:bl.size,type:bl.type};const o=CLIP.oldRP;CLIP=null;RP=o;state='share'};
- RP={t:0,good:CLIP.good,cl:CLIP.oldRP&&CLIP.oldRP.cl,rec:1};state='replay';rec.start(250);thump(150,0.9,0.12);noise(0.08,2400,1,0.5)}
+ const n=TR.length;let ic=TR.findIndex(p=>p.z>=dist);if(ic<0)ic=n-1;// flight to ~0.5s before the posts plays at up to real speed (<=1.5s), the last 0.5s and the make play at 0.35x
+ const s1=Math.max(0,ic-30),D1=Math.min(1.5,s1/60/0.35),CT=0.4,tc=CT+D1+(ic-s1)/(60*0.35),end=Math.min(6.5,Math.max(5,tc+2.3)),sp=0.35;
+ CLIP={rc,rx,rec,vt,oldRP:RP,good:RP?RP.good:true,ch,tl:{CT,tc,end,sp,n,s1,D1},crossed:false,kicked:false};
+ rec.onstop=()=>{const type=(rec.mimeType||mt||'video/webm').split(';')[0];const bl=new Blob(ch,{type});const ext=type.includes('mp4')?'mp4':'webm';if(SH){SH.vid=new File([bl],'field-goal-frenzy.'+ext,{type});SH.vurl=URL.createObjectURL(bl)}window.FGF_LAST_CLIP={size:bl.size,type:bl.type,mime:rec.mimeType,tl:CLIP.tl};const o=CLIP.oldRP;CLIP=null;RP=o;state='share'};
+ RP={t:0,good:CLIP.good,cl:CLIP.oldRP&&CLIP.oldRP.cl,rec:1};state='replay';const p0=TR[0];Object.assign(ball,{x:p0.x,y:p0.y,z:p0.z,rot:0,fly:false});trail=[];
+ rec.start(250);CLIP.t0=performance.now();
+ if(c){const a0=c.currentTime,g=CLIP.good;CLIP.a0=a0;sN(c,a0,end,700,0.4,0.06,0.3);
+  sT(c,a0+CT,190,70,0.12,0.95);sN(c,a0+CT,0.04,3200,1.2,0.6,0.001);sN(c,a0+CT,0.07,600,2,0.5,0.002);
+  if(g){sN(c,a0+tc,2.4,800,0.5,0.6,0.2);sN(c,a0+tc,2.2,1500,0.7,0.35,0.25);sT(c,a0+tc,520,880,0.35,0.2);sT(c,a0+tc+0.13,660,1100,0.4,0.18)}else{sN(c,a0+tc,1.6,500,0.5,0.3,0.2);sT(c,a0+tc,260,110,1.1,0.12,'sawtooth')}}}
+function clipStep(){const C=CLIP;if(!C||!C.t0)return;const L=C.tl,ct=(performance.now()-C.t0)/1000,n=L.n;
+ if(ct<L.CT){const p=TR[0];Object.assign(ball,{x:p.x,y:p.y,z:p.z,fly:false});trail=[];return}
+ if(!C.kicked){C.kicked=true;kickT=0.35}
+ const q=ct-L.CT,u=q<L.D1?(L.D1?q/L.D1*L.s1:0):L.s1+(q-L.D1)*L.sp*60;let p;if(u<n-1){const i=Math.floor(u),f=u-i,a=TR[i],b=TR[i+1];p={x:a.x+(b.x-a.x)*f,y:a.y+(b.y-a.y)*f,z:a.z+(b.z-a.z)*f,r:(a.r||0)+((b.r||0)-(a.r||0))*f}}
+ else{const a=TR[n-2],b=TR[n-1],e=u-(n-1);p={x:b.x+(b.x-a.x)*e,y:Math.max(0,b.y+(b.y-a.y)*e-0.0045*e*e),z:b.z+(b.z-a.z)*e,r:(b.r||0)+e*0.1}}
+ Object.assign(ball,{x:p.x,y:p.y,z:p.z,rot:p.r,fly:true});
+ if(p.z<dist){const i=Math.min(n-1,Math.floor(u));trail=TR.slice(Math.max(0,i-18),i+1).map(q=>({x:q.x,y:q.y,z:q.z}))}else trail=[];
+ if(!C.crossed&&p.z>=dist){C.crossed=true;zoomT=0.55;M.st=C.good?'wild':'slump';M.t=0}
+ if(ct>=L.end&&C.rec.state==='recording')C.rec.stop()}
 function clipFrame(){const c=CLIP,x=c.rx,sw=cv.width,shh=cv.height,s=Math.max(VW/sw,VH/shh);x.fillStyle='#000';x.fillRect(0,0,VW,VH);x.drawImage(cv,(VW-sw*s)/2,(VH-shh*s)/2,sw*s,shh*s);const k=VW/390;
  x.fillStyle='rgba(200,20,20,0.85)';x.beginPath();x.roundRect(14*k,150*k,96*k,30*k,6*k);x.fill();x.fillStyle='#fff';x.font='900 '+(14*k)+'px system-ui';x.textAlign='left';x.fillText('● REPLAY',24*k,170*k);
  x.textAlign='center';x.font='900 '+(30*k)+'px system-ui';x.lineWidth=5*k;x.strokeStyle='#000';const tt=(RP&&RP.cl?'GAME-WINNER! ':'')+dist+' YARDS';x.strokeText(tt,VW/2,VH*0.3);x.fillStyle=GOLD;x.fillText(tt,VW/2,VH*0.3);
  x.fillStyle='rgba(0,0,0,0.6)';x.fillRect(0,VH-56*k,VW,56*k);x.fillStyle=GOLD;x.font='900 '+(18*k)+'px system-ui';x.fillText('🏈 FIELD GOAL FRENZY · '+S5.who(),VW/2,VH-32*k);x.fillStyle='#fff';x.font=(11*k)+'px system-ui';x.fillText(URL0.replace('https://',''),VW/2,VH-14*k)}
-function clipOverlay(){const p=Math.min(1,(performance.now()-CLIP.t0)/5000);ctx.fillStyle='rgba(0,0,0,0.55)';ctx.fillRect(0,H-120,W,120);txt('🎬 Making your clip…',W/2,H-80,18,'#fff');ctx.fillStyle='#333';ctx.fillRect(W*0.15,H-60,W*0.7,10);ctx.fillStyle=GOLD;ctx.fillRect(W*0.15,H-60,W*0.7*p,10)}
-function clipEnd(){if(CLIP&&CLIP.rec.state==='recording'&&performance.now()-CLIP.t0>4500){noise(1.2,800,0.5,CLIP.good?0.18:0.08,0.2);CLIP.rec.stop()}}
+function clipOverlay(){const p=CLIP.t0?Math.min(1,(performance.now()-CLIP.t0)/1000/CLIP.tl.end):0;ctx.fillStyle='rgba(0,0,0,0.55)';ctx.fillRect(0,H-120,W,120);txt('🎬 Making your clip…',W/2,H-80,18,'#fff');ctx.fillStyle='#333';ctx.fillRect(W*0.15,H-60,W*0.7,10);ctx.fillStyle=GOLD;ctx.fillRect(W*0.15,H-60,W*0.7*p,10)}
+function clipEnd(){}// clip ends on its own timeline (clipStep)
 function saveVid(){if(!SH||!SH.vurl){saveImg();return false}const a=document.createElement('a');a.href=SH.vurl;a.download=SH.vid.name;document.body.appendChild(a);a.click();a.remove();return true}
 function shareVid(){if(!SH.vid){toast('Clip not ready, sharing image');nativeShare();return}const d={title:'Field Goal Frenzy',text:SH.text+' '+URL0,files:[SH.vid]};if(navigator.canShare&&navigator.canShare(d))navigator.share(d).catch(()=>{});else{saveVid();toast('Video saved, share it from your gallery')}}
 function saveImg(){const a=document.createElement('a');a.href=SH.img;a.download='field-goal-frenzy.jpg';document.body.appendChild(a);a.click();a.remove()}
@@ -73,7 +93,7 @@ addEventListener('pointerdown',e=>{if(state==='play'&&mode==='tut'&&!ball.fly&&!
 if(!LS.fgfTut){const go2=()=>{if(state==='title'&&team>=0&&LS.fgfHow){S4.tut()}else setTimeout(go2,400)};setTimeout(go2,300)}
 // ---- screens ----
 const oScreen=S3.screen;S3.screen=function(){if(state==='replay'){BTN=[];drawReplay();return true}if(state==='dres'){BTN=[];drawDres();return true}if(state==='ach'){BTN=[];drawAch();return true}if(state==='share'&&SH){BTN=[];drawShare();return true}return oScreen()};
-function drawReplay(){if(RP&&RP.rec&&CLIP){BTN=[];clipFrame();clipOverlay();return}const a=0.6+0.4*Math.sin(T*6);ctx.fillStyle='rgba(200,20,20,'+(0.85)+')';ctx.beginPath();ctx.roundRect(12,160,96,30,6);ctx.fill();ctx.fillStyle='#fff';ctx.globalAlpha=a;ctx.beginPath();ctx.arc(28,175,6,0,7);ctx.fill();ctx.globalAlpha=1;ctx.font='900 14px system-ui';ctx.textAlign='left';ctx.fillText('REPLAY',40,180);ctx.fillStyle='rgba(0,0,0,0.25)';ctx.fillRect(0,0,W,8);ctx.fillRect(0,H-8,W,8);
+function drawReplay(){if(RP&&RP.rec&&CLIP){BTN=[];if(CLIP.t0){clipFrame();if(CLIP.vt)CLIP.vt.requestFrame()}clipOverlay();return}const a=0.6+0.4*Math.sin(T*6);ctx.fillStyle='rgba(200,20,20,'+(0.85)+')';ctx.beginPath();ctx.roundRect(12,160,96,30,6);ctx.fill();ctx.fillStyle='#fff';ctx.globalAlpha=a;ctx.beginPath();ctx.arc(28,175,6,0,7);ctx.fill();ctx.globalAlpha=1;ctx.font='900 14px system-ui';ctx.textAlign='left';ctx.fillText('REPLAY',40,180);ctx.fillStyle='rgba(0,0,0,0.25)';ctx.fillRect(0,0,W,8);ctx.fillRect(0,H-8,W,8);
  txt((RP&&RP.cl?'GAME-WINNER! ':'')+dist+' YARDS',W/2,H*0.3,Math.min(30,W*0.075),GOLD);ctx.fillStyle='#ddd';ctx.font='12px system-ui';ctx.textAlign='center';ctx.fillText('0.35× slow motion',W/2,H*0.3+20);
  if(dist>=80&&RP&&RP.good)bx(W*0.06,H-96,92,32,'📤 Share',()=>share('I just nailed an 80-yard LEGEND kick'),false,12);bx(W-W*0.06-120,H-100,120,40,'SKIP ▶▶',()=>contAfter(),true,15)}
 function drawDres(){const d=DL();txt('DAILY CHALLENGE',W/2,H*0.16,Math.min(30,W*0.08),GOLD,'#063');ctx.fillStyle='#bcd';ctx.font='13px system-ui';ctx.textAlign='center';ctx.fillText(new Date().toDateString()+' · same kick for everyone',W/2,H*0.16+24);
