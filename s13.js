@@ -4,7 +4,9 @@ const CMN=['THUNDER','GATOR','ROBOT','WOLF','SCORPION','BULLDOG','RAM','HAWK','B
  CMHAT=[['none','No hat',0],['cap','Team cap',500],['beanie','Beanie',500],['cowboy','Cowboy hat',1200],['top','Top hat',1500],['crown','Gold crown',2500]],
  CMGL=[['none','No glasses',0],['shades','Shades',500],['nerd','Big specs',500],['star','Star glasses',1500]],
  CMCH=[['none','No chain',0],['gold','Gold chain',2000],['medal','Champ medal',1500]],CMPRICE=5000;
-const CM=Object.assign({own:0,base:7,hue:0,hat:'none',gl:'none',ch:'none',name:'MASCOT',num:1,side:0,kick:0},J('fgfCM',{}));window.CM=CM;let CMO=J('fgfCMO',['none']);const T0J=TEAMS.map(q=>({p:q.p,s:q.s}));const cmSlot=b=>b<8?b:7;window.cmSlot=cmSlot;
+const CM=Object.assign({own:0,base:7,hue:0,hat:'none',gl:'none',ch:'none',name:'MASCOT',num:1,side:0,kick:0},J('fgfCM',{}));window.CM=CM;
+// one-time: clear earlier test customization so the editor starts from the plain template (owned items are kept)
+if(LS.fgfCMv!=='2'){Object.assign(CM,{hue:0,hat:'none',gl:'none',ch:'none'});SV('fgfCM',CM);LS.fgfCMv='2'}let CMO=J('fgfCMO',['none']);const T0J=TEAMS.map(q=>({p:q.p,s:q.s}));const cmSlot=b=>b<8?b:7;window.cmSlot=cmSlot;
 // kicker-head geometry for the new bases: [head ellipse cx,cy,rx,ry], [face cx,cy,rx,ry], fur light/dark
 const CMJ={8:['#1d2f6e','#ffffff'],9:['#5b2a9e','#f2c230'],10:['#1a1a1a','#e8822a'],11:['#1f5fd1','#ffffff'],12:['#0f5a34','#ffffff'],13:['#c0242a','#1a1a1a'],14:['#e8e8ea','#c0322a'],15:['#ececec','#1d2f6e'],16:['#0f6b3a','#ffffff'],17:['#1c1c22','#7a3fc4'],18:['#ececec','#2e8a3a'],19:['#6e1a2b','#e8c890']};
 function cmHueHex(h,deg){if(!deg)return h;const [r,g,b]=rgb(h),c=Math.cos(deg*Math.PI/180),s=Math.sin(deg*Math.PI/180),m=[0.213+c*0.787-s*0.213,0.715-c*0.715-s*0.715,0.072-c*0.072+s*0.928,0.213-c*0.213+s*0.143,0.715+c*0.285+s*0.140,0.072-c*0.072-s*0.283,0.213-c*0.213-s*0.787,0.715-c*0.715+s*0.715,0.072+c*0.928+s*0.072],f=v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0');return '#'+f(r*m[0]+g*m[1]+b*m[2])+f(r*m[3]+g*m[4]+b*m[5])+f(r*m[6]+g*m[7]+b*m[8])}
@@ -50,7 +52,7 @@ function drawCM(){BTN=[];txt('CREATE A MASCOT',W/2,H*0.06,Math.min(26,W*0.068),G
  ctx.textAlign='left';ctx.fillStyle='#fff';ctx.font='900 18px system-ui';ctx.fillText(CM.name,W*0.52,py+ph*0.42);ctx.fillStyle=GOLD;ctx.font='bold 13px system-ui';ctx.fillText('#'+CM.num+' · '+CMN[CM.base],W*0.52,py+ph*0.6);
  const acc=(L,f)=>{const it=L.find(q=>q[0]===CM[f])||L[0];return it[1]+(cmOwn(it[0])?'':' · 🪙 '+it[2].toLocaleString())};
  const cyc=(L,f)=>d=>{const i=L.findIndex(q=>q[0]===CM[f]);CM[f]=L[(i+d+L.length)%L.length][0];cmSave()};
- const R=[['BASE ANIMAL',CMN[CM.base],d=>{CM.base=(CM.base+d+20)%20;if(CM.kick&&CM.own){MK.masc=cmSlot(CM.base);saveMK()}cmSave()}],['COLOUR',CM.hue?'Shift '+CM.hue+'°':'Original',d=>{CM.hue=CMHUE[(CMHUE.indexOf(CM.hue)+d+CMHUE.length)%CMHUE.length];cmSave()}],
+ const R=[['BASE ANIMAL',CMN[CM.base],d=>{CM.base=(CM.base+d+20)%20;Object.assign(CM,{hue:0,hat:'none',gl:'none',ch:'none'});if(CM.kick&&CM.own){MK.masc=cmSlot(CM.base);saveMK()}cmSave()}],['COLOUR',CM.hue?'Shift '+CM.hue+'°':'Original',d=>{CM.hue=CMHUE[(CMHUE.indexOf(CM.hue)+d+CMHUE.length)%CMHUE.length];cmSave()}],
   ['HAT',acc(CMHAT,'hat'),cyc(CMHAT,'hat'),CMHAT,'hat'],['GLASSES',acc(CMGL,'gl'),cyc(CMGL,'gl'),CMGL,'gl'],['CHAIN',acc(CMCH,'ch'),cyc(CMCH,'ch'),CMCH,'ch'],
   ['NAME',CM.name,()=>{const v=prompt('Mascot name (max 12)',CM.name);if(v!=null){const t=v.toUpperCase().replace(/[^A-Z0-9 .\'-]/g,'').trim().slice(0,12);if(t){CM.name=t;cmSave();if(cmUse()){MK.name=t;saveMK()}}}}],
   ['NUMBER','#'+CM.num,()=>{const v=prompt('Jersey number 0-99',CM.num);if(v!=null&&/^\d{1,2}$/.test(v.trim())){CM.num=+v.trim();cmSave();if(cmUse()){MK.num=CM.num;saveMK()}}}]];
