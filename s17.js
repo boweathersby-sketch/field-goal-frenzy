@@ -8,9 +8,10 @@ const ores=S3.onResult;S3.onResult=function(good){const r=ores.apply(this,argume
 const oend=endGame;endGame=function(){if(LM.includes(mode)&&lives<=0&&CN<3&&state==='play'){CT={t0:performance.now(),p:CP[CN]};state='cont';msg=null;return}CT=null;return oend.apply(this,arguments)};
 const free=()=>window.TESTER===true||(typeof TESTER!=='undefined'&&TESTER);
 function buy(){const p=CT.p;if(!free()){if(coins<p)return;addCoins(-p)}CN++;CT=null;lives=1;prevLives=1;state='play';msg=null;newWind();resetBall();toast('🏈 +1 BALL · keep kicking!')}
+window.FGF_CONTFREE=()=>{if(!CT)return false;CN++;CT=null;lives=1;prevLives=1;state='play';msg=null;newWind();resetBall();toast('🏈 +1 BALL · keep kicking!');return true};window.FGF_CONTINFO=()=>CT?{p:CT.p,n:CN}:null;
 function quit(to){CT=null;state='play';oend();if(to)state=to}
 const osc=S3.screen;S3.screen=function(){
- if(state==='cont'&&CT){BTN=[];const left=Math.max(0,15-(performance.now()-CT.t0)/1000);if(left<=0){quit();return true}
+ if(state==='cont'&&CT){BTN=[];{const nw=performance.now();if(window.FGF_ADPLAYING&&CT.lt)CT.t0+=nw-CT.lt;CT.lt=nw}const left=Math.max(0,15-(performance.now()-CT.t0)/1000);if(left<=0){quit();return true}
   ctx.fillStyle='rgba(0,0,0,0.6)';ctx.fillRect(0,0,W,H);ctx.save();ctx.fillStyle='rgba(4,18,10,0.96)';ctx.strokeStyle=GOLD;ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(W*0.07,H*0.24,W*0.86,Math.max(H*0.42,H*0.5-H*0.24+150),18);ctx.fill();ctx.stroke();ctx.restore();
   txt('OUT OF BALLS!',W/2,H*0.31,Math.min(34,W*0.085),'#ff5a4f','#300');txt('Continue?',W/2,H*0.355,20,'#fff');ctx.fillStyle='#bcd';ctx.font='13px system-ui';ctx.textAlign='center';ctx.fillText('Score '+score+' · '+dist+' yds · continue '+(CN+1)+' of 3',W/2,H*0.39);
   const cx=W/2,cy=H*0.45,rr=24;ctx.strokeStyle='rgba(255,255,255,.2)';ctx.lineWidth=5;ctx.beginPath();ctx.arc(cx,cy,rr,0,6.29);ctx.stroke();ctx.strokeStyle=GOLD;ctx.beginPath();ctx.arc(cx,cy,rr,-1.571,-1.571+6.283*left/15);ctx.stroke();txt(Math.ceil(left)+'',cx,cy+8,22,'#fff');
