@@ -54,14 +54,53 @@ const UPX={};try{PAL.forEach((p,i)=>{const id='ux'+i;UPX[id]=[p[1],null];UPR.pus
  const oU=drawUprights;drawUprights=function(x,id,b,c,l,r,lt,rt,w){const u=UPX[id];if(!u)return oU.apply(this,arguments);x.save();x.lineCap='round';x.lineJoin='round';const P2=(st,lw)=>{x.strokeStyle=st;x.lineWidth=lw;postPath(x,b,c,l,r,lt,rt)};P2('rgba(0,0,0,0.55)',w+2.5);let st=u[0];if(u[1]){const g=x.createLinearGradient(l.x,lt.y,r.x,b.y);g.addColorStop(0,u[0]);g.addColorStop(1,u[1]);st=g}P2(st,w);x.restore()}}catch(e){}
 // ---------- HORNS ----------
 const HRN={};const NOTES=[262,294,330,349,392,440,494,523,587,659,698,784];const hn=[];
-for(let i=0;i<20;i++){const base=NOTES[i%12]*(i>=12?0.5:1),ty=['sawtooth','square','triangle','sine'][i%4];const seq=[[base,base,0.18,ty],[base*1.25,base*1.25,0.18,ty],[base*1.5,base*1.5,0.32,ty]];if(i%3===1)seq.push([base*2,base*2,0.4,ty]);if(i%5===4)seq.reverse();hn.push(['Horn No. '+(i+1),seq])}
+const IV=[[0,4,7],[0,7,12],[0,5,9,12],[0,3,7,10],[12,7,4,0],[0,4,7,12,16],[0,12],[0,2,4,7],[7,4,0],[0,5,7,12]],RH=[[.18,.18,.36],[.12,.12,.12,.4],[.4,.2],[.1,.1,.1,.1,.5],[.25,.5],[.15,.3,.15,.45]],WV=['sawtooth','square','triangle','sine'];
+for(let i=0;i<20;i++){const base=NOTES[(i*5)%12]*(i>=10?0.5:1),iv=IV[i%IV.length],rh=RH[(i*7)%RH.length],ty=WV[(i*3)%4],bend=i%4===3?1.06:1;const seq=iv.map((n,k)=>{const f=base*Math.pow(2,n/12);return[f,f*bend,rh[k%rh.length],ty]});hn.push(['Horn No. '+(i+1),seq])}
 [['Air Horn Blast',[[220,220,0.6,'sawtooth']]],['Foghorn',[[90,85,1.0,'sawtooth']]],['Fanfare',[[392,392,0.15,'square'],[523,523,0.15,'square'],[659,659,0.15,'square'],[784,784,0.45,'square']]],['Train Whistle',[[700,680,0.5,'triangle'],[880,860,0.5,'triangle']]],['Victory Bells',[[1047,1047,0.25,'sine'],[1319,1319,0.25,'sine'],[1568,1568,0.5,'sine']]],['Laser Zap',[[1800,200,0.4,'square']]],['Goofy Kazoo',[[330,370,0.2,'sawtooth'],[370,330,0.2,'sawtooth'],[440,440,0.35,'sawtooth']]],['Siren',[[600,900,0.4,'sine'],[900,600,0.4,'sine']]]].forEach(h=>hn.push(h));
 hn.forEach((h,i)=>{const id='hn'+i;HRN[id]=h[1];add('HORNS',[id,h[0],ladder(i,hn.length,80,3000)])});
 function playSeq(seq){let t=0;seq.forEach(n=>{setTimeout(()=>{try{tone(n[0],n[1],n[2],0.12,n[3])}catch(e){}},t*1000);t+=n[2]*0.9})}
 // ---------- CHANTS ----------
-const CHX={};const chs=[['Clap Clap',[1,1,0,1,1,0]],['We Will Kick',[1,1,2,0,1,1,2]],['Stomp Stomp Clap',[3,3,1,0,3,3,1]],['Let\'s Go',[2,0,2,0,1,1,1]],['Defense Drum',[3,0,3,0,3,3,0,3]],['Ole Wave',[2,2,2,0,2,2,2]],['Rally Roll',[1,1,1,1,1,1,1,1,2]],['Ooh Ahh',[2,0,4,0,2,0,4]],['Hey Hey',[2,1,2,1]],['Thunder Stomps',[3,3,3,3,2]],['Kick It',[1,0,2,2,0,1]],['Siren Chant',[4,2,4,2]],['Big Finish',[1,1,1,3,3,2,2,2]],['Slow Clap',[1,0,0,1,0,0,1,0,1,1]],['Victory Song',[2,4,2,4,1,1,2]]];
-chs.forEach((c,i)=>{const id='zc'+i;CHX[id]=c[1];add('CHANTS',[id,c[0],ladder(i,chs.length,150,3500)])});
-function chant(p){p.forEach((s,i)=>setTimeout(()=>{try{if(s===1)noise(0.06,2400,1.5,0.18);else if(s===2)tone(330,300,0.18,0.08,'sawtooth');else if(s===3)noise(0.12,120,1,0.3);else if(s===4)tone(440,520,0.3,0.07,'triangle')}catch(e){}},i*180))}
+const CHX={};
+// Each chant: [name, bpm, root Hz, crowd bed, pattern]. Tokens: c=clap s=stomp d=drum k=snare w=whistle -=rest
+// vN:vowel = crowd voice on scale step N (0..7) with vowel a/e/i/o/u, '>' after = long note
+const chs=[
+['Clap Clap',150,0,'light','c c - c c -'],
+['We Will Kick',90,196,'roar','s s c - s s c - v0:e v0:i v2:i v0:i>'],
+['Stomp Stomp Clap',100,0,'roar','s s c - s s c - s s c -'],
+["Let's Go",140,247,'mid','v4:e v2:o - - c c c - v4:e v2:o'],
+['Defense Drum',120,147,'mid','d - d - v0:e v1:e> - d d - d'],
+['Ole Wave',110,294,'mid','v0:o v2:e> v0:o v2:e> v4:o v2:e v1:o v0:e>'],
+['Rally Roll',180,0,'light','k k k k k k k k k k k k d'],
+['Ooh Ahh',80,220,'roar','v4:u> - v2:a> - v4:u> - v2:a>'],
+['Hey Hey',160,262,'mid','v0:e c v0:e c v3:e c v3:e c'],
+['Thunder Stomps',70,110,'roar','s - s - s - s s d>'],
+['Kick It',130,233,'mid','v3:i v1:i - c - v3:i v1:i - c c'],
+['Siren Chant',120,330,'light','v4:u v6:u v4:u v6:u v7:o>'],
+['Big Finish',150,196,'roar','c c c s s d d v0:a v2:a v4:a v7:a>'],
+['Slow Clap',60,0,'light','c - - c - - c - c - c c c c c c'],
+['Victory Song',100,262,'mid','v0:o v2:o v4:o> v5:a v4:o v2:o v0:o> c c'],
+['Seven Nation Stomp',110,165,'roar','v0:o> - v0:o v3:o v0:o v7:o v5:o> v4:o>'],
+['Air Raid',130,392,'light','w - w - v4:i v2:i v0:i -'],
+['Bongo Party',170,0,'mid','d k d k d d k - d k d k k k'],
+];
+chs.forEach((c,i)=>{const id='zc'+i;CHX[id]=c;add('CHANTS',[id,c[0],ladder(i,chs.length,150,3500)])});
+const SCALE=[0,2,4,5,7,9,11,12];const FORM={a:[800,1200],e:[500,1800],i:[320,2300],o:[500,900],u:[320,800]};
+function crowdVoice(c,t,f,vow,d,v){const fm=FORM[vow]||FORM.a,out=c.createGain();out.gain.setValueAtTime(0.0001,t);out.gain.exponentialRampToValueAtTime(v,t+0.04);out.gain.setValueAtTime(v,t+d*0.75);out.gain.exponentialRampToValueAtTime(0.0001,t+d);
+ const f1=c.createBiquadFilter(),f2=c.createBiquadFilter();f1.type=f2.type='bandpass';f1.frequency.value=fm[0];f2.frequency.value=fm[1];f1.Q.value=4;f2.Q.value=6;const mix=c.createGain();mix.gain.value=1;f1.connect(mix);f2.connect(mix);mix.connect(out);out.connect(OUTN(c));
+ for(let k=0;k<6;k++){const o=c.createOscillator();o.type='sawtooth';o.frequency.value=f*(k%2?2:1)*(1+(Math.random()-0.5)*0.03);o.connect(f1);o.connect(f2);o.start(t+Math.random()*0.03);o.stop(t+d+0.05)}}
+function OUTN(c){return window.FGF_MASTER||c.destination}
+function hit(c,t,kind,v){const len=kind==='s'||kind==='d'?0.18:kind==='w'?0.35:0.07,b=c.createBuffer(1,c.sampleRate*len,c.sampleRate),x=b.getChannelData(0);for(let i=0;i<x.length;i++)x[i]=(Math.random()*2-1)*Math.pow(1-i/x.length,kind==='c'?6:3);
+ const s=c.createBufferSource();s.buffer=b;const fl=c.createBiquadFilter();fl.type=kind==='c'?'highpass':kind==='w'?'bandpass':'lowpass';fl.frequency.value={c:1500,s:160,d:110,k:2600,w:2800}[kind];if(kind==='w')fl.Q.value=18;const g=c.createGain();g.gain.value=v*({c:0.5,s:0.9,d:0.9,k:0.35,w:0.6}[kind]);s.connect(fl);fl.connect(g);g.connect(OUTN(c));s.start(t);
+ if(kind==='d'||kind==='s'){const o=c.createOscillator(),og=c.createGain();o.frequency.setValueAtTime(kind==='d'?90:60,t);o.frequency.exponentialRampToValueAtTime(40,t+0.15);og.gain.setValueAtTime(v*0.8,t);og.gain.exponentialRampToValueAtTime(0.0001,t+0.2);o.connect(og);og.connect(OUTN(c));o.start(t);o.stop(t+0.22)}
+ if(kind==='w'){const o=c.createOscillator(),og=c.createGain();o.type='sine';o.frequency.setValueAtTime(2900,t);o.frequency.linearRampToValueAtTime(3300,t+0.3);og.gain.setValueAtTime(v*0.25,t);og.gain.exponentialRampToValueAtTime(0.0001,t+0.34);o.connect(og);og.connect(OUTN(c));o.start(t);o.stop(t+0.35)}}
+function bed(c,t,d,kind){if(kind==='none')return;const b=c.createBuffer(1,c.sampleRate*d,c.sampleRate),x=b.getChannelData(0);for(let i=0;i<x.length;i++)x[i]=Math.random()*2-1;const s=c.createBufferSource();s.buffer=b;const fl=c.createBiquadFilter();fl.type='bandpass';fl.frequency.value=kind==='roar'?600:kind==='mid'?900:1400;fl.Q.value=0.7;const g=c.createGain(),v={roar:0.1,mid:0.06,light:0.035}[kind]||0.05;g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(v,t+0.3);g.gain.setValueAtTime(v,t+d-0.4);g.gain.exponentialRampToValueAtTime(0.0001,t+d);s.connect(fl);fl.connect(g);g.connect(OUTN(c));s.start(t)}
+let chantBusy=0;
+function chant(ch){if(!ch||!Array.isArray(ch))return;if(LS.fgfMute==='1')return;const c=au&&au();if(!c)return;if(c.state!=='running')try{c.resume()}catch(e){}
+ const now=performance.now();if(now-chantBusy<1200)return;chantBusy=now;
+ const [nm,bpm,root,bd,pat]=ch,step=60/bpm/2,T=pat.trim().split(/\s+/);let t=c.currentTime+0.05;const dur=T.length*step+0.6;bed(c,t,dur,bd);
+ T.forEach(tok=>{const long=tok.endsWith('>');const tk=long?tok.slice(0,-1):tok;
+  if(tk==='-'){}else if(tk[0]==='v'){const [a,vw]=tk.slice(1).split(':');const f=root*Math.pow(2,SCALE[(+a)%8]/12);crowdVoice(c,t,f,vw,step*(long?2.6:0.95),0.14)}else hit(c,t,tk,0.5);t+=step*(long?2:1)})}
+window.FGF_CHANT=chant;
 let lastSt=0;setInterval(()=>{if(typeof streak!=='undefined'&&state==='play'&&streak>=3&&streak!==lastSt&&streak%3===0&&CHX[eq.z]){chant(CHX[eq.z])}lastSt=typeof streak!=='undefined'?streak:0},250);
 // ---------- FLAGS ----------
 const FLX={};const fl=[];
