@@ -11,9 +11,9 @@ function gear(fr,x,y,w,h,e){fr=Math.max(0,Math.min(3,fr|0));ctx.save();const P=(
  const v=VIS[e.v];if(v){const [px,py]=P(HELM[fr]);if(v[1]){ctx.shadowColor=v[0];ctx.shadowBlur=w*0.07}ctx.strokeStyle=v[0];ctx.lineWidth=Math.max(2,w*0.035);ctx.beginPath();ctx.ellipse(px,py,w*0.13,h*0.05,0,-0.35,0.9);ctx.stroke();ctx.shadowBlur=0}
  ctx.restore()}
 window.FGF_GEAR=gear;
-const od=S3.decal;S3.decal=function(fr,x,y,w,h){const r=od.apply(this,arguments);try{const im=S3.kimg();gear(fr,x,y,w,h,eq)}catch(e){}return r};
+const od=S3.decal;S3.decal=function(fr,x,y,w,h){const r=od.apply(this,arguments);try{const im=S3.kimg();if(!(im&&im._masc))gear(fr,x,y,w,h,eq)}catch(e){}return r};
 // kicker preview box (frame 0, current team kicker)
-function kprev(x,y,h,e){const im=S3.kimg();if(!im||!im.complete&&!im.getContext)return;const fw=203,fh=300,w=h*fw/fh;try{ctx.drawImage(im,0,0,fw,fh,x-w/2,y,w,h)}catch(er){return}gear(0,x-w/2,y,w,h,e)}
+function kprev(x,y,h,e){const im=S3.kimg();if(!im||!im.complete&&!im.getContext)return;const fw=203,fh=300,w=h*fw/fh;try{ctx.drawImage(im,0,0,fw,fh,x-w/2,y,w,h)}catch(er){return}if(!(im&&im._masc))gear(0,x-w/2,y,w,h,e)}
 window.FGF_KPREV=kprev;
 const KIND={h:'GOAL HORN · plays when you score',z:'CROWD CHANT · the crowd sings on a streak',c:'CLEATS · on your kicker\'s feet',g:'GLOVES · on your kicker\'s hands',v:'VISOR · on your kicker\'s helmet',t:'KICK TRAIL · behind the ball',e:'CELEBRATION · after a make',b:'BALL SKIN · replaces the football',s:'STADIUM THEME · the background'};
 function itemPrev(id,cx,cy,s){const sl=slot(id);if(sl==='t'){const sv=eq.t;eq.t=id;ctx.save();ctx.lineCap='round';for(let i=0;i<18;i++){const a=i/18;ctx.strokeStyle=S3.trail(a*0.9+0.1);ctx.lineWidth=2+a*s*0.25;ctx.beginPath();ctx.moveTo(cx-s*1.6+a*s*3.2,cy+s*0.6-a*s*1.2);ctx.lineTo(cx-s*1.6+(a+1/18)*s*3.2,cy+s*0.6-(a+1/18)*s*1.2);ctx.stroke()}ctx.restore();eq.t=sv;return}

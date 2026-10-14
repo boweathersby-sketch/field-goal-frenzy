@@ -78,8 +78,11 @@ function pool(bx0){const B=bx0||CURBOX,CATS=B[3]||['BALLS','TRAILS','CELEBRATE',
  if(B[6])try{UPR.forEach(u=>{if(u[2]>0&&!UPO.includes(u[0]))L.push(['up_'+u[0],u[1]+' Uprights',u[2]])})}catch(e){}if(B[5]){const ok=B[5].map(o=>o[0]);return L.filter(i=>ok.includes(rarity(i)))}return L}
 const rarity=i=>{for(const [n,p,a,b] of RAR)if(i[2]>=a&&i[2]<=b)return n;return'common'};
 let MB=null;
-const MBP=(b)=>(b||CURBOX)[4];
-function mystery(b){if(b)CURBOX=b;const P=pool();if(!P.length){const paid=MBP(),n=Math.max(paid,50)+Math.floor(Math.random()*(Math.max(0,500-Math.max(paid,50))+1));addCoins(n);MB={it:['coins','🪙 '+n+' coins',0],coins:n,rar:'',t0:performance.now()};sfx.cheer();return MB.it}
+const MBP=(b)=>{const B=b||CURBOX;return pool(B).length?B[4]:Math.min(B[4],500)};
+function mystery(b){if(b)CURBOX=b;const P=pool();if(!P.length){const paid=MBP(),dk=new Date().toDateString(),E=J('fgfMBE',{d:'',n:0});if(E.d!==dk){E.d=dk;E.n=0}
+ let n;if(E.n>=1)n=paid;else n=Math.max(paid,50)+Math.floor(Math.random()*(Math.max(0,500-Math.max(paid,50))+1));E.n++;SV('fgfMBE',E);
+ if(CURBOX[0]==='mbL'&&!J('fgfLegCol',0)){SV('fgfLegCol',1);try{toast('👑 Badge: Legend Collector')}catch(e){}}
+ addCoins(n);MB={it:['coins','🪙 '+n+' coins',0],coins:n,rar:'',t0:performance.now()};sfx.cheer();return MB.it}
  const by={};RAR.forEach(([n])=>by[n]=[]);P.forEach(i=>by[rarity(i)].push(i));
  let alive=(CURBOX[5]||RAR).filter(([n,p])=>by[n]&&by[n].length),tot=alive.reduce((a,[,p])=>a+p,0),r=Math.random()*tot,pick=alive[0][0];
  for(const [n,p] of alive){r-=p;if(r<=0){pick=n;break}}
@@ -106,7 +109,7 @@ function wxRows(){{const a=rowsArea();ctx.fillStyle='rgba(4,18,10,0.97)';ctx.fil
    bx(W*0.92-b2,by,b2,bh,pend==='o'+id?'CONFIRM':'OWN 🪙'+p2.toLocaleString(),()=>{if(pend==='o'+id){if(coins>=p2){addCoins(-p2);const L=J('fgfWxOwn',[]);L.push(id);SV('fgfWxOwn',L);toast('✔ '+nm+' unlocked');sfx.cheer()}else toast('Need 🪙 '+p2.toLocaleString());pend=null}else pend='o'+id},false,W<350?9:10)}})}
 function extras(){const {y0,y1}=rowsArea(),bw=W*0.92,x=W*0.04,rh=60,per=Math.max(1,Math.floor((y1-y0)/rh)),rows=BOXES.map(b=>['box',b]).concat([['fz']]);pager(rows.length,per);
  rows.slice(page*per,page*per+per).forEach((r,k)=>{const y=y0+k*rh;ctx.fillStyle='rgba(6,30,16,0.98)';ctx.strokeStyle=GOLD;ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(x,y,bw,rh-6,10);ctx.fill();ctx.stroke();ctx.textAlign='left';const fs=W<350?13:15,bw2=W<350?92:110;
-  if(r[0]==='box'){const B=r[1],left=pool(B).length,mp=B[4],od=B[5]?'Rare 60% · Epic 30% · Legendary 10%':'Common 60 · Rare 30 · Epic 9 · Leg. 1%';ctx.fillStyle=GOLD;ctx.font='900 '+fs+'px system-ui';ctx.fillText(B[1],x+10,y+19,bw-bw2-20);ctx.fillStyle='#fff';ctx.font='11px system-ui';ctx.fillText(left?B[2]+' · '+left+' left · 🪙 '+mp:'All owned · pays 🪙 '+mp+'–500',x+10,y+35,bw-bw2-20);ctx.fillStyle='#9bc';ctx.font='10px system-ui';ctx.fillText(od,x+10,y+48,bw-bw2-20);
+  if(r[0]==='box'){const B=r[1],left=pool(B).length,mp=MBP(B),od=B[5]?'Rare 60% · Epic 30% · Legendary 10%':'Common 60 · Rare 30 · Epic 9 · Leg. 1%';ctx.fillStyle=GOLD;ctx.font='900 '+fs+'px system-ui';ctx.fillText(B[1],x+10,y+19,bw-bw2-20);ctx.fillStyle='#fff';ctx.font='11px system-ui';ctx.fillText(left?B[2]+' · '+left+' left · 🪙 '+mp:'All owned · '+(J('fgfMBE',{d:'',n:0}).d===new Date().toDateString()&&J('fgfMBE',{n:0}).n>=1?'pays back 🪙 '+mp:'pays 🪙 '+mp+'–500 (1×/day)'),x+10,y+35,bw-bw2-20);ctx.fillStyle='#9bc';ctx.font='10px system-ui';ctx.fillText(od,x+10,y+48,bw-bw2-20);
    bx(x+bw-bw2-8,y+(rh-6)/2-15,bw2,30,pend===B[0]?'CONFIRM':'🪙 '+mp,()=>{if(pend===B[0]){if(coins>=mp){addCoins(-mp);mystery(B)}else toast('Need 🪙 '+mp);pend=null}else pend=B[0]},true,12)}
   else{ctx.fillStyle='#7fd3ff';ctx.font='900 '+fs+'px system-ui';ctx.fillText('🧊 STREAK FREEZE',x+10,y+19);ctx.fillStyle='#fff';ctx.font='11px system-ui';ctx.fillText('Keep your Daily streak · '+FRZ()+'/2 · 🪙 400',x+10,y+35,bw-bw2-20);
    bx(x+bw-bw2-8,y+(rh-6)/2-15,bw2,30,FRZ()>=2?'FULL':pend==='fz'?'CONFIRM':'🪙 400',()=>{if(FRZ()>=2)return;if(pend==='fz'){if(coins>=400){addCoins(-400);LS.fgfFreeze=FRZ()+1;toast('🧊 Streak Freeze added');sfx.cheer()}else toast('Need 🪙 400');pend=null}else pend='fz'},FRZ()<2,12)}})}
