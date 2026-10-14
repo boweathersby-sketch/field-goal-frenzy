@@ -19,6 +19,13 @@ const KIND={h:'GOAL HORN · plays when you score',z:'CROWD CHANT · the crowd si
 function itemPrev(id,cx,cy,s){const sl=slot(id);if(sl==='t'){const sv=eq.t;eq.t=id;ctx.save();ctx.lineCap='round';for(let i=0;i<18;i++){const a=i/18;ctx.strokeStyle=S3.trail(a*0.9+0.1);ctx.lineWidth=2+a*s*0.25;ctx.beginPath();ctx.moveTo(cx-s*1.6+a*s*3.2,cy+s*0.6-a*s*1.2);ctx.lineTo(cx-s*1.6+(a+1/18)*s*3.2,cy+s*0.6-(a+1/18)*s*1.2);ctx.stroke()}ctx.restore();eq.t=sv;return}
  if(sl==='e'){ctx.font=(s*1.4|0)+'px system-ui';ctx.textAlign='center';ctx.fillText(id==='e0'?'🎉':id==='e13'?'🪙':id==='e14'?'💖':id==='e15'?'🌈':id==='e12'?'⭐':'🎆',cx,cy+s*0.5);return}
  ctx.font=(s|0)+'px system-ui';ctx.textAlign='center';ctx.fillText(sl==='b'?'🏈':'🏟️',cx,cy+s*0.35)}
+window.FGF_ICON=function(id,cx,cy,s){const sl=slot(id);
+ if(sl==='t')return itemPrev(id,cx,cy,s*0.85);
+ if(sl==='e'){const C=window.FGF_CAT&&FGF_CAT.CEX[id];const cols=C?C[1]:id==='e1'?['#ff4040','#ffd23f','#3fa9ff']:id==='e2'?['#ffd23f','#ff6ad5','#5cf']:['#ff4d8d','#ffd23f','#4dd2ff','#7fe87f'];
+  ctx.save();for(let i=0;i<14;i++){const a=i/14*6.283,r=s*(0.45+0.55*((i*7)%5)/4);ctx.fillStyle=cols[i%cols.length];ctx.beginPath();ctx.arc(cx+Math.cos(a)*r,cy+Math.sin(a)*r*0.8,s*0.13+1,0,7);ctx.fill()}ctx.restore();return}
+ if(sl==='c'||sl==='g'||sl==='v'){const e=Object.assign({},eq);e[sl]=id;ctx.save();ctx.beginPath();ctx.rect(cx-s*1.3,cy-s*1.55,s*2.6,s*3.1);ctx.clip();const h=s*3.4;kprev(cx,cy-(sl==='c'?h*0.82:sl==='g'?h*0.5:h*0.12),h*2.2*(sl==='v'?1:1),e);ctx.restore();return}
+ if(sl==='m'){const T=window.FGF_MTH&&FGF_MTH[id];const sv=eq.m;eq.m=id;let th=null;try{th=FGF_MENUTH()}catch(er){}eq.m=sv;ctx.save();ctx.fillStyle=th?th.on:'#f2c230';ctx.strokeStyle=th?th.stroke:'#063';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(cx-s*1.2,cy-s*0.55,s*2.4,s*1.1,s*0.5);ctx.fill();ctx.stroke();ctx.fillStyle=th?(th.textOn||th.text):'#063';ctx.font='900 '+(s*0.6|0)+'px system-ui';ctx.textAlign='center';ctx.fillText('PLAY',cx,cy+s*0.22);ctx.restore();return}
+ return itemPrev(id,cx,cy,s)};
 // ---- Deal of the Day (replaces s20 layout) ----
 const osc=S3.screen;S3.screen=function(){if(state==='deal'&&window.FGF_DEAL){BTN=[];const d=FGF_DEAL();txt('💰 DEAL OF THE DAY',W/2,H*0.065,Math.min(26,W*0.07),GOLD,'#063');ctx.fillStyle='#bcd';ctx.font='12px system-ui';ctx.textAlign='center';ctx.fillText('A new coin discount every day',W/2,H*0.065+22);
  if(!d){txt('You own every shop item!',W/2,H*0.3,16,'#fff')}else{const id=d.it[0],sl=slot(id),gearK='cgv'.includes(sl);

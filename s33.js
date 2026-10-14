@@ -9,7 +9,7 @@ const T=[['mn0','Gold Classic',0,{fill:'rgba(6,30,16,0.92)',on:'#f2c230',stroke:
 ['mn12','Sunset',1100,{fill:'rgba(60,20,30,0.9)',on:'#ffb74d',stroke:'#ff8a65',text:'#fff3e0',textOn:'#3d1a00'}],['mn13','Chrome',1800,{fill:'rgba(40,44,50,0.94)',on:'#e0e0e0',stroke:'#ffffff',text:'#fafafa',textOn:'#222'}],
 ['mn14','Black & Gold',2200,{fill:'rgba(0,0,0,0.94)',on:'#ffd23f',stroke:'#ffd23f',text:'#ffd23f',textOn:'#000'}],['mn15','Rainbow',3500,{rainbow:1}],['mn16','Pixel Arcade',2000,{fill:'rgba(15,0,40,0.94)',on:'#00e5ff',stroke:'#ff00e5',text:'#fff',textOn:'#140030'}],
 ['mn17','Holiday Candy',1300,{fill:'rgba(80,0,10,0.92)',on:'#ffffff',stroke:'#ff5252',text:'#fff',textOn:'#b71c1c'}],['mn18','Forest',600,{fill:'rgba(10,40,15,0.94)',on:'#8bc34a',stroke:'#aed581',text:'#f1f8e9',textOn:'#1b3a0b'}],['mn19','PRO Gold Luxe',5000,{fill:'rgba(30,20,0,0.95)',on:'#ffe082',stroke:'#ffca28',text:'#fff8e1',textOn:'#3e2a00',glow:1}]];
-const TH={};T.forEach(t=>TH[t[0]]=t[3]);
+const TH={};T.forEach(t=>TH[t[0]]=t[3]);window.FGF_MTH=TH;
 if(!SHOP.find(c=>c[0]==='MENU')){const i=SHOP.findIndex(c=>c[0]==='WEATHER');SHOP.splice(i,0,['MENU',T.map(t=>[t[0],t[1],t[2]])])}
 SHOP.forEach(c=>c[1].forEach(i=>ITEM[i[0]]=i));if(!eq.m)eq.m='mn0';
 window.FGF_MENUTH=()=>{const t=TH[eq.m];if(!t||eq.m==='mn0')return null;if(t.team){const tm=TEAMS[myT()]||{p:'#5b2a86',s:'#f2c230'};return{fill:'rgba(0,0,0,0.6)',on:tm.s,stroke:tm.s,text:'#fff',textOn:tm.p}}if(t.rainbow){const h=(performance.now()/20)%360;return{fill:'rgba(10,10,20,0.92)',on:'hsl('+h+',90%,60%)',stroke:'hsl('+((h+120)%360)+',90%,65%)',text:'#fff',textOn:'#111'}}return t};
