@@ -6,7 +6,7 @@ const ladder=(i,n,lo,hi)=>{const t=n<=1?0:i/(n-1);return Math.round((lo*Math.pow
 const cat=n=>SHOP.find(c=>c[0]===n);const add=(n,it)=>{const c=cat(n);if(!c.some?0:0);if(!c[1].some(x=>x[0]===it[0]))c[1].push(it);ITEM[it[0]]=it};
 const hex2=(h,a)=>{const n=parseInt(h.slice(1),16);return'rgba('+(n>>16)+','+(n>>8&255)+','+(n&255)+','+a+')'};
 // ---------- TRAILS (solid + two-tone) ----------
-const TRX={};let k=0;const trs=[];PAL.forEach(p=>trs.push([p[0]+' Trail',[p[1],p[1]]]));
+const TRX={};let k=0;const trs=[];PAL.forEach(p=>trs.push([(p[0]==='Gold'?'Sunflower':p[0])+' Trail',[p[1],p[1]]]));
 for(let i=0;i<PAL.length;i++){const j=(i+5)%PAL.length,m=(i+9)%PAL.length;trs.push([PAL[i][0]+' & '+PAL[j][0],[PAL[i][1],PAL[j][1]]]);trs.push([PAL[i][0]+' Fade',[PAL[i][1],PAL[m][1]]])}
 [['Sunset Streak',['#ff5e3a','#ffcc33']],['Deep Ocean',['#003973','#00d2ff']],['Lava Flow',['#ff2200','#ffb000']],['Mint Breeze',['#a8ffce','#2ecc71']],['Cotton Candy',['#ff9ad5','#9ad5ff']],['Galaxy Dust',['#2b1055','#d3a6ff']],['Ghost Wisp',['#ffffff','#9aa5b1']],['Toxic Slime',['#39ff14','#0b6623']]].forEach(t=>trs.push(t));
 trs.forEach((t,i)=>{const id='tx'+i;TRX[id]=t[1];add('TRAILS',[id,t[0],ladder(i,trs.length,150,9000)])});
@@ -47,7 +47,7 @@ const oBG=drawBG;drawBG=function(){const r=oBG.apply(this,arguments);const t=THX
  const ty=t[3];PT.forEach(f=>{let x=f.x*W,y;if(ty==='stars'){ctx.fillStyle='rgba(255,255,255,'+(0.4+0.6*Math.abs(Math.sin(T*2+f.s*9)))+')';ctx.fillRect(x,f.y*hz*0.85,1.5,1.5);return}if(ty==='none')return;y=((f.y+T*0.05*f.s*(ty==='bubbles'?-1:1))%1+1)%1*hz;x+=Math.sin(T+f.s*7)*10;
   ctx.fillStyle=ty==='snow'?'rgba(255,255,255,.9)':ty==='embers'?'rgba(255,'+(120+f.s*80|0)+',40,.85)':ty==='leaves'?['#d35400','#f39c12','#a04000'][f.s*3|0]:ty==='petals'?'rgba(255,182,193,.9)':ty==='bubbles'?'rgba(180,230,255,.6)':'rgba(170,200,255,.6)';if(ty==='rain'){ctx.fillRect(x,y,1,7);return}ctx.beginPath();ctx.arc(x,y,1.2+f.s*1.4,0,7);ctx.fill()});ctx.restore();return r};
 // ---------- GEAR (cosmetic tints, no stat bonus) ----------
-const GC=FGF_GEARC;PAL.forEach((p,i)=>{add('CLEATS',['cx'+i,p[0]+' Cleats',ladder(i,16,200,6000)]);GC.CLT['cx'+i]=[p[1],i%4===3?1:0];add('HANDS',['gx'+i,p[0]+' Gloves',ladder(i,16,150,5000)]);GC.GLV['gx'+i]=[p[1],i%4===3?1:0]});
+const GC=FGF_GEARC;PAL.forEach((p,i)=>{add('CLEATS',['cx'+i,(p[0]==='Gold'?'Sunflower':p[0])+' Cleats',ladder(i,16,200,6000)]);GC.CLT['cx'+i]=[p[1],i%4===3?1:0];add('HANDS',['gx'+i,p[0]+' Gloves',ladder(i,16,150,5000)]);GC.GLV['gx'+i]=[p[1],i%4===3?1:0]});
 PAL.slice(0,12).forEach((p,i)=>{add('HANDS',['vx'+i,p[0]+' Visor',ladder(i,12,300,7000)]);GC.VIS['vx'+i]=[p[1],i%3===2?1:0]});
 // ---------- UPRIGHTS (My Stadium) ----------
 const UPX={};try{PAL.forEach((p,i)=>{const id='ux'+i;UPX[id]=[p[1],null];UPR.push([id,p[0]+' Uprights',ladder(i,16,300,5000)])});[['ug1','Sunset Fade','#ff5e3a','#ffcc33'],['ug2','Ocean Fade','#00d2ff','#003973'],['ug3','Toxic Glow','#39ff14','#0b6623'],['ug4','Royal','#8e24aa','#fdd835'],['ug5','Ice & Fire','#4fc3f7','#e53935'],['ug6','Pearl','#ffffff','#cfd8dc'],['ug7','Obsidian','#000','#555'],['ug8','Rose Gold','#f4c2c2','#b76e79']].forEach((u,i)=>{UPX[u[0]]=[u[2],u[3]];UPR.push([u[0],u[1],ladder(i,8,2000,9000)])});
