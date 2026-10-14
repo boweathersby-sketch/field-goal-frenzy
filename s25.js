@@ -2,7 +2,7 @@
 // Physics untouched: skins only change how the ball is drawn (same position, size and flight).
 (function(){
 const BALLS=[['bl0','Football',0],['bl1','Pumpkin',600],['bl2','Basketball',800],['bl3','Soccer Ball',800],['bl4','Tennis Ball',900],['bl5','Baseball',1000],['bl6','Beach Ball',1500],['bl7','Watermelon',2000],['bl8','Disco Ball',3500],['bl9','Golden Ball',5000]];
-const THEMES=[['th0','Home Stadium',0],['th1','Night Lights',1200],['th2','Snow Bowl',1800],['th3','Backyard',2200],['th4','Beach Bowl',3000]];
+const THEMES=[['th0','Home Stadium',0],['th1','Night Lights',800],['th2','Snow Bowl',1100],['th3','Backyard',1400],['th4','Beach Bowl',1800]];
 SHOP.push(['BALLS',BALLS],['STADIUMS',THEMES],['WEATHER',[]],['EXTRAS',[]]);
 const TR=SHOP.find(c=>c[0]==='TRAILS'),CE=SHOP.find(c=>c[0]==='CELEBRATE');
 [['t14','Confetti Trail',1500],['t15','Frost Trail',1200],['t16','Toxic Green',900]].forEach(i=>TR[1].push(i));
@@ -62,13 +62,13 @@ const oNW=newWind;newWind=function(){if(WXRUN&&mode==='classic'){window.__wx=WXR
 setInterval(()=>{if(WXRUN&&(mode!=='classic'||['title','shop','hub','teams'].includes(state)))WXRUN=null},300);
 function wxPlay(id){WXRUN=id;newGame('classic');toast('Classic · '+WX.find(w=>w[0]===id)[1])}
 // ---- extras ----
-const RAR=[['common',.60,0,1000],['rare',.30,1001,3000],['epic',.09,3001,8000],['legendary',.01,8001,1e9]];
+const RAR=[['common',.60,0,800],['rare',.30,801,2200],['epic',.09,2201,4500],['legendary',.01,4501,1e9]];
 const RAR_L={common:'Common (60%)',rare:'Rare (30%)',epic:'Epic (9%)',legendary:'Legendary (1%)'};
 function pool(){const L=[];SHOP.forEach(c=>{if(['BALLS','TRAILS','CELEBRATE','CLEATS','HANDS','STADIUMS','HORNS','CHANTS','FLAGS'].includes(c[0]))c[1].forEach(i=>{if(i[2]>0&&!(i[0]||'').startsWith('blS')&&!(window.FGF_LIMITED&&FGF_LIMITED[i[0]])&&!own.includes(i[0]))L.push(i)})});
  try{UPR.forEach(u=>{if(u[2]>0&&!UPO.includes(u[0]))L.push(['up_'+u[0],u[1]+' Uprights',u[2]])})}catch(e){}return L}
 const rarity=i=>{for(const [n,p,a,b] of RAR)if(i[2]>=a&&i[2]<=b)return n;return'common'};
 let MB=null;
-const MBP=()=>pool().length?750:250;
+const MBP=()=>pool().length?500:250;
 function mystery(){const P=pool();if(!P.length){const paid=250,n=Math.max(paid,50)+Math.floor(Math.random()*(500-Math.max(paid,50)+1));addCoins(n);MB={it:['coins','🪙 '+n+' coins',0],coins:n,rar:'',t0:performance.now()};sfx.cheer();return MB.it}
  const by={};RAR.forEach(([n])=>by[n]=[]);P.forEach(i=>by[rarity(i)].push(i));
  let alive=RAR.filter(([n,p])=>by[n].length),tot=alive.reduce((a,[,p])=>a+p,0),r=Math.random()*tot,pick=alive[0][0];
@@ -106,5 +106,7 @@ drawShop=function(){txt('COIN SHOP',W/2,H*0.065,Math.min(30,W*0.08),GOLD,'#063')
  const nm=SHOP[shopTab][0];if(nm==='WEATHER')wxRows();else if(nm==='EXTRAS')extras();else itemRows(SHOP[shopTab][1]);
  bx(W/2-90,H*0.93-14,180,40,'◀ BACK',()=>state='title');
  if(MB){const a=(performance.now()-MB.t0)/1000;if(a>3.2)MB=null;else{BTN=[];ctx.fillStyle='rgba(0,0,0,0.75)';ctx.fillRect(0,0,W,H);panel(W*0.1,H*0.3,W*0.8,H*0.3);txt('🎁 MYSTERY BOX',W/2,H*0.36,22,GOLD,'#063');if(MB.it[0].startsWith('bl')||MB.it[0].startsWith('th'))preview(MB.it[0],W/2,H*0.43,16);txt(MB.it[1],W/2,H*0.5,20,'#fff');ctx.fillStyle='#7fe87f';ctx.font='bold 13px system-ui';ctx.textAlign='center';ctx.fillText(MB.coins?'Collection complete · coins instead':(RAR_L[MB.rar]||'')+' · New! Equip it in its tab',W/2,H*0.55)}}};
-window.FGF_SHOPPG=v=>{if(v!=null)page=v;return page};window.FGF_SHOPTEST={mystery,wxPlay,WX,BALLS,THEMES};
+window.FGF_SHOPPG=v=>{if(v!=null)page=v;return page};// Soften original gear prices too
+SHOP.forEach(c=>{if(['CLEATS','HANDS','TRAILS','CELEBRATE'].includes(c[0]))c[1].forEach(it=>{if(it[2]>5000){it[2]=Math.round(it[2]*0.55/50)*50;ITEM[it[0]]=it}else if(it[2]>3000){it[2]=Math.round(it[2]*0.75/50)*50;ITEM[it[0]]=it}})});
+window.FGF_SHOPTEST={mystery,wxPlay,WX,BALLS,THEMES};
 })();
