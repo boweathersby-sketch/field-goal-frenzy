@@ -2,14 +2,17 @@
 (function(){
 window.FGF_CLOUDON=1;
 const SB=()=>window.FGF_ONLINE||{url:'https://fdmcgupjmjfpraznmsew.supabase.co',anonKey:''};
-const KEYS=['fgfPicks','fgfCoins','fgfOwn','fgfEq','fgfTeams','fgfCar','fgfPass','fgfMis','fgfMisW','fgfXP','fgfStats','fgfAch','fgfOLIni','fgfMenuOrder','fgfMute','fgfVib','fgfMusic','fgfKickType','fgfLeft','fgfTurf','fgfTurfO','fgfWxOwn','fgfFreeze','fgfChamps','fgfTitle','fgfPro','fgfLegend','fgfKN','fgfStreak','fgfLS','fgfFounder','fgfTeam','fgfMK','fgfCM','fgfCT','fgfUP','fgfBG'];
+const KEYS=['fgfPicks','fgfTroCyc','fgfTroAll','fgfCoins','fgfOwn','fgfEq','fgfTeams','fgfCar','fgfPass','fgfMis','fgfMisW','fgfXP','fgfStats','fgfAch','fgfOLIni','fgfMenuOrder','fgfMute','fgfVib','fgfMusic','fgfKickType','fgfLeft','fgfTurf','fgfTurfO','fgfWxOwn','fgfFreeze','fgfChamps','fgfTitle','fgfPro','fgfLegend','fgfKN','fgfStreak','fgfLS','fgfFounder','fgfTeam','fgfMK','fgfCM','fgfCT','fgfUP','fgfBG'];
 function snap(){const o={};KEYS.forEach(k=>{if(LS[k]!=null)o[k]=LS[k]});o._coins=+coins||+(LS.fgfCoins||0);o._v=1;return o}
 function apply(p){if(!p||typeof p!=='object')return;KEYS.forEach(k=>{if(p[k]!=null)LS[k]=typeof p[k]==='string'?p[k]:JSON.stringify(p[k])});
  if(p.fgfCoins!=null){coins=+p.fgfCoins||0}else if(p._coins!=null){coins=+p._coins||0;LS.fgfCoins=String(coins)}
  try{own=J('fgfOwn',own);eq=J('fgfEq',eq);if(LS.fgfTeam!=null)team=+LS.fgfTeam}catch(e){}}
 function merge(local,cloud){const out={...cloud};KEYS.forEach(k=>{
   if(local[k]==null)return;if(cloud[k]==null){out[k]=local[k];return}
-  if(k==='fgfOwn'||k==='fgfTeams'||k==='fgfAch'||k==='fgfTurfO'||k==='fgfWxOwn'){
+  if(k==='fgfAch'){try{const a=JSON.parse(local[k]||'{}'),b=JSON.parse(cloud[k]||'{}'),lc=local.fgfTroCyc||'',cc=cloud.fgfTroCyc||'';out[k]=JSON.stringify(lc>cc?a:cc>lc?b:{...b,...a})}catch(e){out[k]=local[k]}}
+  else if(k==='fgfTroCyc'){out[k]=(local[k]||'')>(cloud[k]||'')?local[k]:cloud[k]}
+  else if(k==='fgfTroAll'){try{const a=JSON.parse(local[k]||'{}'),b=JSON.parse(cloud[k]||'{}'),m={};Object.keys({...a,...b}).forEach(x=>m[x]=Math.max(+a[x]||0,+b[x]||0));out[k]=JSON.stringify(m)}catch(e){out[k]=local[k]}}
+  else if(k==='fgfOwn'||k==='fgfTeams'||k==='fgfTurfO'||k==='fgfWxOwn'){
     try{const a=JSON.parse(local[k]||'[]'),b=JSON.parse(cloud[k]||'[]');out[k]=JSON.stringify([...new Set([].concat(a,b))])}catch(e){out[k]=local[k]}
   }else if(k==='fgfCoins'){out[k]=String(Math.max(+local[k]||0,+cloud[k]||0))}
   else if(k==='fgfXP'||k==='fgfLegend'||k==='fgfChamps'||k==='fgfKN'){out[k]=String(Math.max(+local[k]||0,+cloud[k]||0))}
