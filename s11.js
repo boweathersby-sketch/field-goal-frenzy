@@ -23,7 +23,7 @@ if(window.TESTER){PACKS.push({id:'tester_ads',price:'',coins:0,name:'Tester: Ads
 {const ob=buyPack;buyPack=function(p){if(p.id==='tester_ads'){LS.fgfTestNoAds=LS.fgfTestNoAds==='1'?'0':'1';toast(LS.fgfTestNoAds==='1'?'🧪 Ads OFF (tester)':'🧪 Ads ON (tester)');return}
  if(p.sub||p.id==='noads_lifetime'){if(window.FGF_NOADS()&&!window.TESTER){toast('Ads are already off');return}}return ob(p)}}
 // ===== Pro Bundle extras (cosmetic / bonus only) =====
-window.FGF_PRO=()=>LS.fgfPro==='1'||!!(window.TESTER&&LS.fgfTestPro==='1');
+window.FGF_PRO=()=>LS.fgfPro==='1'||!!(window.TESTER&&LS.fgfTestPro!=='0');
 // old Pro owners keep everything and get the new extras (+7,500 to match the new 10,000 coins), once
 if(LS.fgfPro==='1'&&!LS.fgfPro2){LS.fgfPro2='1';addCoins(5000);toast('⭐ Pro upgraded: +5,000 coins & new Pro extras')}
 // Pro uprights
@@ -45,8 +45,8 @@ function goldify(src,row){const k=row+'_'+(src.__gid||(src.__gid=Math.random()))
 {const od=drawMK;drawMK=function(){od();const ph=Math.min(H*0.44,W*1.05),pw=Math.min(W*0.9,ph*0.62),x0=W/2-pw/2+8,y0=H*0.075+8,on=LS.fgfGoldLook==='1';
  bx(x0,y0,Math.min(124,pw*0.46),26,FGF_PRO()?(on?'⭐ GOLD LOOK: ON':'⭐ GOLD LOOK: OFF'):'🔒 PRO GOLD LOOK',()=>{if(!FGF_PRO()){toast('⭐ Pro Bundle only');return}LS.fgfGoldLook=on?'0':'1'},FGF_PRO()&&on,10)}}
 // tester: unlock Pro
-if(window.TESTER){PACKS.push({id:'tester_pro',price:'',coins:0,name:'Tester: Pro',desc:'Unlock Pro extras for testing (tester mode only)',icon:'🧪 '});const tp=PACKS[PACKS.length-1];Object.defineProperty(tp,'price',{get:()=>LS.fgfTestPro==='1'?'PRO ON':'PRO OFF'})}
-{const ob=buyPack;buyPack=function(p){if(p.id==='tester_pro'){LS.fgfTestPro=LS.fgfTestPro==='1'?'0':'1';proSync();toast(LS.fgfTestPro==='1'?'🧪 Pro ON (tester)':'🧪 Pro OFF (tester)');return}return ob(p)}}
+if(window.TESTER){PACKS.push({id:'tester_pro',price:'',coins:0,name:'Tester: Pro',desc:'Unlock Pro extras for testing (tester mode only)',icon:'🧪 '});const tp=PACKS[PACKS.length-1];Object.defineProperty(tp,'price',{get:()=>LS.fgfTestPro!=='0'?'PRO ON':'PRO OFF'})}
+{const ob=buyPack;buyPack=function(p){if(p.id==='tester_pro'){LS.fgfTestPro=LS.fgfTestPro!=='0'?'0':'1';proSync();toast(LS.fgfTestPro!=='0'?'🧪 Pro ON (tester)':'🧪 Pro OFF (tester)');return}return ob(p)}}
 // mascot kicker in the My Kicker preview uses the same sheet as in game (mySheet -> mascSheet)
 
 // one bad frame must never freeze the game: log it and keep the loop running
