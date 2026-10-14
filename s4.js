@@ -79,7 +79,7 @@ S4.dailyLine=()=>{const d=DL();if(d.day===dkey(new Date())&&d.done)return(d.made
 S4.daily=()=>{const d=DL();if(d.day===dkey(new Date())&&d.done){state='dres';return}const c=dailyCfg();mode='daily';newGame('daily');lives=1;dist=c.d;weather=c.wx;wind={mph:c.mph,a:c.a,x:Math.sin(c.a)*c.mph,z:Math.cos(c.a)*c.mph*0.3};resetBall();bannerT=0;toast('📅 DAILY · '+c.d+' YDS · ONE SHOT')};
 function dailyDone(good){const d=DL(),t=dkey(new Date()),y=new Date();y.setDate(y.getDate()-1);d.streak=good?(d.last===dkey(y)?d.streak+1:1):0;if(good)d.last=t;d.day=t;d.done=true;d.made=good;let rw=0;if(good){rw=150+(dist-45)*10;addCoins(rw)}d.rw=rw;d.dist=dist;SV('fgfDaily',d);if(d.streak>=7)unlock('daily7')}
 // ---- tutorial ----
-const TUT=[{d:25,mph:0,a:0,h:'Swipe STRAIGHT UP from the ball',s:'Nice and smooth. Aim for the middle.'},{d:30,mph:12,a:-Math.PI/2,h:'Wind blows LEFT ← · curve your swipe RIGHT into it',s:'Bend your swipe like a ) to fight the wind.'},{d:45,mph:0,a:0,h:'Long kick! Swipe FAST for full power',s:'Speed = power. Watch the KICK POWER bar.'}];let TS=0,tutMsg='';
+const TUT=[{d:25,mph:0,a:0,h:'Swipe from the ball TOWARD THE POSTS',s:'Nice and smooth. Aim for the middle.'},{d:30,mph:12,a:-Math.PI/2,h:'Wind blows LEFT ← · curve your swipe RIGHT into it',s:'Bend your swipe like a ) to fight the wind.'},{d:45,mph:0,a:0,h:'Long kick! Swipe FAST for full power',s:'Speed = power. Watch the KICK POWER bar.'}];let TS=0,tutMsg='';
 S4.tut=()=>{TS=0;mode='tut';newGame('tut');tutSet()};
 function tutSet(){const t=TUT[TS];dist=t.d;weather='clear';wind={mph:t.mph,a:t.a,x:Math.sin(t.a)*t.mph,z:0};resetBall();msg=null;state='play'}
 function tutRes(good){msg.s=good?['Perfect! 🎯','You fought the wind! 💨','BOOM! 💥'][TS]:'Close! '+TUT[TS].s}
@@ -90,7 +90,7 @@ function tutDraw(){if(msg||ball.fly)return;const t=TUT[TS];const Y=H*0.185;panel
  // guide arrow
  const tee=TEE(),ph=(T*0.9)%1;ctx.save();ctx.globalAlpha=Math.sin(ph*Math.PI)*0.8;ctx.strokeStyle='#fff';ctx.lineWidth=5;ctx.lineCap='round';ctx.beginPath();const x0=W*0.55,y0=H*0.85,x1=W*0.55,y1=H*0.55;ctx.moveTo(x0,y0);if(TS===1)ctx.quadraticCurveTo(W*0.75,H*0.7,x1,y1);else ctx.lineTo(x1,y0-(y0-y1)*ph);ctx.stroke();ctx.restore()}
 addEventListener('pointerdown',e=>{if(state==='play'&&mode==='tut'&&!ball.fly&&!msg){const x=e.clientX,y=e.clientY;if(Math.abs(x-(W*0.95-40))<40&&Math.abs(y-(H*0.185+17))<18){e.stopImmediatePropagation();tutEnd()}}},true);
-if(!LS.fgfTut){const go2=()=>{if(state==='title'&&team>=0&&LS.fgfHow){S4.tut()}else setTimeout(go2,400)};setTimeout(go2,300)}
+if(!LS.fgfTut){const go2=()=>{if(state==='title'&&team>=0&&LS.fgfHow&&!LS.fgfTut){S4.tut()}else setTimeout(go2,400)};setTimeout(go2,300)}
 // ---- screens ----
 const oScreen=S3.screen;S3.screen=function(){if(state==='replay'){BTN=[];drawReplay();return true}if(state==='dres'){BTN=[];drawDres();return true}if(state==='ach'){BTN=[];drawAch();return true}if(state==='share'&&SH){BTN=[];drawShare();return true}return oScreen()};
 function drawReplay(){if(RP&&RP.rec&&CLIP){BTN=[];if(CLIP.t0){clipFrame();if(CLIP.vt)CLIP.vt.requestFrame()}clipOverlay();return}const a=0.6+0.4*Math.sin(T*6);ctx.fillStyle='rgba(200,20,20,'+(0.85)+')';ctx.beginPath();ctx.roundRect(12,160,96,30,6);ctx.fill();ctx.fillStyle='#fff';ctx.globalAlpha=a;ctx.beginPath();ctx.arc(28,175,6,0,7);ctx.fill();ctx.globalAlpha=1;ctx.font='900 14px system-ui';ctx.textAlign='left';ctx.fillText('REPLAY',40,180);ctx.fillStyle='rgba(0,0,0,0.25)';ctx.fillRect(0,0,W,8);ctx.fillRect(0,H-8,W,8);

@@ -39,9 +39,9 @@ const osh=share;share=function(t){const r=osh.apply(this,arguments);if(/80-yard 
 const osc=S3.screen;S3.screen=function(){
  if(state==='rres'&&RV){BTN=[];panel(W*0.08,H*0.22,W*0.84,H*0.5);txt(RV.win?'🏆 YOU WIN!':'RIVAL WINS',W/2,H*0.29,30,RV.win?GOLD:'#ff6b6b','#063');txt('vs '+RV.n,W/2,H*0.335,15,'#cfe');txt(RV.me+' – '+RV.ai,W/2,H*0.42,54,'#fff','#063');RV.log.forEach((l,i)=>txt('R'+(i+1)+' · '+l[2]+' yds   YOU '+(l[0]?'✅':'❌')+'   RIVAL '+(l[1]?'✅':'❌'),W/2,H*0.47+i*20,13,'#dde'));txt(RV.win?'🪙 +300 prize':'🪙 +50 for showing up',W/2,H*0.68,16,GOLD);bx(W*0.1,H*0.76,W*0.38,46,'REMATCH',()=>rvStart(),true);bx(W*0.52,H*0.76,W*0.38,46,'MENU',()=>{state='title';mode='classic'});return true}
  const r=osc.apply(this,arguments);
- if(state==='board')bx(W*0.04,H*0.03,W*0.34,30,'🆚 RIVAL',()=>rvStart(),false,13);
- if(state==='wlb')bx(W*0.62,H*0.03,W*0.34,30,'🆚 RIVAL',()=>rvStart(),false,13);
- if(state==='howto')bx(W*0.62,H*0.025,W*0.34,30,'📖 TUTORIAL',()=>{HT.y=0;S4.tut()},false,12);
+ if(state==='board')bx(W*0.06,H*0.79,W*0.41,36,'🆚 RIVAL',()=>rvStart(),false,13);
+ if(state==='wlb')bx(W*0.53,H*0.88,W*0.41,44,'🆚 RIVAL',()=>rvStart(),false,13);
+ if(state==='howto')bx(W*0.06,H*0.915-20,W*0.41,42,'📖 TUTORIAL',()=>{HT.y=0;S4.tut()},false,14);
  if(state==='play'&&mode==='rival'&&RV){ctx.font='900 13px system-ui';ctx.textAlign='center';ctx.fillStyle=GOLD;ctx.fillText('🆚 '+RV.n+' · R'+(RV.r+1)+(RV.r>=5?' SD':'/5')+' · YOU '+RV.me+' – '+RV.ai,W/2,H*0.155)}
  return r};
 })();

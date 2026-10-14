@@ -71,6 +71,6 @@ function drawCM(){BTN=[];txt('CREATE A MASCOT',W/2,H*0.06,Math.min(26,W*0.068),G
  else{bx(W*0.05,yb,bw,40,CM.side?'✔ ON SIDELINE':'PUT ON SIDELINE',()=>{CM.side=CM.side?0:1;cmSave()},!!CM.side,12);
   bx(W*0.05+bw+8,yb,bw,40,cmUse()?'✔ MY KICKER':'USE AS KICKER',()=>{if(cmUse()){CM.kick=0;MK.masc=-1}else{CM.kick=1;MK.masc=cmSlot(CM.base);MK.on=1;MK.name=CM.name;MK.num=CM.num}cmSave();saveMK();KC5.my=null},cmUse(),12)}
  bx(W/2-90,H*0.93-20,180,40,'◀ BACK',()=>state='teams')}
-{const oS=S3.screen;S3.screen=function(){if(state==='cm'){drawCM();return true}const r=oS();if(state==='teams'&&window.SWC==null)bx(W/2-4-W*0.44,H*0.79,W*0.44,36,'🐾 CREATE MASCOT',()=>state='cm',false,12);return r}}
+{const oS=S3.screen;S3.screen=function(){if(state==='cm'){drawCM();return true}const r=oS();if(state==='teams'&&window.SWC==null)bx(W/2-4-W*0.44,H*0.14+4*(Math.min(H*0.155,130)+8),W*0.44,36,'🐾 CREATE MASCOT',()=>state='cm',false,12);return r}}
 // if the base animal changes while it's the kicker, keep the kicker in sync
 setInterval(()=>{if(CM.kick&&CM.own&&MK.masc>=0&&MK.masc!==cmSlot(CM.base)&&MK.masc!==-1){/* player picked another mascot in My Kicker */CM.kick=0;SV('fgfCM',CM)}},700);

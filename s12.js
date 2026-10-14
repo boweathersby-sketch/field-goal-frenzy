@@ -57,6 +57,6 @@ function drawCT(){BTN=[];txt('CREATE YOUR TEAM',W/2,H*0.06,Math.min(26,W*0.068),
  if(pro)bx(W*0.05,yb,bw,40,CT.on?'✔ USING MY TEAM · TAP TO TURN OFF':'USE MY TEAM',()=>{CT.on=CT.on?0:1;ctSave();toast(CT.on?'🏈 '+CT.n+' is your team':'Team look back to '+T0[myT()].n)},!!CT.on,13);
  else bx(W*0.05,yb,bw,40,'🔒 GET THE PRO BUNDLE',()=>{state='shop';shopTab=SHOP.length},true,13);
  bx(W/2-90,H*0.93-20,180,40,'◀ BACK',()=>state='teams')}
-{const oS=S3.screen;S3.screen=function(){if(state==='ct'){drawCT();return true}const r=oS();if(state==='teams'&&window.SWC==null)bx(W/2+4,H*0.79,W*0.44,36,(FGF_PRO()?'⭐ ':'🔒 ')+'CREATE TEAM',()=>state='ct',false,12);return r}}
+{const oS=S3.screen;S3.screen=function(){if(state==='ct'){drawCT();return true}const r=oS();if(state==='teams'&&window.SWC==null)bx(W/2+4,H*0.14+4*(Math.min(H*0.155,130)+8),W*0.44,36,(FGF_PRO()?'⭐ ':'🔒 ')+'CREATE TEAM',()=>state='ct',false,12);return r}}
 // keep the custom look in sync with Pro (tester toggle / purchase) and at start
 {let lp=null;setInterval(()=>{const p=ctLive();if(p!==lp){lp=p;ctApply()}},500);ctApply()}
