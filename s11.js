@@ -6,7 +6,7 @@ const NOADS=[
  {id:'noads_yearly',price:'$4.99/yr',coins:0,name:'Remove Ads · Yearly',desc:'No ads for a year · '+SUBTXT,icon:'🚫 ',tag:'SAVE 58%',sub:'P1Y'},
  {id:'noads_lifetime',price:'$9.99',coins:0,name:'Remove Ads · Forever',desc:'One-time purchase · no ads forever',icon:'🚫 '}];
 {const i=PACKS.findIndex(p=>p.id==='pro_bundle');PACKS.splice(i+1,0,...NOADS)}
-if(!window.FGF_APP)NOADS.forEach(p=>p.desc+=' · Coming soon on Google Play');
+if(!window.FGF_APP)NOADS.forEach(p=>p.desc=p.desc.replace(/ Cancel anytime in Google Play.?/,' Cancel anytime.')+' Coming soon.');
 // Play Console products to create (the app build reads this list)
 window.FGF_PLAY_PRODUCTS={subscriptions:[{id:'noads_monthly',period:'P1M',price:'0.99 USD'},{id:'noads_yearly',period:'P1Y',price:'4.99 USD'}],
  inapp:PACKS.filter(p=>!p.sub&&!/^tester_/.test(p.id)).map(p=>({id:p.id,price:p.price.replace('$','')+' USD'}))};

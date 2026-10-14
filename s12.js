@@ -6,7 +6,7 @@ function nameOK(v){const u=String(v||'').toUpperCase(),z=u.replace(/[^A-Z0-9]/g,
  if(NBAD.some(b=>z.includes(b)||l.includes(b)))return false;const words=u.split(/[^A-Z0-9]+/);if(NFLN.some(n=>words.includes(n)||z.includes(n)&&n.length>=6))return false;return true}
 window.nameOK=nameOK;
 {const op=window.prompt.bind(window);window.prompt=function(q,d){const v=op(q,d);if(v!=null&&/name|abbrev|text/i.test(q)&&!nameOK(v)){toastNow?toastNow('🚫 That name isn\'t allowed · try another'):toast('🚫 That name isn\'t allowed');return null}return v}}
-// ---- the custom team (a skin over your current team slot: its name, colours, number and logo) ----
+// ---- the custom team (a skin over your current team slot: its name, colors, number and logo) ----
 const CT=Object.assign({on:0,n:'MY TEAM',a:'MYT',p:'#c81e3a',s:'#ffd23f',num:9,shape:0,icon:0},J('fgfCT',{}));window.CT=CT;
 const CTPAL=['#c81e3a','#e8641b','#ffd23f','#2e9d4a','#0f8f8c','#1f6fd1','#1b2a5a','#5b2a9e','#d43f8d','#262626','#8a8f98','#ffffff','#6e1a2b','#c9a46a'];
 const CTSH=['SHIELD','CIRCLE','DIAMOND','HEXAGON'],CTIC=['STAR','BOLT','CROWN','FLAME','LETTERS','BALL'];

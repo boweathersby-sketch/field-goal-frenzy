@@ -1,5 +1,6 @@
 // s34: Cloud Save — optional email magic-link on Supabase. Local stays default until signed in.
 (function(){
+window.FGF_CLOUDON=1;
 const SB=()=>window.FGF_ONLINE||{url:'https://fdmcgupjmjfpraznmsew.supabase.co',anonKey:''};
 const KEYS=['fgfCoins','fgfOwn','fgfEq','fgfTeams','fgfCar','fgfPass','fgfMis','fgfMisW','fgfXP','fgfStats','fgfAch','fgfOLIni','fgfMenuOrder','fgfMute','fgfVib','fgfMusic','fgfKickType','fgfLeft','fgfTurf','fgfTurfO','fgfWxOwn','fgfFreeze','fgfChamps','fgfTitle','fgfPro','fgfLegend','fgfKN','fgfStreak','fgfLS','fgfFounder','fgfTeam','fgfMK','fgfCM','fgfCT','fgfUP','fgfBG'];
 function snap(){const o={};KEYS.forEach(k=>{if(LS[k]!=null)o[k]=LS[k]});o._coins=+coins||+(LS.fgfCoins||0);o._v=1;return o}
@@ -29,7 +30,7 @@ async function push(payload){const id=uid();if(!id)return;const body={user_id:id
 async function syncNow(quiet){if(!uid()){if(!quiet)toast('Sign in to sync');return}try{await refresh();const remote=await pull();const local=snap();local._at=+(LS.fgfCloudAt||0);
  const merged=remote&&remote.payload?merge(local,remote.payload):local;apply(merged);LS.fgfCloudAt=String(Date.now());await push(snap());if(!quiet)toast('☁ Progress synced')}catch(e){if(!quiet)toast('Cloud sync failed · try again');console.warn(e)}}
 async function sendMagic(email){email=(email||'').trim().toLowerCase();if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast('Enter a valid email');return}
- try{await auth('otp',{email,create_user:true});LS.fgfCloudEmail=email;toast('Check your email for the sign-in link');CS.sent=1}catch(e){toast((e.message||'Could not send link').slice(0,60))}}
+ try{await auth('otp?redirect_to='+encodeURIComponent(location.origin+location.pathname),{email,create_user:true});LS.fgfCloudEmail=email;toast('Check your email for the sign-in link');CS.sent=1}catch(e){toast((e.message||'Could not send link').slice(0,60))}}
 async function signOut(){try{if(sess)await fetch(SB().url+'/auth/v1/logout',{method:'POST',headers:hdr()})}catch(e){}sess=null;delete LS.fgfSess;toast('Signed out · progress stays on this device');CS.mode='menu'}
 // Capture magic-link tokens from URL hash/query
 (function boot(){try{const h=location.hash||'',q=location.search||'';const m=h.match(/access_token=([^&]+)/)||q.match(/access_token=([^&]+)/);const r=h.match(/refresh_token=([^&]+)/)||q.match(/refresh_token=([^&]+)/);
