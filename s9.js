@@ -18,7 +18,7 @@ drawChal=function(){dcCheck();txt('DAILY GOALS',W/2,H*0.08,Math.min(26,W*0.07),G
   ctx.textAlign='right';ctx.fillStyle=GOLD;ctx.font='900 '+Math.min(11,rh*0.3)+'px system-ui';ctx.fillText('🪙 '+c[3],W*0.93,y+rh*0.36);ctx.fillStyle='#fff';ctx.font=Math.min(10,rh*0.28)+'px system-ui';ctx.fillText(DC.p[k]+'/'+c[2],W*0.93,y+rh*0.7);ctx.fillStyle='#223';ctx.fillRect(W*0.07,y+rh-8,W*0.86,3);ctx.fillStyle=d?'#3ddc84':GOLD;ctx.fillRect(W*0.07,y+rh-8,W*0.86*DC.p[k]/c[2],3)});
  const yb=y0+DCN*rh+2;ctx.textAlign='center';ctx.fillStyle=DC.bon?'#7fd38a':GOLD;ctx.font='900 12px system-ui';ctx.fillText(DC.bon?'✔ ALL-12 BONUS EARNED  🪙 +'+DCB12:'Finish all 12 for a bonus  🪙 +'+DCB12,W/2,yb+16);
  bx(W/2-90,H*0.93-20,180,40,'◀ MENU',()=>state='title',true,15)};
-menuExtras=(function(){return function(){const yy=H*0.255,w=(W*0.88-12)/3,x0=W*0.06,pd=lsPending();
+menuExtras=(function(){return function(){const yy=Math.max(H*0.255,window.__TB||0),w=(W*0.88-12)/3,x0=W*0.06,pd=lsPending();
  chip(x0,yy,w,26,pd?'🎁 DAY '+pd+' +'+LSR[pd-1]:'🎁 DAY '+LSS.day+' ✔',()=>{if(pd)lsClaim();else toast('Streak day '+LSS.day+' · come back tomorrow')},!!pd);
  chip(x0+w+6,yy,w,26,'🎯 DAILY '+dDone()+'/'+DCN,()=>state='chal');
  chip(x0+2*(w+6),yy,w,26,KOTW?'⭐ KOTW '+KOTW.d+'y':'⭐ KICK OF WK',()=>state='kotw');
