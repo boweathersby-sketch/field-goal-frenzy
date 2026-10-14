@@ -6,7 +6,7 @@ const on=()=>!!(window.FGF_ADS||(window.TESTER&&LS.fgfAdMock==='1'));window.FGF_
 const noAds=()=>{try{return FGF_NOADS()}catch(e){return false}};
 // ---- adapters ----
 const Mock={name:'mock',init(){return Promise.resolve(true)},
- show(kind){return new Promise(res=>{window.FGF_ADPLAYING=1;const d=document.createElement('div');d.style.cssText='position:fixed;inset:0;z-index:20;background:rgba(5,10,20,.96);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:system-ui;text-align:center';
+ show(kind){if(LS.fgfAdNoFill==='1')return Promise.resolve(false);return new Promise(res=>{window.FGF_ADPLAYING=1;const d=document.createElement('div');d.style.cssText='position:fixed;inset:0;z-index:20;background:rgba(5,10,20,.96);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:system-ui;text-align:center';
   d.innerHTML='<div style="font:900 13px system-ui;color:#ff6af0">🧪 MOCK AD ('+kind+')</div><div style="font:900 26px system-ui;margin:14px 0 6px">Ad would play here</div><div style="color:#bcd;font-size:13px;max-width:280px">'+(kind==='rewarded'?'Watch to the end to get your reward.':'Skippable after 5 seconds.')+'</div><button id="adb" disabled style="margin-top:26px;font:900 16px system-ui;padding:12px 26px;border-radius:12px;border:2px solid #f2c230;background:#1d2a3c;color:#889">5</button>'+(kind==='rewarded'?'<button id="adx" style="margin-top:12px;background:none;border:0;color:#8ab;font-size:13px">Close (no reward)</button>':'');
   document.body.appendChild(d);let t=5;const b=d.querySelector('#adb'),fin=r=>{d.remove();window.FGF_ADPLAYING=0;res(r)};const iv=setInterval(()=>{t--;if(t>0)b.textContent=t;else{clearInterval(iv);b.disabled=false;b.style.background='#f2c230';b.style.color='#063';b.textContent=kind==='rewarded'?'CLAIM REWARD':'SKIP ▶'}},1000);
   b.onclick=()=>fin(true);const x=d.querySelector('#adx');if(x)x.onclick=()=>{clearInterval(iv);fin(false)}})},
@@ -15,7 +15,10 @@ const Mock={name:'mock',init(){return Promise.resolve(true)},
 const IDS=window.FGF_ADMOB_IDS||{interstitial:'',rewarded:'',banner:''};
 const AdMobA={name:'admob',init(){return window.AdMob?AdMob.initialize({}).then(()=>true).catch(()=>false):Promise.resolve(false)},
  interstitial(){return AdMob.prepareInterstitial({adId:IDS.interstitial}).then(()=>AdMob.showInterstitial()).then(()=>true).catch(()=>false)},
- rewarded(){return new Promise(res=>{let got=false;const h=AdMob.addListener&&AdMob.addListener('onRewardedVideoAdReward',()=>{got=true});AdMob.prepareRewardVideoAd({adId:IDS.rewarded}).then(()=>AdMob.showRewardVideoAd()).then(()=>res(true)).catch(()=>res(got)).finally(()=>{try{h&&h.remove&&h.remove()}catch(e){}})})},
+ rewarded(){return new Promise(res=>{let got=false,done=false;const hs=[];const fin=()=>{if(done)return;done=true;hs.forEach(h=>{try{h&&h.remove&&h.remove()}catch(e){}});res(got)};
+  // reward ONLY on the earned-reward callback; show/close/error never grant it
+  try{hs.push(AdMob.addListener('onRewardedVideoAdReward',()=>{got=true}));hs.push(AdMob.addListener('onRewardedVideoAdDismissed',()=>setTimeout(fin,300)));hs.push(AdMob.addListener('onRewardedVideoAdFailedToLoad',fin));hs.push(AdMob.addListener('onRewardedVideoAdFailedToShow',fin))}catch(e){}
+  AdMob.prepareRewardVideoAd({adId:IDS.rewarded}).then(()=>AdMob.showRewardVideoAd()).then(()=>setTimeout(fin,500)).catch(fin);setTimeout(fin,90000)})},
  banner(v){try{v?AdMob.showBanner({adId:IDS.banner,position:'BOTTOM_CENTER'}):AdMob.hideBanner()}catch(e){}}};
 const AD=()=>window.AdMob&&window.FGF_ADS?AdMobA:Mock;window.FGF_ADAPTER=AD;
 // ---- policy ----
@@ -35,7 +38,7 @@ setInterval(()=>{if(state==='play'&&pst!=='play'&&!['cpuk'].includes(pst)){if(ps
  if(on()&&!noAds()&&LS.fgfBanner==='1'&&['title','hub','board','wlb','olb','stats','coll'].includes(state))AD().banner(true);else AD().banner(false);
  pst=state},200);
 // ---- rewarded hooks (opt-in only) ----
-function reward(k,fn){if(!canR(k)){toast('📺 Daily ad limit reached');return}AD().rewarded().then(ok=>{if(ok){useR(k);fn()}else toast('No reward (ad closed early)')})}
+function reward(k,fn){if(!canR(k)){toast('📺 Daily ad limit reached');return}if(navigator.onLine===false){toast('Watch the full video to get your reward · you are offline');return}AD().rewarded().then(ok=>{if(ok===true){useR(k);fn()}else toast('Watch the full video to get your reward')}).catch(()=>toast('Watch the full video to get your reward'))}
 window.FGF_REWARD=reward;window.FGF_INTEROK=interOK;window.FGF_ADTEST=n=>{runCoins=coins-n};
 const earned=()=>Math.max(0,coins-runCoins);
 const prevOver=window.FGF_OVERX;window.FGF_OVERX=function(){if(prevOver)prevOver();if(on()&&!runX2&&earned()>0&&canR('x2')&&mode!=='tut'){const y=H*0.905;ctx.save();ctx.fillStyle='rgba(4,18,10,.95)';ctx.strokeStyle='#7fe8ff';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(W/2-100,y,200,30,14);ctx.fill();ctx.stroke();ctx.fillStyle='#7fe8ff';ctx.font='900 13px system-ui';ctx.textAlign='center';ctx.fillText('📺 Watch ad: 2x coins (+'+earned()+')',W/2,y+20);ctx.restore()}};

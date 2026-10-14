@@ -16,23 +16,26 @@ const onx=S3.next;S3.next=function(good){
  if(CH&&['legendc','horse','trick'].includes(mode)){try{pendNext=null}catch(e){}return chNext(good)}
  return onx.apply(this,arguments)};
 // ---- challenge runner ----
-function chStart(type,o){newGame('classic');mode=type;lives=99;prevLives=99;CH=Object.assign({type,n:0,pts:0,log:[]},o||{});dist=CH.d0||30;newWind();resetBall()}
-function setD(d){dist=d;newWind();resetBall();lives=99}
+function chStart(type,o){newGame('classic');mode=type;lives=type==='trick'?5:99;prevLives=lives;CH=Object.assign({type,n:0,pts:0,log:[]},o||{});dist=CH.d0||30;newWind();resetBall()}
+function setD(d){dist=d;newWind();resetBall();if(mode!=='trick')lives=99}
 const pr=d=>Math.max(0.3,Math.min(0.95,0.97-(d-30)*0.013));
 const CPN=['Ace Bot','K-9000','Robo Rex'][Math.random()*3|0];
 function chNext(good){const c=CH;c.n++;
  if(c.type==='legendc'){c.made=good;if(good){addCoins(1000);toast('🏆 Legend Challenge prize  🪙 +1000')}state='chres';return true}
- if(c.type==='trick'){const dk=msg&&/Off the upright/.test(msg.s||''),pf=good&&Math.abs(ball.x)<0.35,p=good?1+(pf?2:0)+(dk?4:0):0;c.pts+=p;c.log.push([dist,p]);if(p)FGF_POP('+'+p+' TRICK PTS','#7fe8ff',0.62);if(c.n>=10){const b=+(LS.fgfTrickBest||0);if(c.pts>b)LS.fgfTrickBest=c.pts;addCoins(c.pts*20);state='chres';return true}setD(25+Math.round(Math.random()*25));return true}
+ if(c.type==='trick'){const dk=msg&&/Off the upright/.test(msg.s||''),pf=good&&Math.abs(ball.x)<0.35,p=good?1+(pf?2:0)+(dk?4:0):0;c.pts+=p;c.log.push([dist,p]);if(p)FGF_POP('+'+p+' TRICK PTS','#7fe8ff',0.62);if(lives<=0){c.over=1;const b=+(LS.fgfTrickBest||0);if(c.pts>b)LS.fgfTrickBest=c.pts;addCoins((c.pts-(c.paid||0))*20);c.paid=c.pts;state='chres';return true}setD(25+Math.round(Math.random()*25));return true}
  if(c.type==='horse'){// phases: 'shoot' (you set the shot) or 'match' (you must match the CPU)
+  if(c.p2){const ot=c.sh===1?2:1;
+   if(c.ph==='shoot'){if(good){c.ph='match';c.pick=0;resetBall();lives=99;toast('🐴 P'+ot+': match it from '+dist+' yds!')}else{c.sh=ot;c.ph='shoot';c.pick=1;resetBall();lives=99;toast('🐴 P'+ot+"'s shot · set the distance")}return true}
+   if(c.ph==='match'){if(!good){if(ot===1)c.me++;else c.cpu++;toast('🐴 P'+ot+' gets a letter: '+'KICK'.slice(0,ot===1?c.me:c.cpu))}if(c.me>=4||c.cpu>=4){c.win=c.cpu>=4;state='chres';return true}c.ph='shoot';c.pick=1;resetBall();lives=99;toast('🐴 P'+c.sh+' shoots again · set the distance');return true}}
   if(c.ph==='shoot'){if(good){const cm=Math.random()<pr(dist);cpuAnim(CPN,cm,dist,()=>{if(!cm){c.cpu++;toast('🐴 '+CPN+' gets a letter: '+'KICK'.slice(0,c.cpu))}hNext('cpu')})}else hNext('cpu');return true}
   if(c.ph==='match'){if(!good){c.me++;toast('🐴 You get a letter: '+'KICK'.slice(0,c.me))}hNext('me');return true}}
  return false}
 function hNext(sh){const c=CH;if(c.me>=4||c.cpu>=4){c.win=c.cpu>=4;if(c.win){addCoins(400);sfx.cheer()}state='chres';return}
- if(sh==='me'){c.ph='shoot';setD(30+Math.round(Math.random()*25));toast('🐴 Your shot: set the distance');return}
+ if(sh==='me'){c.ph='shoot';c.pick=1;resetBall();lives=99;toast('🐴 Your shot: set the distance, then kick');return}
  const d=30+Math.round(Math.random()*25),cm=Math.random()<pr(d);setD(d);cpuAnim(CPN,cm,d,()=>{if(cm){c.ph='match';toast('🐴 Match it from '+d+' yds!')}else hNext('me')})}
 window.FGF_LEGENDC=()=>{if(LS.fgfLC===DK()&&!tester()){toast('🏆 One Legend try per day · come back tomorrow');return}LS.fgfLC=DK();chStart('legendc',{d0:80})};
 window.FGF_TRICK=()=>chStart('trick',{d0:25+Math.round(Math.random()*25)});
-window.FGF_HORSE=()=>{chStart('horse',{me:0,cpu:0,ph:'shoot',d0:30+Math.round(Math.random()*25)});toast('🐴 K-I-C-K: you shoot first')};
+window.FGF_HORSE1=(p2)=>{chStart('horse',{me:0,cpu:0,ph:'shoot',pick:1,p2:!!p2,sh:1,d0:40});toast(p2?'🐴 Pass & Play · P1 sets the first shot':'🐴 K-I-C-K: you shoot first · set the distance')};window.FGF_HORSE=()=>{state='hsel'};
 // ---- weekend events ----
 const EVS=[['snow','❄️ SNOW BOWL','Snow all game long'],['night','🌙 NIGHT GAME','Under the lights'],['moon','🌕 MOON GRAVITY','Low gravity, huge kicks']];
 const wkN=()=>{const d=NOW();return Math.floor((d-new Date(2026,0,5))/6048e5)};const cur=()=>EVS[((wkN()%3)+3)%3];
@@ -46,10 +49,10 @@ const osc=S3.screen;S3.screen=function(){
  if(state==='chres'&&CH){BTN=[];const c=CH;panel(W*0.08,H*0.22,W*0.84,H*0.5);
   if(c.type==='legendc'){txt(c.made?'🏆 LEGEND!':'SO CLOSE…',W/2,H*0.3,32,c.made?GOLD:'#ff6b6b','#063');txt(c.made?'80 yards · 🪙 +1000 prize (+500 jackpot)':'No good from 80. One free try a day.',W/2,H*0.37,14,'#fff');if(c.made)bx(W*0.2,H*0.43,W*0.6,46,'📤 SHARE',()=>share('I just nailed an 80-yard LEGEND kick'),true,16)}
   if(c.type==='trick'){txt('🎯 TRICK SHOTS',W/2,H*0.29,26,GOLD,'#063');txt(c.pts+' pts',W/2,H*0.37,40,'#fff');txt('Best '+(+(LS.fgfTrickBest||0))+' · 🪙 +'+c.pts*20,W/2,H*0.43,14,'#bcd');txt('Make 1 · Perfect +2 · Doink-in +4',W/2,H*0.47,12,'#9ab')}
-  if(c.type==='horse'){txt(c.win?'🐴 YOU WIN!':'🐴 '+CPN+' WINS',W/2,H*0.29,28,c.win?GOLD:'#ff6b6b','#063');txt('YOU '+('KICK'.slice(0,c.me)||'—')+'   ·   CPU '+('KICK'.slice(0,c.cpu)||'—'),W/2,H*0.37,18,'#fff');txt(c.win?'🪙 +400':'Spell K-I-C-K and you lose',W/2,H*0.43,14,GOLD)}
+  if(c.type==='horse'&&c.p2){txt('🐴 '+(c.win?'P1':'P2')+' WINS!',W/2,H*0.29,28,GOLD,'#063');txt('P1 '+('KICK'.slice(0,c.me)||'—')+'   ·   P2 '+('KICK'.slice(0,c.cpu)||'—'),W/2,H*0.37,18,'#fff');txt('Pass & Play · no coins',W/2,H*0.43,14,'#bcd')}else if(c.type==='horse'){txt(c.win?'🐴 YOU WIN!':'🐴 '+CPN+' WINS',W/2,H*0.29,28,c.win?GOLD:'#ff6b6b','#063');txt('YOU '+('KICK'.slice(0,c.me)||'—')+'   ·   CPU '+('KICK'.slice(0,c.cpu)||'—'),W/2,H*0.37,18,'#fff');txt(c.win?'🪙 +400':'Spell K-I-C-K and you lose',W/2,H*0.43,14,GOLD)}
   bx(W*0.1,H*0.62,W*0.38,46,'AGAIN',()=>{const t=c.type;CH=null;t==='legendc'?FGF_LEGENDC():t==='trick'?FGF_TRICK():FGF_HORSE()},false,15);bx(W*0.52,H*0.62,W*0.38,46,'EVENTS',()=>{CH=null;mode='classic';state='hub'},true,15);return true}
  const r=osc.apply(this,arguments);
- if(state==='play'&&CH){ctx.save();ctx.font='900 13px system-ui';ctx.textAlign='center';ctx.fillStyle=GOLD;const c=CH;ctx.fillText(c.type==='legendc'?'🏆 LEGEND CHALLENGE · one try':c.type==='trick'?'🎯 TRICK '+(c.n+1)+'/10 · '+c.pts+' pts':'🐴 YOU '+('KICK'.slice(0,c.me)||'—')+' · CPU '+('KICK'.slice(0,c.cpu)||'—')+(c.ph==='match'?' · MATCH IT':' · YOUR SHOT'),W/2,H*0.155);ctx.restore()}
+ if(state==='play'&&CH){ctx.save();ctx.font='900 13px system-ui';ctx.textAlign='center';ctx.fillStyle=GOLD;const c=CH;ctx.fillText(c.type==='legendc'?'🏆 LEGEND CHALLENGE · one try':c.type==='trick'?'🎯 TRICK SHOTS · '+c.pts+' pts · '+lives+' 🏈 left':'🐴 YOU '+('KICK'.slice(0,c.me)||'—')+' · CPU '+('KICK'.slice(0,c.cpu)||'—')+(c.ph==='match'?' · MATCH IT':' · YOUR SHOT'),W/2,H*0.155);ctx.restore()}
  if(state==='play'&&window.EVT&&!CH){ctx.save();ctx.font='900 13px system-ui';ctx.textAlign='center';ctx.fillStyle='#bfe6ff';ctx.fillText(cur()[1],W/2,H*0.155);ctx.restore()}
  return r};
 // ---- loading screen + PWA ----
