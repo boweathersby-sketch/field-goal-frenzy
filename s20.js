@@ -15,7 +15,7 @@ FGF_ONLINE.submit=function(sc){if(window.TESTER||window.FGF_NOSUBMIT||!this.enab
  rl.t=now;rl.b[mode]=sc;SV('fgfOLrl',rl);
  return fetch(this.url+'/rest/v1/weekly_scores',{method:'POST',headers:Object.assign(OH(),{'Prefer':'return=minimal'}),body:JSON.stringify({week:WK(),mode:String(mode).slice(0,20),initials:ini3(),score:Math.min(1e7,Math.round(sc))})}).then(r=>{FGF_ONLINE.status=r.ok?'ok':'err '+r.status;return r.ok}).catch(()=>{FGF_ONLINE.status='offline';return false})};
 FGF_ONLINE.fetchWeek=function(m){if(!this.enabled||!this.url)return Promise.resolve(null);return fetch(this.url+'/rest/v1/weekly_scores?select=initials,score,mode&week=eq.'+WK()+'&mode=eq.'+(m||'classic')+'&order=score.desc&limit=10',{headers:OH()}).then(r=>r.ok?r.json():(FGF_ONLINE.status='err '+r.status,null)).catch(()=>{FGF_ONLINE.status='offline';return null})};
-let OLB={t:0,m:'classic',rows:null,busy:0};
+let OLB={t:-1e9,m:'classic',rows:null,busy:0};
 window.FGF_AN=Object.assign({enabled:false,endpoint:''},window.FGF_AN_CFG||{});window.FGF_track=function(ev){if(!FGF_AN.enabled||!FGF_AN.endpoint)return;try{navigator.sendBeacon(FGF_AN.endpoint+'?p=/event/'+encodeURIComponent(ev))}catch(e){}};
 // ---- XP, levels, titles ----
 const TIT=[[1,'Rookie'],[5,'Starter'],[10,'Pro'],[20,'All-Pro'],[30,'Hall of Famer'],[40,'Legend']];
@@ -70,7 +70,7 @@ const hubItems=()=>{const d=deal(),L=[
  ['📋','WEEKLY MISSIONS',mis().w?MI.filter(x=>(mis().p[x[0]]||0)>=x[2]&&!mis().c[x[0]]).length+' ready to claim':'',()=>state='mis',MI.some(x=>(mis().p[x[0]]||0)>=x[2]&&!mis().c[x[0]])],
  ['🎟️','SEASON PASS','Free track · this month',()=>state='pass',false],
  ['💰','DEAL OF THE DAY',d?d.it[1]+' · 🪙 '+d.pr:'You own everything!',()=>state='deal',false],
- ['🌐','ONLINE BOARD','Weekly scores worldwide',()=>{state='olb';OLB.t=0},false],
+ ['🌐','ONLINE BOARD','Weekly scores worldwide',()=>{state='olb';OLB.t=-1e9},false],
  ['📅','WEEKLY BOARD','This week vs rivals',()=>state='wlb',false],
  ['🔗','CHALLENGE A FRIEND','Share a beat-my-score link',shareLink,false],
  ['🏈','CAREER BRACKET','Playoffs & trophies',()=>state='brk',false],
@@ -89,7 +89,7 @@ const osc=S3.screen;S3.screen=function(){
   L.forEach((c,i)=>{const x=W*0.04+(i%2)*(gw+gap),y=y0+(i>>1)*rh;bx(x,y,gw,rh-6,'',c[3],false);ctx.textAlign='left';ctx.fillStyle='#fff';ctx.font='900 '+Math.min(12,rh*0.22)+'px system-ui';ctx.fillText(c[0]+' '+c[1],x+8,y+rh*0.36);ctx.fillStyle='#9fb';ctx.font=Math.min(10,rh*0.18)+'px system-ui';let s=c[2]||'';while(ctx.measureText(s).width>gw-16&&s.length>3)s=s.slice(0,-2)+'…';ctx.fillText(s,x+8,y+rh*0.66);if(c[4]){ctx.fillStyle='#ff4f4f';ctx.beginPath();ctx.arc(x+gw-10,y+10,5,0,6.29);ctx.fill()}});
   bx(W/2-80,H*0.95-22,160,38,'◀ MENU',()=>state='title',false,14);return true}
 
- if(state==='olb'){BTN=[];head('🌐 ONLINE WEEKLY','Week of '+WK()+' · top 10');const MS=[['classic','CLASSIC'],['time','TIME'],['pressure','PRESSURE'],['hurricane','HURRICANE'],['chaos','CHAOS']],tw=(W*0.92-16)/5;MS.forEach((m,i)=>bx(W*0.04+i*(tw+4),H*0.12,tw,30,m[1],()=>{OLB.m=m[0];OLB.t=0},OLB.m===m[0],9));
+ if(state==='olb'){BTN=[];head('🌐 ONLINE WEEKLY','Week of '+WK()+' · top 10');const MS=[['classic','CLASSIC'],['time','TIME'],['pressure','PRESSURE'],['hurricane','HURRICANE'],['chaos','CHAOS']],tw=(W*0.92-16)/5;MS.forEach((m,i)=>bx(W*0.04+i*(tw+4),H*0.12,tw,30,m[1],()=>{OLB.m=m[0];OLB.t=-1e9},OLB.m===m[0],9));
   if(!OLB.busy&&performance.now()-OLB.t>20000){OLB.busy=1;OLB.t=performance.now();OLB.rows=undefined;FGF_ONLINE.fetchWeek(OLB.m).then(r=>{OLB.rows=r;OLB.busy=0})}
   const y0=H*0.19,rh=Math.min(44,H*0.058);if(OLB.rows===undefined)txt('Loading…',W/2,H*0.3,15,'#bcd');else if(!OLB.rows){txt('Online board unavailable right now',W/2,H*0.28,15,'#ffb36b');txt('Showing your local weekly bests instead',W/2,H*0.32,12,'#bcd');const L=(J('fgfLB',{})[OLB.m]||[]).slice(0,8);L.forEach((e,i)=>{const y=H*0.36+i*rh;panel(W*0.08,y,W*0.84,rh-6);ctx.textAlign='left';ctx.fillStyle='#fff';ctx.font='900 14px system-ui';ctx.fillText((i+1)+'. '+e.i,W*0.12,y+rh*0.55);ctx.textAlign='right';ctx.fillText(e.s.toLocaleString(),W*0.88,y+rh*0.55)})}
   else if(!OLB.rows.length)txt('No scores yet this week. Be the first!',W/2,H*0.3,14,'#bcd');else OLB.rows.forEach((e,i)=>{const y=y0+i*rh,me=e.initials===ini3();panel(W*0.08,y,W*0.84,rh-6);ctx.textAlign='left';ctx.fillStyle=i<3?GOLD:me?'#7fd38a':'#fff';ctx.font='900 15px system-ui';ctx.fillText((i+1)+'. '+e.initials,W*0.12,y+rh*0.55);ctx.textAlign='right';ctx.fillText((+e.score).toLocaleString(),W*0.88,y+rh*0.55)});
