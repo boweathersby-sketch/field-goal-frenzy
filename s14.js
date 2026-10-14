@@ -6,7 +6,7 @@ LSR[6]=1000;
 // Halloween
 const now=new Date(),HW=now.getMonth()===9,HWEND='Oct 31';
 const HI={CLEATS:['c9','Pumpkin Cleats 🎃',1500,'p',.03],TRAILS:['t9','Ghost Trail 👻',1200,'p',0],CELEBRATE:['e9','Spooky Party 🦇',1500,'p',0]};
-SHOP.forEach(tb=>{const it=HI[tb[0]]||HI[tb.name];if(!it)return;const arr=Array.isArray(tb[1])?tb[1]:tb.items;if(arr&&(HW||own[it[0]])&&!arr.some(a=>a[0]===it[0]))arr.push(it)});
+SHOP.forEach(tb=>{const it=HI[tb[0]]||HI[tb.name];if(!it)return;const arr=Array.isArray(tb[1])?tb[1]:tb.items;if(arr&&(HW||own.includes(it[0]))&&!arr.some(a=>a[0]===it[0]))arr.push(it)});
 window.FGF_LIMITED={c9:1,t9:1,e9:1,witch:1};window.FGF_LIMEND=HWEND;
 if(typeof CMHAT!=='undefined'&&(HW||cmOwn('witch'))&&!CMHAT.some(h=>h[0]==='witch'))CMHAT.push(['witch','Witch 🎃',1200]);
 const otr=S3.trail;S3.trail=function(a){return eq.t==='t9'?'rgba(232,238,255,'+(a*0.8)+')':otr.apply(this,arguments)};

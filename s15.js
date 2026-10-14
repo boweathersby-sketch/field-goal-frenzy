@@ -7,7 +7,7 @@ const olc=lsClaim;lsClaim=function(){const r=olc.apply(this,arguments);if(LSS&&L
 // ---- seasonal items (same pattern as Halloween) ----
 const EV={10:{end:'🦃 LIMITED · ends Nov 30',it:{CLEATS:['c10','Turkey Trot Cleats 🦃',1500,'p',.03],TRAILS:['t10','Autumn Leaves 🍂',1200,'p',0],CELEBRATE:['e10','Turkey Bowl 🦃',1500,'p',0]}},11:{end:'🎄 LIMITED · ends Dec 31',it:{CLEATS:['c11','Candy Cane Cleats 🎄',1500,'p',.03],TRAILS:['t11','Candy Cane Trail',1200,'p',0],CELEBRATE:['e11','Snow Globe ❄️',1500,'p',0]}}};
 window.FGF_LIMITED=window.FGF_LIMITED||{};
-for(const m in EV){const e=EV[m];for(const tb of SHOP){const it=e.it[tb[0]];if(!it)continue;FGF_LIMITED[it[0]]=e.end;if((+m===MO||own[it[0]])&&!tb[1].some(a=>a[0]===it[0]))tb[1].push(it)}}
+for(const m in EV){const e=EV[m];for(const tb of SHOP){const it=e.it[tb[0]];if(!it)continue;FGF_LIMITED[it[0]]=e.end;if((+m===MO||own.includes(it[0]))&&!tb[1].some(a=>a[0]===it[0]))tb[1].push(it)}}
 const otr=S3.trail;S3.trail=function(a){return eq.t==='t10'?'hsla('+(18+a*25|0)+',90%,'+(40+a*15|0)+'%,'+a+')':eq.t==='t11'?(((a*12)|0)%2?'rgba(255,255,255,'+a+')':'rgba(230,30,50,'+a+')'):otr.apply(this,arguments)};
 const burst=cs=>{const x=W*(0.2+Math.random()*0.6),y=H*(0.15+Math.random()*0.25);for(let i=0;i<40;i++){const a=i/40*6.28,v=80+Math.random()*80;parts.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,c:cs[i%cs.length],l:1.4,g:90,f:1})}};
 const GLOW={c10:'200,120,40',c11:'235,40,60'};
