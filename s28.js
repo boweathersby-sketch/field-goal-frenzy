@@ -17,7 +17,7 @@ const clm=()=>{const c=J('fgfSP2',{m:'',c:{}});if(c.m!==MO()){c.m=MO();c.c={}}re
 let CEL=null,scroll=0,drag=null,autoS=true;
 function grant(i){const c=clm();if(c.c[i])return;const r=REW(i),k=r[2];c.c[i]=1;SV('fgfSP2',c);
  if(k.startsWith('c:'))addCoins(+k.slice(2)),toast('🎟️ Tier '+i+' · 🪙 +'+k.slice(2));
- else if(k==='mb'){try{FGF_SHOPTEST.mystery(FGF_BOXES[0])}catch(e){addCoins(300)}toast('🎁 Mystery Box opened · check the Shop!')}
+ else if(k==='mb'){try{FGF_SHOPTEST.mystery(FGF_BOXES[0])}catch(e){addCoins(300)}toast('🎁 Mystery pick waiting in Shop › Extras!')}
  else if(k.startsWith('b:')||k.startsWith('t:')){const id=k.slice(2);if(own.includes(id)){const v=id==='bl4'?900:1200;addCoins(v);toast('Already owned · 🪙 +'+v)}else{own.push(id);SV('fgfOwn',own);toast('🎁 Unlocked '+ITEM[id][1])}}
  else if(k==='champ'){addCoins(2000);const id=SEX();if(!own.includes(id)){own.push(id);SV('fgfOwn',own)}const L=J('fgfChamps',[]);if(!L.includes(MO())){L.push(MO());SV('fgfChamps',L)}try{unlock('champ')}catch(e){}CEL={t0:performance.now()};sfx.cheer()}}
 addEventListener('pointerdown',e=>{if(state==='pass')drag={y:e.clientY,s:scroll,m:0}},true);addEventListener('pointermove',e=>{if(state==='pass'&&drag){scroll=drag.s-(e.clientY-drag.y);drag.m=Math.max(drag.m,Math.abs(e.clientY-drag.y));autoS=false}});addEventListener('pointerup',()=>drag=null);addEventListener('wheel',e=>{if(state==='pass'){scroll+=e.deltaY;autoS=false}});

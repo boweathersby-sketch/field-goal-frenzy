@@ -8,7 +8,11 @@ const GLV={g1:['#ff8a00',0],g2:['#39ff14',1]},VIS={v1:['#7d8ea6',0],v2:['#ff2bd6
 function gear(fr,x,y,w,h,e){fr=Math.max(0,Math.min(3,fr|0));ctx.save();const P=(q)=>[x+w*q[0],y+h*q[1]];
  const g=GLV[e.g];if(g){const r=w*0.06;HANDS[fr].forEach(q=>{const [px,py]=P(q);if(g[1]){ctx.shadowColor=g[0];ctx.shadowBlur=r*1.6}ctx.fillStyle=g[0];ctx.globalAlpha=0.9;ctx.beginPath();ctx.ellipse(px,py,r*0.8,r,0,0,7);ctx.fill();ctx.shadowBlur=0;ctx.globalAlpha=1;ctx.strokeStyle='#fff';ctx.lineWidth=Math.max(1,r*0.28);ctx.beginPath();ctx.moveTo(px-r*0.75,py-r*0.85);ctx.lineTo(px+r*0.75,py-r*0.85);ctx.stroke()})}
  const c=CLT[e.c];if(c){FEET[fr].forEach(q=>{const [px,py]=P(q);if(c[1]){ctx.shadowColor=c[0];ctx.shadowBlur=w*0.06}ctx.fillStyle=c[0];ctx.globalAlpha=0.8;ctx.beginPath();ctx.ellipse(px,py,w*0.085,h*0.022,0,0,7);ctx.fill();ctx.shadowBlur=0;ctx.globalAlpha=1})}
- const v=VIS[e.v];if(v){const [px,py]=P(HELM[fr]);if(v[1]){ctx.shadowColor=v[0];ctx.shadowBlur=w*0.07}ctx.strokeStyle=v[0];ctx.lineWidth=Math.max(2,w*0.035);ctx.beginPath();ctx.ellipse(px,py,w*0.13,h*0.05,0,-0.35,0.9);ctx.stroke();ctx.shadowBlur=0}
+ const v=VIS[e.v];if(v){const [px,py]=P(HELM[fr]);let c=v[0];if(c==='team'){const tm=(typeof TEAMS!=='undefined'&&TEAMS[typeof team!=='undefined'?team:0])||{p:'#5b2a86',s:'#f2c230'};c=[tm.p,tm.s]}
+ if(Array.isArray(c)){const g=ctx.createLinearGradient(px-w*0.13,py,px+w*0.13,py);c.forEach((q,i)=>g.addColorStop(i/Math.max(1,c.length-1),q));ctx.strokeStyle=g}else ctx.strokeStyle=c;
+ if(v[1]){ctx.shadowColor=Array.isArray(c)?c[0]:c;ctx.shadowBlur=w*0.07}const lw=Math.max(2,w*(v[2]==='wide'?0.05:0.035));ctx.lineWidth=lw;ctx.beginPath();ctx.ellipse(px,py,w*0.13,h*0.05,0,-0.35,0.9);ctx.stroke();ctx.shadowBlur=0;
+ if(v[2]==='mirror'||v[2]==='chrome'){ctx.strokeStyle='rgba(255,255,255,0.85)';ctx.lineWidth=Math.max(1,lw*0.35);ctx.beginPath();ctx.ellipse(px,py-lw*0.25,w*0.13,h*0.05,0,-0.1,0.45);ctx.stroke()}
+ if(v[2]==='dbl'){ctx.strokeStyle=v[3]||'#fff';ctx.lineWidth=Math.max(1,lw*0.3);ctx.beginPath();ctx.ellipse(px,py,w*0.13,h*0.05,0,-0.35,0.9);ctx.stroke()}}
  ctx.restore()}
 window.FGF_GEAR=gear;
 const od=S3.decal;S3.decal=function(fr,x,y,w,h){const r=od.apply(this,arguments);try{const im=S3.kimg();if(!(im&&im._masc))gear(fr,x,y,w,h,eq)}catch(e){}return r};
