@@ -28,7 +28,7 @@ const cap=()=>{const c=J('fgfAdCap',{d:'',n:{},t:0});if(c.d!==DK()){c.d=DK();c.n
 const canR=k=>on()&&cap().t<TOT&&(cap().n[k]||0)<CAPS[k];
 const useR=k=>{const c=cap();c.n[k]=(c.n[k]||0)+1;c.t++;SV('fgfAdCap',c)};
 window.FGF_ADPOLICY=()=>({on:on(),noAds:noAds(),firstSession,rounds:+LS.fgfRounds||0,sessRuns,runsSince,minsSince:((now()-(+LS.fgfAdT||0))/6e4)|0,caps:cap()});
-function interOK(){if(!on()||noAds()||firstSession||(+LS.fgfRounds||0)<3||runsSince<3)return false;if(now()-(+LS.fgfAdT||0)<4*60e3)return false;if(now()-lastBuy()<3*60e3)return false;if(['daily','legendc','tut','rival','horse','trick'].includes(mode))return false;return true}
+function interOK(){if(!on()||noAds()||firstSession||(+LS.fgfRounds||0)<4||runsSince<3)return false;if(now()-(+LS.fgfAdT||0)<4*60e3)return false;if(now()-lastBuy()<3*60e3)return false;if(['daily','legendc','tut','rival','horse','trick'].includes(mode))return false;return true}
 let pst=state,runCoins=coins,runX2=false;
 setInterval(()=>{if(state==='play'&&pst!=='play'&&!['cpuk'].includes(pst)){if(pst!=='cont'&&pst!=='replay'){runCoins=coins;runX2=false}}
  if(state==='over'&&pst!=='over'){sessRuns++;runsSince++;LS.fgfAdRuns=runsSince;if(interOK()){setTimeout(()=>{if(state==='over'&&!window.FGF_ADPLAYING){AD().interstitial().then(()=>{LS.fgfAdT=now();runsSince=0;LS.fgfAdRuns=0})}},1200)}}
@@ -36,7 +36,7 @@ setInterval(()=>{if(state==='play'&&pst!=='play'&&!['cpuk'].includes(pst)){if(ps
  pst=state},200);
 // ---- rewarded hooks (opt-in only) ----
 function reward(k,fn){if(!canR(k)){toast('📺 Daily ad limit reached');return}AD().rewarded().then(ok=>{if(ok){useR(k);fn()}else toast('No reward (ad closed early)')})}
-window.FGF_REWARD=reward;window.FGF_ADTEST=n=>{runCoins=coins-n};
+window.FGF_REWARD=reward;window.FGF_INTEROK=interOK;window.FGF_ADTEST=n=>{runCoins=coins-n};
 const earned=()=>Math.max(0,coins-runCoins);
 const prevOver=window.FGF_OVERX;window.FGF_OVERX=function(){if(prevOver)prevOver();if(on()&&!runX2&&earned()>0&&canR('x2')&&mode!=='tut'){const y=H*0.905;ctx.save();ctx.fillStyle='rgba(4,18,10,.95)';ctx.strokeStyle='#7fe8ff';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(W/2-100,y,200,30,14);ctx.fill();ctx.stroke();ctx.fillStyle='#7fe8ff';ctx.font='900 13px system-ui';ctx.textAlign='center';ctx.fillText('📺 Watch ad: 2x coins (+'+earned()+')',W/2,y+20);ctx.restore()}};
 addEventListener('pointerdown',e=>{if(state!=='over'||!on()||runX2||!(earned()>0))return;const x=e.clientX,y=e.clientY;if(x>=W/2-100&&x<=W/2+100&&y>=H*0.905-4&&y<=H*0.905+34){e.stopImmediatePropagation();const n=earned();reward('x2',()=>{runX2=true;addCoins(n);toast('📺 2x coins  🪙 +'+n)})}},true);

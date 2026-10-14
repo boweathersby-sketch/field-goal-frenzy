@@ -10,7 +10,7 @@ window.FGF_ONLINE=Object.assign({enabled:true,url:'https://fdmcgupjmjfpraznmsew.
 const OH=()=>({'apikey':FGF_ONLINE.anonKey,'Content-Type':'application/json'});
 const ini3=()=>{let s='';try{const I=J('fgfIni',null);if(I)s=I.map(k=>AZ[k]).join('')}catch(e){}if(!s)s=((window.MK&&MK.name)||'FGF');s=s.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,3);return s||'FGF'};
 FGF_ONLINE.status='idle';
-FGF_ONLINE.submit=function(sc){if(!this.enabled||!this.url||!(sc>0)||mode==='tut'||!['classic','time','pressure','hurricane','chaos'].includes(mode))return Promise.resolve(false);
+FGF_ONLINE.submit=function(sc){if(window.TESTER||window.FGF_NOSUBMIT||!this.enabled||!this.url||!(sc>0)||mode==='tut'||!['classic','time','pressure','hurricane','chaos'].includes(mode))return Promise.resolve(false);
  const now=Date.now(),rl=J('fgfOLrl',{t:0,w:'',b:{}});if(rl.w!==WK()){rl.w=WK();rl.b={}}if(now-rl.t<30000||sc<=(rl.b[mode]||0))return Promise.resolve(false);// rate limit: 1 per 30s, only new weekly bests per mode
  rl.t=now;rl.b[mode]=sc;SV('fgfOLrl',rl);
  return fetch(this.url+'/rest/v1/weekly_scores',{method:'POST',headers:Object.assign(OH(),{'Prefer':'return=minimal'}),body:JSON.stringify({week:WK(),mode:String(mode).slice(0,20),initials:ini3(),score:Math.min(1e7,Math.round(sc))})}).then(r=>{FGF_ONLINE.status=r.ok?'ok':'err '+r.status;return r.ok}).catch(()=>{FGF_ONLINE.status='offline';return false})};
