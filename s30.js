@@ -100,5 +100,5 @@ window.FGF_FLAG=function(lt,rt,s,lw){const id=eq.f;if(!id)return false;const cv2
  for(const pt of[lt,rt]){const x0=pt.x,y0=pt.y-s*0.9;ctx.fillStyle='#ddd';ctx.fillRect(x0-lw*0.3,y0,lw*0.6,s*0.9);for(let i=0;i<N;i++){const u=i/N,wv=Math.sin(T*8+u*6)*fh*0.12*amp*u,sx=i*cv2.width/N;ctx.drawImage(cv2,sx,0,cv2.width/N+0.5,cv2.height,dir>0?x0+u*fw:x0-(u+1/N)*fw,y0+wv,fw/N+0.6,fh)}}return true};
 // shop slot for flags: id prefix 'fl'/'fs'/'fc'/'fz'/'fst'... use eq.f
 
-window.FGF_CAT={TRX,BX,CEX,THX,HRN,CHX,FLX,count:()=>SHOP.reduce((a,c)=>a+c[1].length,0)};
+window.FGF_PLAYH=id=>{if(HRN[id])playSeq(HRN[id]);else if(CHX[id])chant(CHX[id])};window.FGF_CAT={TRX,BX,CEX,THX,HRN,CHX,FLX,count:()=>SHOP.reduce((a,c)=>a+c[1].length,0)};
 })();

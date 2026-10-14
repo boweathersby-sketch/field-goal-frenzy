@@ -230,8 +230,8 @@ const BILLING={available:false,// set true + implement purchase() in the Android
 function buyPack(p){if(window.TESTER&&p.id==='custom_field'){state='cfield';return}if(!BILLING.available){toast('Coming soon on Google Play');return}BILLING.purchase(p.id).then(()=>BILLING.onPurchased(p.id),()=>toast('Purchase cancelled'))}
 const PKS={y:0,max:0,top:0,bot:0};window.PKS=PKS;
 function wrapP(t,w){ctx.font='11px system-ui';const o=[];let l='';for(const wd of t.split(' ')){const q=l?l+' '+wd:wd;if(ctx.measureText(q).width>w&&l){o.push(l);l=wd}else l=q}if(l)o.push(l);return o}
-function drawPacks(){ctx.fillStyle='#3ddc84';ctx.font='900 12px system-ui';ctx.textAlign='center';ctx.fillText('▶ COMING SOON ON GOOGLE PLAY',W/2,H*0.14+50+(window.SHOP_DY||0));
- const top=H*0.14+58+(window.SHOP_DY||0),bot=H-62,tw=W*0.92-W*0.26-W*0.1;PKS.top=top;PKS.bot=bot;let y=top-PKS.y;
+function drawPacks(){const nTabs=(SHOP.length+1),rows=Math.ceil(nTabs/5),tabBot=H*0.14+(rows-1)*34+30+8;ctx.fillStyle='#3ddc84';ctx.font='900 12px system-ui';ctx.textAlign='center';ctx.fillText('▶ COMING SOON ON GOOGLE PLAY',W/2,tabBot+12);
+ const top=tabBot+22,bot=H-62,tw=W*0.92-W*0.26-W*0.1;PKS.top=top;PKS.bot=bot;let y=top-PKS.y;
  ctx.save();ctx.beginPath();ctx.rect(0,top,W,bot-top);ctx.clip();
  for(const p of PACKS){const d=wrapP((p.desc||'Coins for gear, teams & more')+(p.id==='pro_bundle'?' · Not available in the web version.':'')+(window.TESTER&&p.id==='custom_field'?' · 🧪 Tester: unlocked':''),tw),rh=Math.max(70,44+d.length*14);const vis=y>=top-1&&y+rh-6<=bot+1;
   if(y+rh>top&&y<bot){panel(W*0.04,y,W*0.92,rh-6);ctx.textAlign='left';ctx.fillStyle=GOLD;ctx.font='900 16px system-ui';ctx.fillText((p.icon||(p.id==='pro_bundle'?'⭐ ':'🪙 '))+p.name,W*0.08,y+28);ctx.fillStyle='#bcd';ctx.font='11px system-ui';d.forEach((l,k)=>ctx.fillText(l,W*0.08,y+46+k*14));
