@@ -141,6 +141,6 @@ window.FGF_OVERX=function(){{const lv=FGF_LV(),nx=Math.ceil((lv.l+1)/5)*5,y=H*0.
   if(score>0&&score>=best)bx(W/2-70,H*0.86,140,30,'📤 Share best',()=>share('New personal best: '+score.toLocaleString()+' points'),false,12)}
 };
 // music: soft synth pads in menus only
-let mi=0;setInterval(()=>{if(LS.fgfMusic!=='1'||LS.fgfMute==='1'||state==='play'||document.hidden)return;const C=[[262,330,392],[220,262,330],[175,220,262],[196,247,294]][mi++%4];try{C.forEach(f=>tone(f,f,2.2,0.025,'sine'))}catch(e){}},2400);
+let mi=0;setInterval(()=>{if(LS.fgfMusic!=='1'||LS.fgfMute==='1'||state==='play'||document.hidden)return;const C=[[262,330,392],[220,262,330],[175,220,262],[196,247,294]][mi++%4];try{window.__CH='music';C.forEach(f=>tone(f,f,2.2,0.025,'sine'))}catch(e){}finally{window.__CH=null}},2400);
 })();
 addEventListener('pointerdown',e=>{if(state!=='over'||!(score>0&&score>=best))return;const x=e.clientX,y=e.clientY;if(x>=W/2-70&&x<=W/2+70&&y>=H*0.86-6&&y<=H*0.86+36){e.stopImmediatePropagation();share('New personal best: '+score.toLocaleString()+' points')}},true);
