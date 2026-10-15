@@ -20,7 +20,7 @@ const REW=i=>i===30?['🏆','Champion: badge + 🪙 2,500 + Champion Tee + '+MN(
 window.FGF_SPREW=REW;
 const pts=()=>{const sp=J('fgfSPx',{m:'',p:0});return sp.m===MO()?sp.p:0};
 const clm=()=>{const c=J('fgfSP2',{m:'',c:{}});if(c.m!==MO()){c.m=MO();c.c={}}return c};
-let CEL=null,scroll=0,drag=null,autoS=true;
+let CEL=null,scroll=0,drag=null,autoS=true;const SPO={get y(){return scroll},set y(v){scroll=v;autoS=false},max:0};
 function grant(i){const c=clm();if(c.c[i])return;const r=REW(i),k=r[2];c.c[i]=1;SV('fgfSP2',c);
  if(k.startsWith('c:'))addCoins(+k.slice(2)),toast('🎟️ Tier '+i+' · 🪙 +'+k.slice(2));
  else if(k.startsWith('box:')){const [,bid,cn]=k.split(':');addCoins(+cn);try{const B=FGF_BOXES.find(x=>x[0]===bid)||FGF_BOXES[0];FGF_SHOPTEST.mystery(B)}catch(e){addCoins(300)}toast('🎟️ Tier '+i+' · 🪙 +'+(+cn).toLocaleString()+' · pick waiting in Shop › Extras!')}
@@ -34,7 +34,7 @@ const osc=S3.screen;S3.screen=function(){if(state!=='pass'){if(pst==='pass')auto
  pst=state;BTN=[];const P=pts(),c=clm();let tier=0;while(tier<30&&P>=CUM[tier+1])tier++;
  txt('🎟️ SEASON PASS',W/2,H*0.06,Math.min(28,W*0.075),GOLD,'#063');const d=NOW(),end=new Date(d.getFullYear(),d.getMonth()+1,1),days=Math.ceil((end-d)/864e5);ctx.fillStyle='#cde';ctx.font='12px system-ui';ctx.textAlign='center';ctx.fillText(MN()+' season · FREE · '+days+' day'+(days===1?'':'s')+' left',W/2,H*0.06+20);
  const nx=Math.min(30,tier+1),into=P-CUM[tier],need=tier>=30?1:NEED(nx);ctx.fillStyle='rgba(255,255,255,.12)';ctx.fillRect(W*0.08,H*0.06+30,W*0.84,10);ctx.fillStyle=GOLD;ctx.fillRect(W*0.08,H*0.06+30,W*0.84*Math.min(1,tier>=30?1:into/need),10);ctx.fillStyle='#fff';ctx.font='bold 11px system-ui';ctx.fillText(tier>=30?'All 30 tiers complete!':'Tier '+tier+' / 30 · '+into+' / '+need+' XP to tier '+nx,W/2,H*0.06+54);
- ctx.fillStyle='#ffd27a';ctx.font='10px system-ui';ctx.textAlign='center';ctx.fillText(window.FGF_BILLING&&FGF_BILLING.available?'👑 GOLD TRACK available':'👑 Gold track: Google Play app only · coming soon',W/2,H*0.06+68,W*0.9);const top=H*0.06+76,bot=H*0.88,rh=Math.max(48,Math.min(58,H*0.07)),tot=30*rh;if(autoS){scroll=Math.max(0,(Math.max(1,tier)-2)*rh)}scroll=Math.max(0,Math.min(tot-(bot-top),scroll));
+ ctx.fillStyle='#ffd27a';ctx.font='10px system-ui';ctx.textAlign='center';ctx.fillText(window.FGF_BILLING&&FGF_BILLING.available?'👑 GOLD TRACK available':'👑 Gold track: Google Play app only · coming soon',W/2,H*0.06+68,W*0.9);const top=H*0.06+76,bot=H*0.88,rh=Math.max(48,Math.min(58,H*0.07)),tot=30*rh;if(autoS){scroll=Math.max(0,(Math.max(1,tier)-2)*rh)}scroll=Math.max(0,Math.min(tot-(bot-top),scroll));SPO.max=Math.max(0,tot-(bot-top));window.__SCK={st:'pass',o:SPO,t:performance.now()};
  ctx.save();ctx.beginPath();ctx.rect(0,top,W,bot-top);ctx.clip();
  for(let i=1;i<=30;i++){const y=top+(i-1)*rh-scroll;if(y+rh<top||y>bot)continue;const got=P>=CUM[i],cl=!!c.c[i],cur=i===nx&&tier<30,r=REW(i),ms=i%5===0;
   ctx.globalAlpha=got||cur?1:0.6;panel(W*0.04,y+2,W*0.92,rh-6);if(cur){ctx.strokeStyle='#7fe8ff';ctx.lineWidth=3;ctx.beginPath();ctx.roundRect(W*0.04,y+2,W*0.92,rh-6,10);ctx.stroke()}
