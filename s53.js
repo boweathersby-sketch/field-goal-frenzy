@@ -16,3 +16,11 @@ const osc=S3.screen;S3.screen=function(){const r=osc.apply(this,arguments);try{
 // stretch break: after 20 minutes of play this session, one gentle reminder
 let played=0,told=false;setInterval(()=>{if(state==='play'&&!paused)played+=5;if(!told&&played>=1200&&state==='play'&&!ball.fly){told=true;FGF_POP(T_('🧘 Nice session! Time for a quick stretch?'),'#bfe6ff',0.3)}},5000);
 })();
+// highlight the item you just previewed when you come back to the shop (3 s pulse)
+(function(){const oI=window.FGF_ICON;if(!oI)return;window.FGF_ICON=FGF_ICON=function(id,cx,cy,s){const r=oI.apply(this,arguments);try{const h=window.FGF_HL;if(h&&h.id===id){const a=(performance.now()-h.t)/1000;if(a<3.5){ctx.save();ctx.strokeStyle='#ffd23f';ctx.lineWidth=3;ctx.globalAlpha=0.55+0.45*Math.sin(a*9);ctx.beginPath();ctx.arc(cx,cy,(s||11)*2.1,0,7);ctx.stroke();ctx.restore()}else window.FGF_HL=null}}catch(e){}return r}})();
+// free "No Horn" / "No Chant": first card in HORNS / CHANTS, owned by everyone, equipping it silences that sound
+(function(){try{const add=(cat,id,name)=>{const c=SHOP.find(x=>x[0]===cat);if(!c||c[1].some(i=>i[0]===id))return;const it=[id,name,0];c[1].unshift(it);ITEM[id]=it;if(!own.includes(id)){own.push(id);SV('fgfOwn',own)}};
+ add('HORNS','hnNone','No Horn');add('CHANTS','zcNone','No Chant');
+ const oP=window.FGF_PLAYH;if(oP)window.FGF_PLAYH=FGF_PLAYH=function(id){if(id==='hnNone'||id==='zcNone'){toast((window.FGF_TR?FGF_TR('🔇 Silent'):'🔇 Silent'));return}return oP.apply(this,arguments)};
+ const oI=window.FGF_ICON;if(oI)window.FGF_ICON=FGF_ICON=function(id,cx,cy,s){if(id==='hnNone'||id==='zcNone'){ctx.save();ctx.font=Math.round((s||11)*1.9)+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('🔇',cx,cy);ctx.restore();return}return oI.apply(this,arguments)};
+}catch(e){}})();

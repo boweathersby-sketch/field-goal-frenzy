@@ -61,12 +61,12 @@ function drawEQP(){if(!EQP)return;const a=(performance.now()-EQP.t0)/1000;if(a>1
 const KEYS=()=>{const o={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k!=='fgfTryBak')o[k]=localStorage.getItem(k)}return o};
 function restore(){const b=LS.fgfTryBak;if(!b)return;const o=JSON.parse(b);Object.keys(localStorage).forEach(k=>{if(!(k in o))localStorage.removeItem(k)});Object.keys(o).forEach(k=>localStorage.setItem(k,o[k]));localStorage.removeItem('fgfTryBak')}
 let SNAP=null;
-const otry=FGF_TRY;FGF_TRY=function(id,ret){if(window.FGF_TRYING)return;SNAP={coins,eq:{...eq},own:own.slice(),ret:ret||'shop'};LS.fgfTryBak=JSON.stringify(KEYS());window.FGF_TRYING=1;return otry.apply(this,arguments)};
+const otry=FGF_TRY;FGF_TRY=function(id,ret){if(window.FGF_TRYING)return;SNAP={coins,eq:{...eq},own:own.slice(),ret:ret||'shop'};try{sessionStorage.fgfRetUI=JSON.stringify({id,tab:typeof shopTab!=='undefined'?shopTab:null,page:window.FGF_SHOPPG?FGF_SHOPPG():0,dy:window.SHOP_DY||0,st:typeof stTab!=='undefined'?stTab:null})}catch(e){}LS.fgfTryBak=JSON.stringify(KEYS());window.FGF_TRYING=1;return otry.apply(this,arguments)};
 function endTry(){if(!window.FGF_TRYING)return;window.FGF_TRYING=0;try{sessionStorage.fgfRet=(SNAP&&SNAP.ret)||(state==='deal'?'deal':'shop');sessionStorage.fgfLSseen=1;location.reload();return}catch(e){}if(SNAP){coins=SNAP.coins;Object.keys(eq).forEach(k=>delete eq[k]);Object.assign(eq,SNAP.eq);own.length=0;SNAP.own.forEach(x=>own.push(x))}SNAP=null;try{FGF_TRYEND()}catch(e){}}
 const oUn=unlock;unlock=function(){if(window.FGF_TRYING)return;return oUn.apply(this,arguments)};
 const oAC=addCoins;addCoins=function(n){if(window.FGF_TRYING)return;return oAC.apply(this,arguments)};
 const onx=S3.next;S3.next=function(){if(window.FGF_TRYING){const r=onx.apply(this,arguments);endTry();return r}return onx.apply(this,arguments)};
 setInterval(()=>{if(window.FGF_TRYING&&!['play','replay','pause','cont'].includes(state)&&!paused)endTry()},250);
-if(sessionStorage.fgfRet){const r=sessionStorage.fgfRet;sessionStorage.removeItem('fgfRet');setTimeout(()=>{if(team>=0)state=r},400)}
+if(sessionStorage.fgfRet){const r=sessionStorage.fgfRet;sessionStorage.removeItem('fgfRet');setTimeout(()=>{if(team>=0){state=r;try{const u=JSON.parse(sessionStorage.fgfRetUI||'null');sessionStorage.removeItem('fgfRetUI');if(u){if(u.tab!=null&&typeof shopTab!=='undefined')shopTab=u.tab;if(u.st!=null&&typeof stTab!=='undefined')stTab=u.st;setTimeout(()=>{try{if(window.FGF_SHOPPG)FGF_SHOPPG(u.page||0);if(u.dy)window.SHOP_DY=u.dy}catch(e){}},120);window.FGF_HL={id:u.id,t:performance.now()+150}}}catch(e){}}},400)}
 
 })();
