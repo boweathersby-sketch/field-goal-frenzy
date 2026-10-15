@@ -19,7 +19,7 @@ const owns=id=>own.includes(id)||!!window.TESTER;
 // ---- sounds ----
 const KS={boom:()=>{tone(90,35,0.35,1);noise(0.18,500,1,0.7,0.002)},thwack:()=>{noise(0.06,2500,2,0.9,0.001);tone(220,90,0.08,0.6)},bit:()=>{tone(660,660,0.05,0.35,'square');setTimeout(()=>tone(990,990,0.07,0.3,'square'),50)},laser:()=>tone(1800,120,0.25,0.35,'sawtooth'),
  cannon:()=>{tone(70,30,0.6,1);noise(0.5,300,0.7,0.8,0.002)},whoosh:()=>noise(0.35,1200,0.6,0.6,0.08),bongo:()=>{tone(320,260,0.12,0.7);setTimeout(()=>tone(240,200,0.12,0.6),90)},thunder:()=>{tone(80,40,0.4,0.9);noise(0.9,180,0.6,0.7,0.01)}};
-const oK=sfx.kick;sfx.kick=function(){const s=ST().ks,b=BYID[s];if(b&&owns(s)&&KS[b[1][3]]){try{KS[b[1][3]]()}catch(e){}return}return oK.apply(this,arguments)};
+window.FGF_STYLE.KS=KS;const oK=sfx.kick;sfx.kick=function(){const s=ST().ks,b=BYID[s];if(b&&owns(s)&&KS[b[1][3]]){try{KS[b[1][3]]()}catch(e){}return}return oK.apply(this,arguments)};
 // ---- overlays on the kicker ----
 function overlays(fr,x,y,w,h,st){fr=Math.max(0,Math.min(3,fr|0));const P=q=>[x+w*q[0],y+h*q[1]];ctx.save();
  const sl=BYID[st.s];if(sl&&sl[0]==='s'){let c=sl[1][3][0];if(c==='team')c=tm().p;const r=w*0.06;if(sl[1][3][1]){ctx.shadowColor=c;ctx.shadowBlur=r}ctx.strokeStyle=c;ctx.lineCap='round';ctx.lineWidth=Math.max(2,r*0.9);HANDS[fr].forEach(q=>{const [px,py]=P(q),dy=fr===3&&q[1]<0.3?h*0.05:-h*0.05;ctx.beginPath();ctx.moveTo(px-r*0.55,py+dy);ctx.lineTo(px+r*0.55,py+dy);ctx.stroke()});ctx.shadowBlur=0}
