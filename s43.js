@@ -1,0 +1,84 @@
+// s43 (Batch 4, social on free Supabase): clubs + club board, country board, weekly online bracket, ghost races (= send-a-challenge links), H2H spectate.
+// Emotes/quick-chat live in s32 (Realtime broadcast). Tables: fgf_store/SOCIAL_SQL.sql. Until it is run, screens say "switching on soon".
+(function(){
+const SBU='https://fdmcgupjmjfpraznmsew.supabase.co',KEY=()=>(window.FGF_ONLINE&&(FGF_ONLINE.anonKey||FGF_ONLINE.key))||'sb_publishable_944lD1vIQwA5DGifZqbFJw_AuC1xUkz';
+const HD=()=>({apikey:KEY(),Authorization:'Bearer '+KEY(),'Content-Type':'application/json'});
+async function api(path,opt){const r=await fetch(SBU+'/rest/v1/'+path,Object.assign({},opt,{headers:Object.assign(HD(),(opt&&opt.headers)||{})}));const t=await r.text();if(!r.ok){const e=new Error(t);e.status=r.status;e.off=/42P01|PGRST205|Could not find the table|does not exist|42501|permission/.test(t);throw e}return t?JSON.parse(t):null}
+const uid=()=>{let id=LS.fgfUID;if(!id){id='u'+Math.random().toString(36).slice(2)+Date.now().toString(36);LS.fgfUID=id}return id};
+const ini=()=>{const v=LS.fgfOLIni;return v&&v!=='FGF'&&/^[A-Z]{3}$/.test(v)?v:null};
+const WK=()=>window.FGF_WK?FGF_WK():(()=>{const d=new Date();return d.getFullYear()+'-W'+Math.ceil(((d-new Date(d.getFullYear(),0,1))/864e5+1)/7)})();
+const CTY=[['US','United States'],['MX','Mexico'],['NI','Nicaragua'],['CA','Canada'],['BR','Brazil'],['GB','United Kingdom'],['JP','Japan'],['DE','Germany'],['FR','France'],['ES','Spain'],['IT','Italy'],['AR','Argentina'],['CO','Colombia'],['CL','Chile'],['PE','Peru'],['GT','Guatemala'],['HN','Honduras'],['SV','El Salvador'],['CR','Costa Rica'],['PA','Panama'],['DO','Dominican Rep.'],['PR','Puerto Rico'],['CU','Cuba'],['VE','Venezuela'],['AU','Australia'],['NZ','New Zealand'],['IE','Ireland'],['NL','Netherlands'],['SE','Sweden'],['NO','Norway'],['PH','Philippines'],['KR','South Korea'],['IN','India'],['NG','Nigeria'],['ZA','South Africa'],['XX','Other']];
+const cty=()=>{if(!LS.fgfCty){const m=(navigator.language||'').match(/-([A-Z]{2})$/i),c=m?m[1].toUpperCase():'US';LS.fgfCty=CTY.some(x=>x[0]===c)?c:'XX'}return LS.fgfCty};
+const cname=c=>(CTY.find(x=>x[0]===c)||[c,c])[1];
+let SO={tab:0,data:{},busy:{},off:0,msg:''};window.FGF_SOCIAL=SO;
+// ---- record runs (classic + standard modes) and the kicks for ghost races ----
+let RUN=[];const STD=['classic','time','pressure','hurricane','chaos'];
+const oN=newGame;newGame=function(){RUN=[];return oN.apply(this,arguments)};
+const oR=S3.onResult;S3.onResult=function(good){try{if(mode==='classic'&&RUN.length<60)RUN.push([dist,+wind.mph||0,+(wind.a||0).toFixed(3),+(wind.x||0).toFixed(2),+(wind.z||0).toFixed(2),weather,good?1:0])}catch(e){}return oR.apply(this,arguments)};
+const oE=S3.onEnd;S3.onEnd=function(){const r=oE.apply(this,arguments);try{if(mode==='classic'&&RUN.length)LS.fgfLastRun=JSON.stringify(RUN);
+ const unl=mode==='hurricane'&&window.FGF_HUNL&&FGF_HUNL.on();if(STD.includes(mode)&&!unl&&!window.TESTER&&ini()&&score>0&&score<1e6)api('social_runs',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({week:WK(),device_id:uid(),ini:ini(),country:cty()==='XX'?null:cty(),club:LS.fgfClub||null,mode,score:Math.round(score)})}).catch(()=>{})}catch(e){}return r};
+// ---- loaders ----
+function load(k,fn){if(SO.busy[k])return;SO.busy[k]=1;SO.data[k]=SO.data[k]||null;fn().then(v=>{SO.data[k]=v;SO.off=0}).catch(e=>{SO.data[k]={err:e.off?'off':'net'};if(e.off)SO.off=1}).finally(()=>{SO.busy[k]=0;SO.data[k+'_t']=performance.now()})}
+const fresh=k=>SO.data[k]&&performance.now()-(SO.data[k+'_t']||0)<30000;
+const best=rows=>{const m=new Map();for(const r of rows||[]){const k=r.device_id||r.ini;if(!m.has(k)||m.get(k).score<r.score)m.set(k,r)}return [...m.values()].sort((a,b)=>b.score-a.score)};
+const runs=(q)=>api('social_runs?select=device_id,ini,country,club,score&week=eq.'+encodeURIComponent(WK())+'&mode=eq.classic'+q+'&order=score.desc&limit=500');
+// ---- clubs ----
+const code5=()=>{const A='ABCDEFGHJKMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<5;i++)s+=A[Math.random()*A.length|0];return s};
+async function createClub(){if(!ini()){toast('Set your 3 initials first (Online Board)');return}const n=(prompt('Club name (3-20 letters)')||'').trim().slice(0,20);if(n.length<3)return;const c=code5();
+ try{await api('clubs',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({code:c,name:n,owner_id:uid()})});await api('club_members',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({device_id:uid(),code:c,ini:ini()})});LS.fgfClub=c;LS.fgfClubN=n;toast('🛡️ Club '+n+' created · code '+c);SO.data={}}catch(e){toast(e.off?'Clubs are switching on soon':'Could not create club')}}
+async function joinClub(){if(!ini()){toast('Set your 3 initials first (Online Board)');return}const c=(prompt('Club code (5 letters)')||'').toUpperCase().replace(/[^A-Z0-9]/g,'');if(c.length!==5)return;
+ try{const r=await api('clubs?select=code,name&code=eq.'+c);if(!r||!r[0]){toast('No club with that code');return}await api('club_members',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({device_id:uid(),code:c,ini:ini()})}).catch(e=>{if(e.status!==409)throw e});LS.fgfClub=c;LS.fgfClubN=r[0].name;toast('🛡️ Joined '+r[0].name);SO.data={}}catch(e){toast(e.off?'Clubs are switching on soon':/club full/.test(e.message)?'That club is full (30)':'Could not join club')}}
+// ---- ghost races ----
+const id8=()=>{const A='ABCDEFGHJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';let s='';for(let i=0;i<8;i++)s+=A[Math.random()*A.length|0];return s};
+async function sendGhost(){const k=JSON.parse(LS.fgfLastRun||'[]');if(!k.length){toast('Play a Classic run first · it becomes your ghost');return}if(!ini()){toast('Set your 3 initials first (Online Board)');return}const id=id8(),mk=k.filter(x=>x[6]).length;
+ try{await api('ghosts',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({id,ini:ini(),kicks:k,makes:mk})});const url=location.origin+location.pathname+'?ghost='+id,t='👻 Race my ghost in Field Goal Frenzy! I made '+mk+' of '+k.length+'. Same kicks, same wind: '+url;
+  if(navigator.share)navigator.share({text:t}).catch(()=>{});else if(navigator.clipboard){navigator.clipboard.writeText(t);toast('Challenge link copied')}LS.fgfGhostSent=id}catch(e){toast(e.off?'Ghost races are switching on soon':'Could not create challenge')}}
+let GR=null;window.FGF_GR=()=>GR;
+function grSet(){const k=GR.k[GR.i];dist=k[0];newWind();window.__wx=null;wind={mph:k[1],a:k[2],x:k[3],z:k[4]};weather=k[5]||'clear';resetBall();lives=99;prevLives=99}
+function startGhost(g){newGame('classic');mode='ghost';GR={id:g.id,ini:g.ini,k:g.kicks,i:0,me:0,gm:0};grSet();toast('👻 Racing '+g.ini+"'s ghost · same kicks, same wind")}
+window.FGF_GHOSTSTART=startGhost;
+const oNx=S3.next;S3.next=function(good){if(mode!=='ghost'||!GR)return oNx.apply(this,arguments);const k=GR.k[GR.i];if(good)GR.me++;if(k[6])GR.gm++;GR.i++;FGF_POP(k[6]?'👻 '+GR.ini+' made it':'👻 '+GR.ini+' missed',k[6]?'#7fe8ff':'#ff9a9a',0.74);
+ if(GR.i>=GR.k.length){GR.done=1;const key='fgfGW_'+GR.id;if(GR.me>GR.gm&&!LS[key]){LS[key]=1;addCoins(150);GR.paid=150}state='grres';return true}grSet();return true};
+const gq=new URLSearchParams(location.search).get('ghost');if(gq&&/^[A-Za-z0-9]{8}$/.test(gq))setTimeout(()=>{api('ghosts?select=*&id=eq.'+gq).then(r=>{if(r&&r[0]){SO.pendingGhost=r[0];state='social';SO.tab=3}else toast('Ghost not found')}).catch(e=>toast(e.off?'Ghost races are switching on soon':'Could not load ghost'))},3500);
+// ---- spectate ----
+let SP=null;window.FGF_SPEC=()=>SP;
+function spectate(room){SP={id:room.id,r:room,t:0};state='spec'}
+setInterval(()=>{if(state==='spec'&&SP&&performance.now()-SP.t>2000){SP.t=performance.now();api('h2h_rooms?select=*&id=eq.'+SP.id).then(r=>{if(r&&r[0])SP.r=r[0]}).catch(()=>{})}},500);
+// ---- screen ----
+const TABS=['🛡️ CLUB','🌎 COUNTRY','🏆 BRACKET','👻 GHOST','👀 WATCH'];
+function head(t,s){txt(t,W/2,H*0.07,Math.min(26,W*0.07),GOLD,'#063');if(s){ctx.fillStyle='#bcd';ctx.font='12px system-ui';ctx.textAlign='center';ctx.fillText(s,W/2,H*0.07+22,W*0.92)}}
+function line(y,a,b,c,hl){panel(W*0.05,y,W*0.9,30);ctx.textAlign='left';ctx.fillStyle=hl?GOLD:'#fff';ctx.font='900 '+(W<350?12:13)+'px system-ui';ctx.fillText(a,W*0.08,y+20,W*0.12);ctx.fillText(b,W*0.2,y+20,W*0.5);ctx.textAlign='right';ctx.fillStyle=GOLD;ctx.fillText(c,W*0.92,y+20)}
+function note(t,y){ctx.fillStyle='#bcd';ctx.font=(W<350?12:13)+'px system-ui';ctx.textAlign='center';ctx.fillText(t,W/2,y,W*0.9)}
+function status(k){const d=SO.data[k];if(SO.busy[k]&&!d){note('Loading…',H*0.4);return true}if(d&&d.err){note(d.err==='off'?'Online social is switching on soon.':'Offline · try again later.',H*0.4);return true}return !d}
+const osc=S3.screen;S3.screen=function(){
+ if(state==='social'){BTN=[];head('👥 SOCIAL','Week '+WK()+' · Classic scores · '+(ini()||'no initials yet'));const tw=W*0.92/5;TABS.forEach((t,i)=>bx(W*0.04+i*tw,H*0.115,tw-4,30,W<350?t.split(' ')[0]:t,()=>{SO.tab=i},SO.tab===i,W<350?15:10));
+  const y0=H*0.115+42;
+  if(SO.tab===0){const c=LS.fgfClub;if(!c){note('Join a club to compete with friends every week.',y0+20);bx(W*0.15,y0+40,W*0.7,44,'🛡️ CREATE A CLUB',createClub,true,14);bx(W*0.15,y0+94,W*0.7,44,'🔑 JOIN WITH CODE',joinClub,false,14);note('Max 30 members · your best Classic score counts',y0+160)}
+   else{note('🛡️ '+(LS.fgfClubN||'')+' · code '+c,y0+16);if(!fresh('club'))load('club',()=>runs('&club=eq.'+c));if(!status('club')){const L=best(SO.data.club).slice(0,Math.floor((H*0.8-y0-70)/34));if(!L.length)note('No club scores this week yet · play Classic!',y0+60);L.forEach((r,i)=>line(y0+30+i*34,(i+1)+'.',r.ini+(r.device_id===uid()?' (you)':''),r.score.toLocaleString(),r.device_id===uid()))}
+    bx(W*0.05,H*0.84,W*0.43,30,'📤 Share code',()=>{const t='Join my Field Goal Frenzy club "'+(LS.fgfClubN||'')+'": code '+c;navigator.share?navigator.share({text:t}).catch(()=>{}):(navigator.clipboard&&navigator.clipboard.writeText(t),toast('Copied'))},false,12);bx(W*0.52,H*0.84,W*0.43,30,'Leave club',()=>{if(confirm('Leave this club?')){delete LS.fgfClub;delete LS.fgfClubN;SO.data={}}},false,12)}}
+  if(SO.tab===1){note('You: '+cname(cty()),y0+16);bx(W*0.62,y0,W*0.33,26,'Change',()=>{SO.pick=1},false,11);
+   if(SO.pick){const per=Math.floor((H*0.82-y0-30)/30),pg=SO.cpg||0,pages=Math.ceil(CTY.length/per);CTY.slice(pg*per,pg*per+per).forEach((c,i)=>bx(W*0.1,y0+30+i*30,W*0.8,26,c[1],()=>{LS.fgfCty=c[0];SO.pick=0},c[0]===cty(),12));if(pages>1)bx(W*0.05,H*0.84,W*0.9,30,'More countries ▶',()=>SO.cpg=(pg+1)%pages,false,12)}
+   else{if(!fresh('cty'))load('cty',()=>runs(''));if(!status('cty')){const m=new Map();for(const r of best(SO.data.cty)){if(!r.country)continue;const e=m.get(r.country)||{c:r.country,s:0,n:0,top:r};e.n++;if(e.n<=10)e.s+=r.score;m.set(r.country,e)}const L=[...m.values()].sort((a,b)=>b.s-a.s).slice(0,Math.floor((H*0.8-y0-50)/34));
+    note('Country score = top 10 players added up',y0+44);if(!L.length)note('No country scores this week yet',y0+80);L.forEach((e,i)=>line(y0+54+i*34,(i+1)+'.',cname(e.c)+' ('+e.n+')',e.s.toLocaleString(),e.c===cty()))}}}
+  if(SO.tab===2){if(!fresh('brk'))load('brk',()=>runs(''));if(!status('brk')){const T=best(SO.data.brk).slice(0,8);if(T.length<2)note('The weekly bracket needs 2+ players · play Classic!',y0+30);else{
+    note('Top 8 Classic scores this week · higher score advances',y0+14);const seed=[[0,7],[3,4],[1,6],[2,5]],g=i=>T[i]||{ini:'BYE',score:-1},win=(a,b)=>a.score>=b.score?a:b;const qf=seed.map(([a,b])=>[g(a),g(b)]),sf=[[win(...qf[0]),win(...qf[1])],[win(...qf[2]),win(...qf[3])]],fn=[win(...sf[0]),win(...sf[1])],ch=win(...fn);
+    const col=[W*0.04,W*0.36,W*0.68],cw=W*0.28,box=(x,y,p)=>{const me=p.device_id===uid();ctx.fillStyle=me?'rgba(242,194,48,.25)':'rgba(6,30,16,.9)';ctx.strokeStyle=GOLD;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(x,y,cw,24,6);ctx.fill();ctx.stroke();ctx.fillStyle='#fff';ctx.font='900 '+(W<350?10:11)+'px system-ui';ctx.textAlign='left';ctx.fillText(p.ini,x+5,y+16);ctx.textAlign='right';ctx.fillStyle=GOLD;ctx.fillText(p.score<0?'':p.score.toLocaleString(),x+cw-5,y+16,cw*0.6)};
+    const yy=y0+30,hh=(H*0.8-yy)/8;qf.forEach((m,i)=>{box(col[0],yy+i*2*hh,m[0]);box(col[0],yy+(i*2+1)*hh,m[1])});sf.forEach((m,i)=>{box(col[1],yy+(i*4+0.5)*hh,m[0]);box(col[1],yy+(i*4+2.5)*hh,m[1])});box(col[2],yy+1.5*hh,fn[0]);box(col[2],yy+5.5*hh,fn[1]);ctx.fillStyle=GOLD;ctx.font='900 13px system-ui';ctx.textAlign='center';ctx.fillText('🏆 '+ch.ini,col[2]+cw/2,yy+3.9*hh)}}}
+  if(SO.tab===3){const g=SO.pendingGhost;if(g){note('👻 '+g.ini+' challenged you: '+g.makes+' makes in '+g.kicks.length+' kicks',y0+20);bx(W*0.15,y0+40,W*0.7,48,'▶ RACE THE GHOST',()=>{SO.pendingGhost=null;startGhost(g)},true,15);note('Same distances and wind as their run · beat them for 🪙 150',y0+110)}
+   else{note('Your last Classic run becomes a ghost.',y0+20);note('Send it and friends race the same kicks and wind.',y0+40);bx(W*0.15,y0+60,W*0.7,48,'📤 SEND A CHALLENGE',sendGhost,true,15);const k=JSON.parse(LS.fgfLastRun||'[]');note(k.length?'Last run: '+k.filter(x=>x[6]).length+' makes in '+k.length+' kicks':'No run yet · play Classic first',y0+128);
+    bx(W*0.15,y0+150,W*0.7,40,'🔑 RACE A CODE',()=>{const c=(prompt('Ghost code (8 letters, from the link)')||'').trim();if(/^[A-Za-z0-9]{8}$/.test(c))api('ghosts?select=*&id=eq.'+c).then(r=>{if(r&&r[0])SO.pendingGhost=r[0];else toast('Ghost not found')}).catch(e=>toast(e.off?'Ghost races are switching on soon':'Could not load'))},false,13)}}
+  if(SO.tab===4){if(!fresh('live'))load('live',()=>api('h2h_rooms?select=id,host_ini,guest_ini,host_score,guest_score,round,ai,updated_at&status=eq.active&updated_at=gt.'+new Date(Date.now()-5*60e3).toISOString()+'&order=updated_at.desc&limit=8'));if(!status('live')){const L=SO.data.live||[];if(!L.length)note('No live Online H2H matches right now',y0+30);L.forEach((r,i)=>{const y=y0+10+i*44;bx(W*0.05,y,W*0.9,38,'👀 '+r.host_ini+' '+(r.host_score||0)+' – '+(r.guest_score||0)+' '+r.guest_ini+(r.ai?' 🤖':'')+' · rd '+(r.round||0),()=>spectate(r),false,13)})}}
+  bx(W/2-80,H*0.93-22,160,42,'◀ BACK',()=>{SO.pick=0;state='hub'},false,14);return true}
+ if(state==='spec'&&SP){BTN=[];const r=SP.r||{},lr=r.last_result||{};head('👀 WATCHING','Live Online H2H · updates every 2s');panel(W*0.08,H*0.2,W*0.84,H*0.36);txt((r.host_ini||'?')+'  vs  '+(r.guest_ini||'?'),W/2,H*0.29,22,'#fff');txt((r.host_score||0)+'  —  '+(r.guest_score||0),W/2,H*0.38,36,GOLD);
+  note(r.status==='active'?'Round '+(r.round||0)+' · next kick '+(r.dist||'?')+' yds':r.status==='done'?'Final':'Match ended',H*0.45);if(lr.who)note('Last: '+(lr.who==='host'?r.host_ini:lr.who==='guest'||lr.who==='ai'?r.guest_ini:'')+' '+(lr.good?'made':'missed')+(lr.dist?' from '+lr.dist:''),H*0.5);
+  bx(W/2-80,H*0.93-22,160,42,'◀ BACK',()=>{SP=null;state='social';SO.tab=4},false,14);return true}
+ if(state==='grres'&&GR){BTN=[];panel(W*0.08,H*0.22,W*0.84,H*0.36);const w=GR.me>GR.gm,t=GR.me===GR.gm;txt(w?'👻 GHOST BEATEN!':t?'👻 DEAD HEAT':'👻 THE GHOST WINS',W/2,H*0.29,Math.min(26,W*0.07),w?GOLD:'#ff9a9a','#063');txt('YOU '+GR.me+'  —  '+GR.gm+' '+GR.ini,W/2,H*0.38,26,'#fff');note(GR.paid?'🪙 +'+GR.paid:w?'Already paid for this ghost':'Same kicks, same wind · try again',H*0.45);
+  bx(W*0.1,H*0.62,W*0.38,46,'AGAIN',()=>{const g={id:GR.id,ini:GR.ini,kicks:GR.k};GR=null;startGhost(g)},false,15);bx(W*0.52,H*0.62,W*0.38,46,'SOCIAL',()=>{GR=null;mode='classic';state='social';SO.tab=3},true,15);return true}
+ const r=osc.apply(this,arguments);return r};
+const oH=S3.hud;S3.hud=function(sm){if(mode!=='ghost'||!GR)return oH.apply(this,arguments);ctx.save();ctx.font='900 13px system-ui';ctx.textAlign='center';ctx.fillStyle='#7fe8ff';ctx.fillText('👻 YOU '+GR.me+' · '+GR.gm+' '+GR.ini+' · kick '+(GR.i+1)+'/'+GR.k.length,W/2,H*0.155,W*0.94);ctx.restore();return true};
+setInterval(()=>{if(GR&&['menu','hub','title'].includes(state)){GR=null;if(mode==='ghost')mode='classic'}},500);
+window.FGF_SOCIAL_TEST={api,startGhost,sendGhost,best,runs};
+})();
+// in-play tap buttons (H2H emotes/quit, Hurricane END RUN): BTN is rebuilt every HUD frame and checked before the swipe handler
+(function(){const oH=S3.hud;S3.hud=function(){if(state==='play')BTN=[];return oH.apply(this,arguments)};
+ addEventListener('pointerdown',e=>{if(state!=='play'||paused||!BTN.length)return;const b=BTN.find(b=>e.clientX>=b.x-4&&e.clientX<=b.x+b.w+4&&e.clientY>=b.y-4&&e.clientY<=b.y+b.h+4);if(b){e.stopImmediatePropagation();e.preventDefault();BTN=[];b.cb()}},true)})();

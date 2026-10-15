@@ -11,14 +11,16 @@ async function api(path,opt){const s=SB();const r=await fetch(s.url+'/rest/v1/'+
 function code6(){const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<6;i++)s+=A[Math.random()*A.length|0];return s}
 function roll(){const d=25+Math.round(Math.random()*40),mph=Math.round(Math.random()*14),a=Math.random()*6.283;return{dist:d,wind:{mph,a,x:Math.sin(a)*mph,z:Math.cos(a)*mph*0.3}}}
 async function patch(id,fields){fields.updated_at=new Date().toISOString();return api('h2h_rooms?id=eq.'+id,{method:'PATCH',body:JSON.stringify(fields)})}
-function leave(){stopSub();H2={room:null,sub:null,poll:null,role:null,ai:0,grace:0,waitT:0,busy:0,lastKick:0};if(['h2h','h2play','h2res'].includes(state))state='hub'}
+function leave(){stopSub();H2={room:null,sub:null,poll:null,role:null,ai:0,grace:0,waitT:0,busy:0,lastKick:0};if(['h2h','h2res'].includes(state)||inPlay()){state='hub';mode='classic'}}
 function stopSub(){try{if(H2.sub){H2.sub.close();H2.sub=null}}catch(e){}if(H2.poll){clearInterval(H2.poll);H2.poll=null}}
-function applyRoom(r){if(!r)return;H2.room=r;if(r.status==='active'&&state!=='h2play'&&state!=='h2res'){mode='h2h';lives=H2.role==='host'?r.host_lives:r.guest_lives;dist=r.dist;const w=r.wind||{};wind={mph:w.mph||0,a:w.a||0,x:w.x||0,z:w.z||0};state='h2play';msg=null;resetBall();paused=false}
+const inPlay=()=>state==='play'&&mode==='h2h';window.FGF_H2INPLAY=inPlay;
+function setKick(r){mode='h2h';lives=H2.role==='host'?r.host_lives:r.guest_lives;dist=r.dist;const w=r.wind||{};wind={mph:w.mph||0,a:w.a||0,x:w.x||0,z:w.z||0};msg=null;resetBall();paused=false;H2.rnd=r.round||0}
+function applyRoom(r){if(!r)return;H2.room=r;if(r.status==='active'&&!inPlay()&&state!=='h2res'){newGame('classic');setKick(r);state='play'}else if(r.status==='active'&&inPlay()&&(r.round||0)!==H2.rnd&&myTurn()&&(ball.done||!ball.fly)&&!msg){setKick(r)}
  if(r.status==='done'||r.status==='forfeit'){state='h2res'}}
 async function refresh(){if(!H2.room)return;try{const rows=await api('h2h_rooms?id=eq.'+H2.room.id+'&select=*');if(rows&&rows[0])applyRoom(rows[0])}catch(e){}}
 function subscribe(id){stopSub();const s=SB(),host=s.url.replace(/^https?:\/\//,''),url='wss://'+host+'/realtime/v1/websocket?apikey='+encodeURIComponent(s.anonKey)+'&vsn=1.0.0';let ref=0;const ws=new WebSocket(url);H2.sub=ws;
  ws.onopen=()=>{const payload={config:{postgres_changes:[{event:'*',schema:'public',table:'h2h_rooms',filter:'id=eq.'+id}],broadcast:{ack:false},presence:{key:uid()}},access_token:s.anonKey};ws.send(JSON.stringify({topic:'realtime:public:h2h_rooms',event:'phx_join',payload:payload,ref:String(++ref)}))};
- ws.onmessage=e=>{try{const m=JSON.parse(e.data);const rec=m.payload&&(m.payload.record||(m.payload.data&&m.payload.data.record));if(rec)applyRoom(rec)}catch(err){}};
+ ws.onmessage=e=>{try{const m=JSON.parse(e.data);if(m.event==='broadcast'&&m.payload&&m.payload.payload){const q=m.payload.payload;if(H2.room&&q.room===H2.room.id&&q.from!==H2.role)H2.emo={e:String(q.e).slice(0,24),t:performance.now(),them:1};return}const rec=m.payload&&(m.payload.record||(m.payload.data&&m.payload.data.record));if(rec)applyRoom(rec)}catch(err){}};
  ws.onerror=()=>{};ws.onclose=()=>{};H2.poll=setInterval(refresh,2000)}
 async function needIni(){if(myIni())return myIni();toast('Set 3 initials first (Online Board)');state='olb';if(window.FGF_ASKINI)FGF_ASKINI(true);return null}
 async function createRoom(priv){const ini=await needIni();if(!ini)return;H2.busy=1;try{const roll0=roll(),body={code:priv?code6():null,status:'waiting',host_ini:ini,host_id:uid(),turn:uid(),dist:roll0.dist,wind:roll0.wind,expires_at:new Date(Date.now()+15*60e3).toISOString()};
@@ -49,17 +51,26 @@ const osc=S3.screen;S3.screen=function(){if(state==='h2menu'){BTN=[];txt('⚔️
   bx(W/2-90,H*0.93-18,180,38,'◀ BACK',()=>state='hub');return true}
  if(state==='h2h'){BTN=[];const r=H2.room||{};txt(r.code?'🔗 ROOM '+r.code:'🔎 MATCHMAKING',W/2,H*0.16,Math.min(26,W*0.07),GOLD,'#063');
   if(r.status==='waiting'){txt('Waiting for an opponent…',W/2,H*0.3,16,'#fff');ctx.fillStyle='#bcd';ctx.font='13px system-ui';ctx.textAlign='center';ctx.fillText(r.code?'Share this code with a friend':'Looking for a Quick Match…',W/2,H*0.36);ctx.fillText('Computer fills in after 25s if no one joins',W/2,H*0.42);if(r.code)bx(W*0.2,H*0.5,W*0.6,40,'📋 Copy code',()=>{navigator.clipboard&&navigator.clipboard.writeText(r.code).then(()=>toast('Code copied'))},false,14)}
-  else{txt((r.host_ini||'?')+'  vs  '+(r.guest_ini||'?')+(r.ai?' (CPU)':''),W/2,H*0.3,18,'#fff');txt((r.host_score||0)+'  —  '+(r.guest_score||0),W/2,H*0.38,32,GOLD);bx(W*0.2,H*0.5,W*0.6,48,'▶ GO TO KICK',()=>{applyRoom(r);state='h2play';newGame('classic');mode='h2h';dist=r.dist;const w=r.wind||{};wind={mph:w.mph||0,a:w.a||0,x:w.x||0,z:w.z||0};lives=H2.role==='host'?r.host_lives:r.guest_lives;resetBall()},true,15)}
+  else{txt((r.host_ini||'?')+'  vs  '+(r.guest_ini||'?')+(r.ai?' (CPU)':''),W/2,H*0.3,18,'#fff');txt((r.host_score||0)+'  —  '+(r.guest_score||0),W/2,H*0.38,32,GOLD);bx(W*0.2,H*0.5,W*0.6,48,'▶ GO TO KICK',()=>{newGame('classic');setKick(r);state='play'},true,15)}
   bx(W/2-90,H*0.93-18,180,38,'✕ LEAVE',leave,false,14);return true}
- if(state==='h2play'){BTN=[];const r=H2.room||{},me=H2.role==='host',mine=myTurn();
+ if(state==='h2res'){BTN=[];const r=H2.room||{},me=H2.role==='host',ms=r.host_score||0,os=r.guest_score||0,win=r.status==='forfeit'?true:(me?ms>=os:os>=ms);
+  txt(r.status==='forfeit'?'⚠️ OPPONENT LEFT':(win?'🏆 YOU WIN!':'💀 YOU LOSE'),W/2,H*0.22,Math.min(30,W*0.08),win?GOLD:'#ff6b6b','#063');
+  txt((r.host_ini||'?')+'  '+ms+'  —  '+os+'  '+(r.guest_ini||'?'),W/2,H*0.34,18,'#fff');if(win&&!r.ai&&H2.paid!==r.id){H2.paid=r.id;addCoins(200);toast('⚔️ H2H win  🪙 +200')}bx(W*0.15,H*0.5,W*0.7,48,'PLAY AGAIN',()=>{leave();state='h2menu'},true,15);bx(W/2-90,H*0.5+64,180,40,'◀ HUB',()=>{leave();state='hub'},false,14);return true}
+ return osc.apply(this,arguments)};
+// emotes + quick-chat (Realtime broadcast, filtered by room id)
+const EMO=['👏','🔥','😱','😂','GG!','Nice kick!','Good luck!','Rematch?'];
+function sendEmo(e){const r=H2.room;if(!r||performance.now()-(H2.emoT||0)<1500)return;H2.emoT=performance.now();H2.emo={e,t:performance.now(),them:0};
+ try{if(H2.sub&&H2.sub.readyState===1)H2.sub.send(JSON.stringify({topic:'realtime:public:h2h_rooms',event:'broadcast',payload:{type:'broadcast',event:'emote',payload:{room:r.id,from:H2.role,e}},ref:String(Date.now())}))}catch(err){}
+ if(r.ai&&Math.random()<0.6)setTimeout(()=>{H2.emo={e:['👏','GG!','🔥','Nice kick!'][Math.random()*4|0],t:performance.now(),them:1}},1200)}
+window.FGF_H2EMO=sendEmo;
+function emotes(r){const sz=W<350?30:34,x=W-sz-8;let y=H*0.36;if(H2.emoOpen){EMO.forEach((e,i)=>{bx(x-(e.length>2?70:0),y+i*(sz+4),sz+(e.length>2?70:0),sz,e,()=>{sendEmo(e);H2.emoOpen=0},false,e.length>2?11:16)})}else bx(x,y,sz,sz,'💬',()=>H2.emoOpen=1,false,16);
+ const E=H2.emo;if(E&&performance.now()-E.t<2600){ctx.save();ctx.globalAlpha=Math.min(1,(2600-(performance.now()-E.t))/400);ctx.font='900 '+(W<350?15:18)+'px system-ui';ctx.textAlign='center';const lbl=(E.them?(H2.role==='host'?(r.guest_ini||''):(r.host_ini||''))+': ':'')+E.e,w=Math.min(W*0.85,Math.max(60,ctx.measureText(lbl).width+24)),bx0=E.them?W*0.5:W*0.5,by=E.them?84:H*0.78;ctx.fillStyle=E.them?'rgba(255,255,255,0.95)':'rgba(242,194,48,0.95)';ctx.beginPath();ctx.roundRect(bx0-w/2,by,w,32,14);ctx.fill();ctx.fillStyle='#063';ctx.fillText(lbl,bx0,by+22,w-12);ctx.restore()}}
+const oHud=S3.hud;S3.hud=function(sm){if(!(mode==='h2h'&&H2.room))return oHud.apply(this,arguments);const r=H2.room||{},me=H2.role==='host',mine=myTurn();
   ctx.fillStyle='rgba(0,0,0,0.55)';ctx.beginPath();ctx.roundRect(W*0.06,8,W*0.88,58,12);ctx.fill();ctx.fillStyle=GOLD;ctx.font='900 13px system-ui';ctx.textAlign='center';ctx.fillText((r.host_ini||'H')+' '+ (r.host_score||0)+'  ·  '+(r.guest_score||0)+' '+(r.guest_ini||'G')+(r.ai?' 🤖':''),W/2,28);
   ctx.fillStyle=mine?'#7fe87f':'#ffb36b';ctx.font='900 12px system-ui';ctx.fillText(mine?'YOUR TURN · '+dist+' YDS':('Waiting for '+(me?r.guest_ini:r.host_ini)+'…'),W/2,48);
   ctx.fillStyle='#bcd';ctx.font='11px system-ui';ctx.fillText('🏈 '+(me?r.host_lives:r.guest_lives)+' left · round '+(r.round||0),W/2,H*0.92);
-  if(!mine&&!ball.fly){/* block kicks */}bx(W*0.04,H*0.93-18,90,36,'✕ Quit',leave,false,12);return false}
- if(state==='h2res'){BTN=[];const r=H2.room||{},me=H2.role==='host',ms=r.host_score||0,os=r.guest_score||0,win=r.status==='forfeit'?true:(me?ms>=os:os>=ms);
-  txt(r.status==='forfeit'?'⚠️ OPPONENT LEFT':(win?'🏆 YOU WIN!':'💀 YOU LOSE'),W/2,H*0.22,Math.min(30,W*0.08),win?GOLD:'#ff6b6b','#063');
-  txt((r.host_ini||'?')+'  '+ms+'  —  '+os+'  '+(r.guest_ini||'?'),W/2,H*0.34,18,'#fff');if(win&&!r.ai){addCoins(200);toast('⚔️ H2H win  🪙 +200')}bx(W*0.15,H*0.5,W*0.7,48,'PLAY AGAIN',()=>{leave();state='h2menu'},true,15);bx(W/2-90,H*0.5+64,180,40,'◀ HUB',()=>{leave();state='hub'},false,14);return true}
- return osc.apply(this,arguments)};
+  if(!mine&&!ball.fly){/* block kicks */}emotes(r);bx(W*0.04,H*0.93-18,90,36,'✕ Quit',leave,false,12);return true};
+
 // block input when not your turn
 const ok=kick;kick=function(){if(mode==='h2h'&&H2.room&&!myTurn()){toast('Wait for your turn');return}return ok.apply(this,arguments)};
 try{const L=SHOP&&0}catch(e){}
