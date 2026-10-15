@@ -2,7 +2,7 @@
 (function(){
 window.FGF_CLOUDON=1;
 const SB=()=>window.FGF_ONLINE||{url:'https://fdmcgupjmjfpraznmsew.supabase.co',anonKey:''};
-const KEYS=['fgfAdProg','fgfPicks','fgfTroCyc','fgfTroAll','fgfCoins','fgfOwn','fgfEq','fgfTeams','fgfCar','fgfPass','fgfMis','fgfMisW','fgfXP','fgfStats','fgfAch','fgfOLIni','fgfMenuOrder','fgfMute','fgfVib','fgfMusic','fgfKickType','fgfLeft','fgfTurf','fgfTurfO','fgfWxOwn','fgfFreeze','fgfChamps','fgfTitle','fgfPro','fgfLegend','fgfKN','fgfStreak','fgfLS','fgfFounder','fgfTeam','fgfMK','fgfCM','fgfCT','fgfUP','fgfBG'];
+const KEYS=['fgfPerks','fgfTitleEq','fgfMS','fgfMM_posts','fgfMM_kickoff','fgfMM_punt','fgfMM_onside','fgfMM_drill','fgfMM_boss','fgfMM_ladder','fgfAdProg','fgfPicks','fgfTroCyc','fgfTroAll','fgfCoins','fgfOwn','fgfEq','fgfTeams','fgfCar','fgfPass','fgfMis','fgfMisW','fgfXP','fgfStats','fgfAch','fgfOLIni','fgfMenuOrder','fgfMute','fgfVib','fgfMusic','fgfKickType','fgfLeft','fgfTurf','fgfTurfO','fgfWxOwn','fgfFreeze','fgfChamps','fgfTitle','fgfPro','fgfLegend','fgfKN','fgfStreak','fgfLS','fgfFounder','fgfTeam','fgfMK','fgfCM','fgfCT','fgfUP','fgfBG'];
 function snap(){const o={};KEYS.forEach(k=>{if(LS[k]!=null)o[k]=LS[k]});o._coins=+coins||+(LS.fgfCoins||0);o._v=1;return o}
 function apply(p){if(!p||typeof p!=='object')return;KEYS.forEach(k=>{if(p[k]!=null)LS[k]=typeof p[k]==='string'?p[k]:JSON.stringify(p[k])});
  if(p.fgfCoins!=null){coins=+p.fgfCoins||0}else if(p._coins!=null){coins=+p._coins||0;LS.fgfCoins=String(coins)}

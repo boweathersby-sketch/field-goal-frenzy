@@ -77,7 +77,7 @@ const hubItems=()=>{const d=deal(),L=[
  ['🔗','CHALLENGE A FRIEND','Share a beat-my-score link',shareLink,false],
  ['🤝','INVITE FRIENDS','Share your code · 🪙 500 each',()=>window.FGF_REFER&&FGF_REFER(),false],
  ['🏈','CAREER BRACKET','Playoffs & trophies',()=>state='brk',false],
- ['📊','STATS','Kicks, accuracy, level',()=>state='stats',false],
+ ['📊','STATS','Perks · milestones · career',()=>state='stats',false],
  ['⭐','HALL OF FAME','Your top 5 kicks',()=>state='hof',false],
  ['📚','COLLECTION','Everything you own',()=>state='coll',false],
  ['ℹ️','CREDITS & PRIVACY','',()=>state='cred',false]];
