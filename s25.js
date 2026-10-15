@@ -121,7 +121,7 @@ function extras(){if(CH)return chooser();const {y0,y1}=rowsArea(),bw=W*0.92,x=W*
 drawShop=function(){txt('COIN SHOP',W/2,H*0.065,Math.min(30,W*0.08),GOLD,'#063');ctx.fillStyle=GOLD;ctx.font='900 15px system-ui';ctx.textAlign='center';ctx.fillText('🪙 '+CSTR(),W/2,H*0.065+22);
  if(shopTab!==lastTab){page=0;pend=null;lastTab=shopTab}if(shopTab===SHOP.length)LS.fgfSPseen='1';const T5=TABN(),tw=(W*0.92-16)/5;T5.forEach((c,i)=>bx(W*0.04+(i%5)*(tw+4),H*0.14+(i/5|0)*34,tw,30,c,()=>{shopTab=i;pendBuy=null},i===shopTab,Math.min(11,tw/7.2)));
  if(shopTab===SHOP.length){window.SHOP_DY=0;drawPacks();bx(W/2-90,H*0.93-14,180,40,'◀ BACK',()=>state='title');return}
- const nm=SHOP[shopTab][0];if(nm==='WEATHER')wxRows();else if(nm==='AD ITEMS'&&window.FGF_ADROWS)FGF_ADROWS();else if(nm==='EXTRAS')extras();else itemRows(SHOP[shopTab][1]);
+ const nm=SHOP[shopTab][0];if(nm==='WEATHER')wxRows();else if(nm==='AD ITEMS'&&window.FGF_ADROWS)FGF_ADROWS();else if(window.FGF_TABROWS&&FGF_TABROWS[nm])FGF_TABROWS[nm]();else if(nm==='EXTRAS')extras();else itemRows(SHOP[shopTab][1]);
  bx(W/2-90,H*0.93-14,180,40,'◀ BACK',()=>state='title');
  if(MB){const a=(performance.now()-MB.t0)/1000;if(a>3.2)MB=null;else{BTN=[];ctx.fillStyle='rgba(0,0,0,0.75)';ctx.fillRect(0,0,W,H);panel(W*0.1,H*0.3,W*0.8,H*0.3);txt(CURBOX[1],W/2,H*0.36,20,GOLD,'#063');if(/^(bl|th|fg)/.test(MB.it[0]))preview(MB.it[0],W/2,H*0.43,16);txt(MB.it[1],W/2,H*0.5,20,'#fff');ctx.fillStyle='#7fe87f';ctx.font='bold 13px system-ui';ctx.textAlign='center';ctx.fillText(MB.coins?'Collection complete · coins instead':(RAR_L[MB.rar]||'')+' · New! Equip it in its tab',W/2,H*0.55)}}};
 window.FGF_SHOPPG=v=>{if(v!=null)page=v;return page};// Soften original gear prices too

@@ -1,4 +1,4 @@
-// s41 (Batch 2, gameplay): perfect-center & doink-in bonuses, stronger long-range wind bend (55-76 yd only; 80-yd tuning untouched),
+// s41 (Batch 2, gameplay): (perfect +15 / doink-in +25 bonuses already live in s19), stronger long-range wind bend (55-76 yd only; 80-yd tuning untouched),
 // heat shimmer + night fog/snow, and MORE MODES: Moving Posts, Kickoff, Punt Pin, Onside Kick, Two-Minute Drill, Boss Gauntlet, Ladder.
 (function(){
 const R=Math.random,RI=(a,b)=>a+Math.round(R()*(b-a)),DK=window.FGF_DK||(()=>new Date().toDateString());
@@ -6,9 +6,7 @@ let MM=null,kt0=0;window.FGF_MM=()=>MM;
 const OFFY=()=>typeof OFF!=='undefined'?OFF:0;
 // ---- bonuses on normal kicks ----
 const oR=S3.onResult;S3.onResult=function(good){const r=oR.apply(this,arguments);
- try{if(good&&!MM&&!['trick','tut','legendc'].includes(mode)&&ball&&ball.res==='GOOD!'){
-  if(ball.hitPost){addCoins(25);FGF_POP('🔔 DOINK-IN +25','#7fe8ff',0.6);LS.fgfDoinkIn=(+(LS.fgfDoinkIn||0))+1}
-  else if(Math.abs(ball.x)<0.3){addCoins(10);FGF_POP('🎯 PERFECT CENTER +10',GOLD,0.6);LS.fgfPerfect=(+(LS.fgfPerfect||0))+1}}}catch(e){}
+
  if(MM)mmMsg(good);return r};
 const oK=S3.onKick;S3.onKick=function(){kt0=performance.now();return oK.apply(this,arguments)};
 // ---- wind: a bit more bend at long range, never at 80 and never under 55 ----
