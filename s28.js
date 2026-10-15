@@ -21,7 +21,7 @@ window.FGF_SPREW=REW;
 const pts=()=>{const sp=J('fgfSPx',{m:'',p:0});return sp.m===MO()?sp.p:0};
 const clm=()=>{const c=J('fgfSP2',{m:'',c:{}});if(c.m!==MO()){c.m=MO();c.c={}}return c};
 let CEL=null,scroll=0,drag=null,autoS=true;const SPO={get y(){return scroll},set y(v){scroll=v;autoS=false},max:0};
-function grant(i){const c=clm();if(c.c[i])return;const r=REW(i),k=r[2];c.c[i]=1;SV('fgfSP2',c);
+function grant(i){const c=clm();if(c.c[i])return;const r=REW(i),k=r[2];c.c[i]=1;SV('fgfSP2',c);try{window.FGF_SPGOLD&&FGF_SPGOLD(i,k)}catch(e){}
  if(k.startsWith('c:'))addCoins(+k.slice(2)),toast('🎟️ Tier '+i+' · 🪙 +'+k.slice(2));
  else if(k.startsWith('box:')){const [,bid,cn]=k.split(':');addCoins(+cn);try{const B=FGF_BOXES.find(x=>x[0]===bid)||FGF_BOXES[0];FGF_SHOPTEST.mystery(B)}catch(e){addCoins(300)}toast('🎟️ Tier '+i+' · 🪙 +'+(+cn).toLocaleString()+' · pick waiting in Shop › Extras!')}
  else if(k.startsWith('it:')){const [,id,cn]=k.split(':');if(+cn)addCoins(+cn);if(own.includes(id)){const v=Math.max(200,(ITEM[id]&&ITEM[id][2])||300);addCoins(v);toast('Already owned · 🪙 +'+v)}else{own.push(id);SV('fgfOwn',own);toast('🎁 Unlocked '+((ITEM[id]&&ITEM[id][1])||id)+(+cn?' · 🪙 +'+(+cn).toLocaleString():''))}}
