@@ -74,6 +74,7 @@ const hubItems=()=>{const d=deal(),L=[
  ['🌐','ONLINE BOARD','Weekly scores worldwide',()=>{state='olb';OLB.t=-1e9},false],
  ['📅','WEEKLY BOARD','This week vs rivals',()=>state='wlb',false],
  ['🔗','CHALLENGE A FRIEND','Share a beat-my-score link',shareLink,false],
+ ['🤝','INVITE FRIENDS','Share your code · 🪙 500 each',()=>window.FGF_REFER&&FGF_REFER(),false],
  ['🏈','CAREER BRACKET','Playoffs & trophies',()=>state='brk',false],
  ['📊','STATS','Kicks, accuracy, level',()=>state='stats',false],
  ['⭐','HALL OF FAME','Your top 5 kicks',()=>state='hof',false],
