@@ -48,7 +48,7 @@ const oOn=B.onPurchased.bind(B);B.onPurchased=function(id){
  if(id==='vip_monthly'){LS.fgfVipExp=String(Date.now()+31*864e5);giveItem('cTvip');if(!own.includes(VIPN)){own.push(VIPN);SV('fgfOwn',own)}toast('👑 Welcome to VIP!');return}
  if(id==='spass_gold'){LS.fgfSPGold=mo();toast('🎟️ Season Pass Gold active for this month');return}
  if(id==='coin_doubler'){LS.fgfDoubler='1';toast('✖️2 Coin Doubler active');return}
- if(id==='gift_3000'||id==='gift_10000'){const n=id==='gift_3000'?3000:10000;try{FGF_GIFTPACK(n)}catch(e){toast('Gift code could not be made · contact support')}return}
+ if(id==='gift_3000'||id==='gift_10000'){const n=id==='gift_3000'?3000:10000;FGF_GIFTPACK(n,arguments[1]).catch(()=>toast('Gift code could not be made · contact support'));return}
  return oOn(id)};
 const oSub=B.onSubscription;B.onSubscription=function(id,exp){if(id==='vip_monthly'){LS.fgfVipExp=String(+exp||0);return}return oSub?oSub.apply(this,arguments):undefined};
 // VIP: no ads + 500 coins on the first game each day
