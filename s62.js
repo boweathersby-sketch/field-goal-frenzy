@@ -86,15 +86,5 @@ let gk=0,gRun=null;const MMf=()=>window.FGF_MM&&FGF_MM();
 const oR=S3.onResult;S3.onResult=function(){const r=oR.apply(this,arguments);try{const m=MMf();if(m&&m.t==='posts')gk++}catch(e){}return r};
 const oDP=drawPosts;drawPosts=function(){const r=oDP.apply(this,arguments);try{const m=MMf();if(m&&m.t==='posts'){if(gRun!==m){gRun=m;gk=0;LS.fgfGhostN=+(LS.fgfGhostN||0)+1}
  if(state==='play'&&!ball.fly&&gk<3&&+(LS.fgfGhostN||0)<=5){const t=performance.now()/1000+1.1,px=Math.sin(t*1.3)*2.6*Math.min(1,(dist-20)/25+0.4),a=P(px,0,dist+0.2),b=P(px,BAR+4,dist+0.2);if(a&&b){ctx.save();ctx.globalAlpha=0.55+0.25*Math.sin(performance.now()/180);ctx.strokeStyle='#7fffd4';ctx.lineWidth=Math.max(2,a.s*0.12);ctx.setLineDash([6,6]);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();ctx.setLineDash([]);ctx.font='900 11px system-ui';ctx.textAlign='center';ctx.fillStyle='#7fffd4';ctx.fillText('AIM HERE · '+(3-gk)+' left',b.x,b.y-6);ctx.restore()}}}}catch(e){}return r};
-// ---------- Continue last Classic run ----------
-let resumed=false,asked=false;
-const runOK=()=>mode==='classic'&&!X&&!MMf();
-const oNx2=S3.next;S3.next=function(good){const r=oNx2.apply(this,arguments);try{if(mode==='classic'&&lives<=0)delete LS.fgfResume;if(runOK()&&!r&&lives>0&&!(lives<=0)){setTimeout(()=>{if(runOK()&&state==='play'&&lives>0)LS.fgfResume=JSON.stringify({score,streak,lives,dist,t:Date.now(),c:+(LS.fgfCont||0)})},50)}}catch(e){}return r};
-const oEnd=S3.onEnd;S3.onEnd=function(){try{if(mode==='classic')delete LS.fgfResume}catch(e){}return oEnd?oEnd.apply(this,arguments):undefined};
-const oNG=newGame;newGame=function(m){const r=oNG.apply(this,arguments);try{if(!resumed&&(m||mode)==='classic')delete LS.fgfResume}catch(e){}return r};
-function resume(){let s;try{s=JSON.parse(LS.fgfResume||'')}catch(e){}if(!s)return;resumed=true;newGame('classic');resumed=false;score=s.score;streak=s.streak;lives=s.lives;prevLives=lives;dist=s.dist;state='play';newWind();resetBall();toast('▶ Run resumed · '+score+' pts · '+dist+' yds')}
-setInterval(()=>{if(state!=='title'||asked||document.getElementById('fgfxm')||document.getElementById('fgfwn'))return;let s;try{s=JSON.parse(LS.fgfResume||'')}catch(e){}if(!s||Date.now()-s.t>3*864e5)return;asked=true;
- const d=card('▶ CONTINUE YOUR RUN?',`<div style="text-align:center">Classic · <b>${s.score}</b> pts · ${s.dist} yds · ${s.lives} ${s.lives===1?'miss':'misses'} left${s.streak>1?' · 🔥 x'+s.streak:''}</div><div style="display:flex;gap:8px;justify-content:center;margin-top:14px"><button id="xrs" style="${BG}">CONTINUE ▶</button><button id="xnr" style="${BS}">NEW RUN</button><button id="xlt" style="${BS}">Later</button></div>`);
- d.querySelector('#xrs').onclick=()=>{closeCard();resume()};d.querySelector('#xnr').onclick=()=>{delete LS.fgfResume;closeCard()};d.querySelector('#xlt').onclick=closeCard},700);
-window.FGF_XMTEST={start,menu,seeded,normCode,resume,truth,codeUI,passUI};
+window.FGF_XMTEST={start,menu,seeded,normCode,truth,codeUI,passUI};
 })();
