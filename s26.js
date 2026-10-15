@@ -15,7 +15,7 @@ function gear(fr,x,y,w,h,e){fr=Math.max(0,Math.min(3,fr|0));ctx.save();const P=(
  if(v[2]==='dbl'){ctx.strokeStyle=v[3]||'#fff';ctx.lineWidth=Math.max(1,lw*0.3);ctx.beginPath();ctx.ellipse(px,py,w*0.13,h*0.05,0,-0.35,0.9);ctx.stroke()}}
  ctx.restore()}
 window.FGF_GEAR=gear;
-const od=S3.decal;S3.decal=function(fr,x,y,w,h){const r=od.apply(this,arguments);try{const im=S3.kimg();if(!(im&&im._masc))gear(fr,x,y,w,h,eq)}catch(e){}return r};
+const od=S3.decal;S3.decal=function(fr,x,y,w,h){const r=od.apply(this,arguments);try{const im=S3.kimg();if(!(im&&im._masc)&&window.FGF_KOVL)gear(fr,x,y,w,h,eq)}catch(e){}return r};
 // kicker preview box (frame 0, current team kicker)
 function kprev(x,y,h,e){const im=S3.kimg();if(!im||!im.complete&&!im.getContext)return;const fw=203,fh=300,w=h*fw/fh;try{ctx.drawImage(im,0,0,fw,fh,x-w/2,y,w,h)}catch(er){return}if(!(im&&im._masc))gear(0,x-w/2,y,w,h,e)}
 window.FGF_KPREV=kprev;

@@ -11,6 +11,9 @@ const CAT={k:['STICKERS','🏷️',[['sy_k0','Gold Star',150,['★','#ffd23f']],
  n:['NAME PLATES','🪪',[['sy_n0','Classic Plate',150,['#063','#ffd23f']],['sy_n1','Gold Plate',500,['#ffd23f','#063']],['sy_n2','Chrome Plate',600,['#d9e3ee','#1d2a3c']],['sy_n3','Neon Plate',450,['#0b0033','#ff2bd6']],['sy_n4','Team Plate',300,['team','#fff']],['sy_n5','Fire Plate',500,['#ff5a00','#fff36b']],['sy_n6','Ice Plate',500,['#bfefff','#08304a']],['sy_n7','Night Plate',300,['#111827','#9ad5ff']]]],
  cs:['CROWD SIGNS','🪧',[['sy_c0','GO KICKER!',150,['GO KICKER!']],['sy_c1','DOINK!',200,['DOINK!']],['sy_c2','IT\'S GOOD!',200,['IT\'S GOOD!']],['sy_c3','LEG DAY',250,['LEG DAY']],['sy_c4','80 YDS OR BUST',400,['80 OR BUST']],['sy_c5','#1 FAN',150,['#1 FAN']],['sy_c6','MY NAME',500,['__name']],['sy_c7','ICE IN VEINS',300,['ICE IN VEINS']],['sy_c8','SPLIT THE POSTS',300,['SPLIT EM']],['sy_c9','BOOM!',200,['BOOM!']]]],
  ks:['KICK SOUNDS','🔊',[['sy_x0','Big Boom',200,'boom'],['sy_x1','Thwack',150,'thwack'],['sy_x2','Retro 8-Bit',300,'bit'],['sy_x3','Laser',400,'laser'],['sy_x4','Cannon',500,'cannon'],['sy_x5','Whoosh',250,'whoosh'],['sy_x6','Bongo',300,'bongo'],['sy_x7','Thunder Foot',700,'thunder']]]};
+// Kirk (Oct 15): no overlays on the approved kicker art. Helmet stickers + arm sleeves retired; owners refunded once.
+try{if(!LS.fgfStyRef){let n=0;const kill=new Set(['k','s'].flatMap(k=>CAT[k][2].map(i=>i[0])));CAT.k[2].concat(CAT.s[2]).forEach(i=>{if(own.includes(i[0]))n+=i[2]});if(n){addCoins(n);setTimeout(()=>toast('🪙 +'+n.toLocaleString()+' refund · helmet stickers & sleeves retired'),2500)}for(let i=own.length-1;i>=0;i--)if(kill.has(own[i]))own.splice(i,1);SV('fgfOwn',own);const s0=J('fgfSty',{});delete s0.k;delete s0.s;SV('fgfSty',s0);LS.fgfStyRef='1'}}catch(e){}
+delete CAT.k;delete CAT.s;
 const KEYS=Object.keys(CAT),BYID={};KEYS.forEach(k=>CAT[k][2].forEach(it=>BYID[it[0]]=[k,it]));window.FGF_STYLE={CAT,ST,BYID};
 const owns=id=>own.includes(id)||!!window.TESTER;
 // ---- sounds ----
@@ -23,7 +26,7 @@ function overlays(fr,x,y,w,h,st){fr=Math.max(0,Math.min(3,fr|0));const P=q=>[x+w
  const sk=BYID[st.k];if(sk&&sk[0]==='k'){const [px,py]=P(HELM[fr]),d=sk[1][3],fs=Math.max(7,w*0.11);ctx.font='900 '+fs+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=d[1]==='team'?tm().s:(d[1]||'#fff');ctx.strokeStyle='rgba(0,0,0,.55)';ctx.lineWidth=2;const sx=px+w*0.03,sy=py-h*0.022;if(d[1])ctx.strokeText(d[0],sx,sy);ctx.fillText(d[0],sx,sy);ctx.textBaseline='alphabetic'}
  ctx.restore()}
 window.FGF_STYOV=overlays;
-const od=S3.decal;S3.decal=function(fr,x,y,w,h){const r=od.apply(this,arguments);try{const im=S3.kimg();if(!(im&&im._masc)){const st=Object.assign({},ST());['k','s'].forEach(k=>{if(st[k]&&!owns(st[k]))st[k]=''});overlays(fr,x,y,w,h,st)}window.__KR={x,y,w,h}}catch(e){}return r};
+const od=S3.decal;S3.decal=function(fr,x,y,w,h){const r=od.apply(this,arguments);try{const im=S3.kimg();if(!(im&&im._masc)){const st=Object.assign({},ST());['k','s'].forEach(k=>{if(st[k]&&!owns(st[k]))st[k]=''});if(window.FGF_KOVL)overlays(fr,x,y,w,h,st)}window.__KR={x,y,w,h}}catch(e){}return r};
 // ---- victory pose callout after a make ----
 let POSE=null;const oR=S3.onResult;S3.onResult=function(good){const r=oR.apply(this,arguments);try{const p=ST().p,b=BYID[p];if(good&&b&&owns(p))POSE={d:b[1][3],t:performance.now()}}catch(e){}return r};
 // ---- crowd signs (drawn in the stands, behind the kicker) ----
@@ -36,7 +39,7 @@ function plate(n0,px,py){const n=n0||ST().n,b=BYID[n];if(!b||(!n0&&!owns(n)))ret
 function pose(){if(!POSE)return;const a=(performance.now()-POSE.t)/1000;if(a>1.8){POSE=null;return}const K=window.__KR;if(!K)return;const x=K.x+K.w*0.5,y=K.y-10-a*8;ctx.save();ctx.globalAlpha=Math.min(1,(1.8-a)*2);ctx.font=(W<350?26:32)+'px system-ui';ctx.textAlign='center';ctx.fillText(POSE.d[0],x,y);ctx.font='900 '+(W<350?13:15)+'px system-ui';ctx.fillStyle=GOLD;ctx.strokeStyle='#063';ctx.lineWidth=3;ctx.strokeText(POSE.d[1],x,y+18);ctx.fillText(POSE.d[1],x,y+18);ctx.restore()}
 const oH=S3.hud;S3.hud=function(){const r=oH.apply(this,arguments);try{if(state==='play'){plate();pose()}}catch(e){}return r};
 // ---- STYLE shop tab ----
-SHOP.push(['STYLE',[]]);let sub='k',pg=0,PV=null;
+SHOP.push(['STYLE',[]]);let sub=KEYS[0],pg=0,PV=null;
 function buy(it){if(owns(it[0]))return;if(coins<it[2]){toast('Not enough coins · need 🪙 '+it[2].toLocaleString());return}addCoins(-it[2]);own.push(it[0]);SV('fgfOwn',own);try{sfx.cheer()}catch(e){}equip(it[0]);toast('✔ '+it[1]+' unlocked & equipped')}
 function equip(id){const k=BYID[id][0],s=ST();setST(k,s[k]===id?'':id);if(k==='ks'&&ST().ks)sfx.kick()}
 function preview(it){const k=BYID[it[0]][0];if(k==='ks'){try{KS[it[3]]()}catch(e){}return}if(k==='cs'||k==='n'||k==='p'){PV={it,k,t:performance.now()};return}PV={it,k,t:performance.now()}}
