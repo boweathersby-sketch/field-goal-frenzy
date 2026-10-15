@@ -16,13 +16,13 @@ const op=sfx.post;sfx.post=function(){const r=op.apply(this,arguments);try{thump
 const ok=kick;kick=function(s){const r=ok.apply(this,arguments);const kt=LS.fgfKT||'n';if(ball&&ball.fly&&kt!=='n'&&!ball._kt){ball._kt=1;const vh=Math.hypot(ball.vx,ball.vz),sp=Math.hypot(vh,ball.vy),a=kt==='l'?0.55:0.92,k=kt==='l'?1:0.97;const nh=sp*k*Math.cos(a);ball.vy=sp*k*Math.sin(a);if(vh>0){ball.vx*=nh/vh;ball.vz*=nh/vh}}return r};
 // ---- bad snap / pumpkin / blimp setup per ball ----
 let BL=null;
-const orb=resetBall;resetBall=function(){orb.apply(this,arguments);if(state!=='play'||mode==='tut'||isCh())return;
+const orb=resetBall;resetBall=function(){orb.apply(this,arguments);if(state!=='play'||(mode==='tut'||mode==='range')||isCh())return;
  if(dist<80&&(+LS.fgfKN||0)>10&&!ball.bonus&&(window.FGF_SNAP||Math.random()<0.05)){ball.snap=(Math.random()<0.5?-1:1);ball.x=ball.snap*0.3}
  const mo=(window.FGF_DATE?new Date(FGF_DATE):new Date()).getMonth();if(mo===9&&!ball.bonus&&!ball.gold&&(window.FGF_PUMP||Math.random()<0.1))ball.pump=1;
  if(!BL&&(window.FGF_BLIMP||Math.random()<1/30))BL={t0:performance.now(),dir:Math.random()<0.5?1:-1}};
 // ---- results ----
 let lastStreak=0;
-const ores=S3.onResult;S3.onResult=function(good){const r=ores.apply(this,arguments);if(mode==='tut')return r;const res=ball&&ball.res||'';
+const ores=S3.onResult;S3.onResult=function(good){const r=ores.apply(this,arguments);if((mode==='tut'||mode==='range'))return r;const res=ball&&ball.res||'';
  if(good&&res!=='BLOCKED!'){
   if(msg&&/Off the upright/.test(msg.s||'')){FGF_FREE(25,'🔔 DOINK-IN bonus');FGF_POP('🔔 DOINK… IN!','#7fe8ff',0.56)}
   if(Math.abs(ball.x)<0.35){FGF_FREE(15,'🎯 Perfect kick');FGF_POP('🎯 PERFECT!','#7dff6a',0.6)}

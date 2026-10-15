@@ -1,6 +1,6 @@
 // s16: new-player first-run flow (title + PLAY -> tutorial -> Classic -> team pick), first-kick power pulse counter
 (function(){
-const ok=kick;kick=function(){const r=ok.apply(this,arguments);if(mode!=='tut')LS.fgfKN=(+LS.fgfKN||0)+1;return r};
+const ok=kick;kick=function(){const r=ok.apply(this,arguments);if((mode!=='tut'&&mode!=='range'))LS.fgfKN=(+LS.fgfKN||0)+1;return r};
 if(team<0&&!LS.fgfTut){state='fstart'}
 let prev=state;
 setInterval(()=>{const f=LS.fgfFirst;

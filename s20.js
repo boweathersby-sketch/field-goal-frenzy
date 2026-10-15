@@ -10,7 +10,7 @@ window.FGF_ONLINE=Object.assign({enabled:true,url:'https://fdmcgupjmjfpraznmsew.
 const OH=()=>({'apikey':FGF_ONLINE.anonKey,'Content-Type':'application/json'});
 const ini3=()=>{if(LS.fgfOLIni)return LS.fgfOLIni;let s='';try{const I=J('fgfIni',null);if(I)s=I.map(k=>AZ[k]).join('')}catch(e){}if(!s)s=((window.MK&&MK.name)||'FGF');s=s.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,3);return s||'FGF'};
 FGF_ONLINE.status='idle';
-FGF_ONLINE.submit=function(sc){if(window.TESTER||window.FGF_NOSUBMIT||!this.enabled||!this.url||!(sc>0)||mode==='tut'||!['classic','time','pressure','hurricane','chaos'].includes(mode))return Promise.resolve(false);
+FGF_ONLINE.submit=function(sc){if(window.TESTER||window.FGF_NOSUBMIT||!this.enabled||!this.url||!(sc>0)||(mode==='tut'||mode==='range')||!['classic','time','pressure','hurricane','chaos'].includes(mode))return Promise.resolve(false);
  const now=Date.now(),rl=J('fgfOLrl',{t:0,w:'',b:{}});if(rl.w!==WK()){rl.w=WK();rl.b={}}if(now-rl.t<30000||sc<=(rl.b[mode]||0))return Promise.resolve(false);// rate limit: 1 per 30s, only new weekly bests per mode
  rl.t=now;rl.b[mode]=sc;SV('fgfOLrl',rl);
  return fetch(this.url+'/rest/v1/weekly_scores',{method:'POST',headers:Object.assign(OH(),{'Prefer':'return=minimal'}),body:JSON.stringify({week:WK(),mode:String(mode).slice(0,20),initials:ini3(),score:Math.min(1e7,Math.round(sc))})}).then(r=>{FGF_ONLINE.status=r.ok?'ok':'err '+r.status;return r.ok}).catch(()=>{FGF_ONLINE.status='offline';return false})};
@@ -24,11 +24,11 @@ const title=l=>TIT.filter(t=>l>=t[0]).pop()[1];window.FGF_TITLE=()=>title(FGF_LV
 function addXP(n){const b=FGF_LV().l;LS.fgfXP=(+LS.fgfXP||0)+n;const sp=J('fgfSPx',{m:'',p:0});if(sp.m!==MO()){sp.m=MO();sp.p=0}sp.p+=n;SV('fgfSPx',sp);const a=FGF_LV().l;if(a>b){toast('⬆️ LEVEL '+a+' · '+title(a));if(a%5===0){const c=100*a;addCoins(c);toast('🎁 Level '+a+' reward  🪙 +'+c)}}}
 // ---- stats / HoF / missions tracking ----
 const S=Object.assign({k:0,m:0,long:0,dk:0,pf:0,g:0,ds:0},J('fgfStats2',{}));
-const ok=kick;kick=function(){const f=ball&&ball.fly;const r=ok.apply(this,arguments);if(!f&&ball&&ball.fly&&mode!=='tut'){S.k++;SV('fgfStats2',S)}return r};
+const ok=kick;kick=function(){const f=ball&&ball.fly;const r=ok.apply(this,arguments);if(!f&&ball&&ball.fly&&(mode!=='tut'&&mode!=='range')){S.k++;SV('fgfStats2',S)}return r};
 const MI=[['m_make','Make 30 kicks',30,300],['m_50','Make 3 kicks of 50+ yards',3,400],['m_games','Finish 5 runs',5,250]];
 const mis=()=>{const m=J('fgfMis',{w:'',p:{},c:{}});if(m.w!==WK()){m.w=WK();m.p={};m.c={}}return m};
 const misAdd=(id,n)=>{const m=mis();m.p[id]=(m.p[id]||0)+n;SV('fgfMis',m)};window.FGF_MIS={mis,misAdd,MI,WK};
-const ores=S3.onResult;S3.onResult=function(good){const r=ores.apply(this,arguments);if(mode==='tut')return r;
+const ores=S3.onResult;S3.onResult=function(good){const r=ores.apply(this,arguments);if((mode==='tut'||mode==='range'))return r;
  if(good&&ball.res!=='BLOCKED!'){S.m++;S.ds+=dist;S.long=Math.max(S.long,dist);if(msg&&/Off the upright/.test(msg.s||''))S.dk++;if(Math.abs(ball.x)<0.35)S.pf++;addXP(Math.round(dist/2)+5);misAdd('m_make',1);if(dist>=50)misAdd('m_50',1);
   const H=J('fgfHoF',[]);H.push({d:dist,m:mode,dt:NOW().toLocaleDateString(),w:weather});H.sort((a,b)=>b.d-a.d);SV('fgfHoF',H.slice(0,5))}
  SV('fgfStats2',S);return r};
