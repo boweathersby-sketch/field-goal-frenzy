@@ -62,6 +62,7 @@ const onx=S3.next;S3.next=function(good){if(PRV&&PRV.on){Object.assign(eq,PRV.eq
 const hubItems=()=>{const d=deal(),L=[
  ['🏆','LEGEND CHALLENGE',LS.fgfLC===DK()?'Done today · back tomorrow':'1 free 80-yd try today',()=>window.FGF_LEGENDC&&FGF_LEGENDC(),LS.fgfLC!==DK()],
  ...(window.FGF_EARLY?[['🤖','GET IT ON ANDROID',LS.fgfEA?'You\'re on the list ✓':'Join Play testing',()=>FGF_EARLY(),!LS.fgfEA]]:[]),
+ ['🎁','BONUS CENTER',window.FGF_GIFTREADY&&FGF_GIFTREADY()?'Free gift ready!':(window.FGF_BOOST&&FGF_BOOST().mult>1?'Coin boost live!':'Bundles · book · gifts'),()=>state='bonus',!!(window.FGF_GIFTREADY&&FGF_GIFTREADY())],
  ['🎡','DAILY SPIN',LS.fgfSpin===DK()?'Spun today':'Free spin ready!',()=>{state='spin';SPN=null},LS.fgfSpin!==DK()],
  ['🌙','WEEKEND EVENT',window.FGF_EVTNAME?FGF_EVTNAME():'',()=>window.FGF_EVENT&&FGF_EVENT(),!!(window.FGF_EVTON&&FGF_EVTON())],
  ['🐴','K-I-C-K','vs computer or a friend',()=>window.FGF_HORSE&&FGF_HORSE(),false],
