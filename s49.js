@@ -3,7 +3,7 @@
 // ---- languages ----
 // [code, native name, beta?]  beta = machine translated, not yet reviewed by a native speaker
 const L=[['en','English',0],['es','Español',0],['pt','Português',1],['fr','Français',1],['de','Deutsch',1],['it','Italiano',1],['ja','日本語',1],['ko','한국어',1],['zh','简体中文',1],['hi','हिन्दी',1],['ar','العربية',1],['ru','Русский',1],['tr','Türkçe',1],['id','Bahasa Indonesia',1],['vi','Tiếng Việt',1],['tl','Filipino',1],['pl','Polski',1],['nl','Nederlands',1]];
-const AVAIL=['en','es'];// languages with finished dictionaries shipped; others are added when their files land
+const AVAIL=L.map(l=>l[0]);// all dictionaries shipped; non-en/es stay marked Beta until native review
 for(let i=L.length-1;i>=0;i--)if(!AVAIL.includes(L[i][0]))L.splice(i,1);
 window.FGF_LANGMETA=L;
 const LANGS=window.FGF_LANGS;if(LANGS){LANGS.length=0;L.forEach(l=>LANGS.push([l[0],l[1]+(l[2]?' (Beta)':'')]))}
@@ -19,8 +19,8 @@ const suggest=()=>{const n=((navigator.languages&&navigator.languages[0])||navig
 window.FGF_LANGPICK=function(first){if(document.getElementById('lngm'))return;const cur=LS.fgfLang||suggest();const d=document.createElement('div');d.id='lngm';d.style.cssText='position:fixed;inset:0;background:rgba(2,10,6,.92);z-index:70;display:flex;align-items:center;justify-content:center;font-family:system-ui';
  const b=document.createElement('div');b.style.cssText='background:#06301a;border:3px solid #f5c542;border-radius:16px;width:min(92vw,380px);max-height:88vh;display:flex;flex-direction:column;padding:12px;box-sizing:border-box';
  b.innerHTML='<div style="color:#f5c542;font-weight:900;font-size:20px;text-align:center">🌐 Language · Idioma · Langue</div><div style="color:#bcd;font-size:12px;text-align:center;margin:4px 0 8px">Change any time in Settings</div>';
- const g=document.createElement('div');g.style.cssText='overflow:auto;display:grid;grid-template-columns:1fr 1fr;gap:6px';
- L.forEach(([c,n,bt])=>{const e=document.createElement('button');e.dir=c==='ar'?'rtl':'ltr';e.style.cssText='min-height:44px;border-radius:10px;border:2px solid '+(c===cur?'#f5c542':'#2d6a45')+';background:'+(c===cur?'#f5c542':'#0b4026')+';color:'+(c===cur?'#063':'#fff')+';font:700 14px system-ui;padding:4px 6px;overflow-wrap:anywhere';e.innerHTML=n+(bt?' <span style="font-size:10px;opacity:.75">BETA</span>':'')+(c===suggest()&&first?'<div style="font-size:10px;opacity:.8">✓ suggested</div>':'');
+ const g=document.createElement('div');g.style.cssText='overflow-y:auto;min-height:0;flex:1 1 auto;touch-action:pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;display:grid;grid-template-columns:1fr 1fr;gap:6px;padding-bottom:4px';
+ L.forEach(([c,n,bt])=>{const e=document.createElement('button');e.dir=c==='ar'?'rtl':'ltr';e.style.cssText='min-height:'+(innerWidth<350?40:44)+'px;border-radius:10px;border:2px solid '+(c===cur?'#f5c542':'#2d6a45')+';background:'+(c===cur?'#f5c542':'#0b4026')+';color:'+(c===cur?'#063':'#fff')+';font:700 '+(innerWidth<350?13:14)+'px system-ui;padding:4px 6px;overflow-wrap:anywhere';e.innerHTML=n+(bt?' <span style="font-size:10px;opacity:.75">BETA</span>':'')+(c===suggest()&&first?'<div style="font-size:10px;opacity:.8">✓ suggested</div>':'');
   e.onclick=()=>{setLang(c);LS.fgfLangPicked='1';d.remove();try{sfxClick()}catch(x){}};g.appendChild(e)});
  b.appendChild(g);const n=document.createElement('div');n.style.cssText='color:#8ab;font-size:11px;text-align:center;margin-top:8px';n.textContent='BETA = machine translated, not yet reviewed';b.appendChild(n);d.appendChild(b);document.body.appendChild(d)};
 // first launch for new players only (existing players keep their language, default English)
