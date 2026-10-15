@@ -66,6 +66,7 @@ const hubItems=()=>{const d=deal(),L=[
  ['🌙','WEEKEND EVENT',window.FGF_EVTNAME?FGF_EVTNAME():'',()=>window.FGF_EVENT&&FGF_EVENT(),!!(window.FGF_EVTON&&FGF_EVTON())],
  ['🐴','K-I-C-K','vs computer or a friend',()=>window.FGF_HORSE&&FGF_HORSE(),false],
  ['🆚','RIVAL','Rookie · Pro · Legend',()=>state='rvt',false],
+ ['🎮','MORE MODES','Kickoff · Punt · Drill · Bosses',()=>state='mmsel',false],
  ['🎯','TRICK SHOTS','Doinks & dead-center',()=>window.FGF_TRICK&&FGF_TRICK(),false],
  ['📋','WEEKLY MISSIONS',mis().w?MI.filter(x=>(mis().p[x[0]]||0)>=x[2]&&!mis().c[x[0]]).length+' ready to claim':'',()=>state='mis',MI.some(x=>(mis().p[x[0]]||0)>=x[2]&&!mis().c[x[0]])],
  ['🎟️','SEASON PASS','Free track · this month',()=>state='pass',false],
