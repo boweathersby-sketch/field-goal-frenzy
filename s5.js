@@ -57,7 +57,7 @@ function who(){const n=MK.on&&MK.name?MK.name:'KICKER';return n+' #'+myNum(myT()
 function saveMK(){for(const[k,L]of[['skin',SKIN],['hair',HAIR],['wb',WBAND],['vz',VISOR]])if(L[MK[k]][2]&&!own5(k+MK[k]))MK[k]=0;if(MK.masc>=0&&!own5('masc'+MK.masc))MK.masc=-1;SV('fgfMK',MK);KC5.my=null}
 // ---- backgrounds (data-driven: add a themed one by appending {id,name,src,by,price}) ----
 const BGS=TEAMS.map((t,i)=>({id:'bg'+i,name:t.n.split(' ').slice(-1)[0]+' Field',im:STI[i],by:BASEY[i],price:[600,700,900,800,800,700,900,600][i],team:i})).concat([
- {id:'beach',name:'Beach',soon:1},{id:'space',name:'Space',soon:1},{id:'volcano',name:'Volcano',soon:1},{id:'roof',name:'City Rooftop',soon:1}]);
+ {id:'beach',name:'Beach',src:'bg_beach.webp?v=1',by:729,price:1200},{id:'space',name:'Space',src:'bg_space.webp?v=1',by:729,price:1500},{id:'volcano',name:'Volcano',src:'bg_volcano.webp?v=1',by:729,price:1500},{id:'roof',name:'City Rooftop',src:'bg_roof.webp?v=1',by:729,price:1200}]);
 // art drop-in: {id:'beach',name:'Beach',src:'bg_beach.webp',by:<field-top y in the 960x1080 image>,price:800}
 BGS.forEach(b=>{if(b.src&&!b.im)b.im=IMG(b.src)});
 let BGO=J('fgfBGO',[]),ST=Object.assign({bg:-1,un:0,crowd:0,sky:0,wx:0,ez:'',name:''},J('fgfST',{})),STO=J('fgfSTO',[]);
@@ -77,7 +77,7 @@ const TURF=[['classic','Classic Green',0,{g0:'#2c7a30',g1:'#1f6a26',st:0.07,ln:'
  ['desert','Desert Sand-Tint',700,{g0:'#b9a56b',g1:'#9f8a55',st:0.06,ln:'rgba(255,255,255,0.7)',ga:0.35}],
  ['neon','Neon Night',1500,{g0:'#06231a',g1:'#031510',st:0.08,ln:'rgba(60,255,220,0.95)',glow:1,ga:0.35}],
  ['team','Team-Color Tint',1200,null]];
-let TFO=J('fgfTurfO',['classic']),TFE=LS.fgfTurf||'classic';const tfOwn=id=>TESTER||TFO.includes(id);
+let TFO=J('fgfTurfO',['classic']),TFE=LS.fgfTurf||'classic';['classic','stripe','retro',TFE].forEach(id=>{if(id&&id!=='custom'&&!TFO.includes(id))TFO.push(id)});const tfOwn=id=>TESTER||TFO.includes(id);
 function mix(a,b,k){const A=rgb(a),B=rgb(b);return'rgb('+A.map((v,i)=>v*(1-k)+B[i]*k|0)+')'}
 function turfCfg(){const ti=stadT();if(!isHome(ti))return TURF[0][3];const t=TURF.find(q=>q[0]===TFE)||TURF[0];if(t[0]==='team')return{g0:mix('#2c7a30',TEAMS[myT()].p,0.55),g1:mix('#1f6a26',TEAMS[myT()].p,0.6),st:0.08,ln:'rgba(255,255,255,0.75)',ga:0.45};return t[3]}
 function turfBands(TS){for(let z=Math.ceil(dist/5)*5-5;z>-8;z-=5){const z1=Math.min(dist+0.2,z+5),z0=Math.max(-7.6,z),a=P(0,0,z1),b=P(0,0,z0);if(!a||!b)continue;const ev=((z/5)|0)%2===0;
@@ -140,7 +140,7 @@ function drawST(){txt('MY STADIUM',W/2,H*0.06,Math.min(30,W*0.08),GOLD,'#063');c
  const tw=(W*0.9-12)/4;['🖼️ BACKDROP','🏟️ CREATOR','🌱 TURF','🥅 UPRIGHTS'].forEach((l,i)=>bx(W*0.05+i*(tw+4),H*0.1,tw,32,l,()=>{stTab=i;P5=null},stTab===i,Math.min(11,tw/8.5)));
  const y0=H*0.1+42;
  if(stTab===0){const cw=(W*0.9-8)/2,ch=Math.min(92,(H*0.8-y0)/6);BGS.forEach((b,i)=>{const x=W*0.05+(i%2)*(cw+8),y=y0+(i/2|0)*(ch+4);panel(x,y,cw,ch);if(b.im&&b.im.complete&&b.im.naturalWidth){ctx.save();ctx.beginPath();ctx.roundRect(x+3,y+3,cw-6,ch-24,6);ctx.clip();ctx.drawImage(b.im,0,(b.by||600)-560,960,520,x+3,y+3,cw-6,(cw-6)*520/960);ctx.restore()}else{ctx.fillStyle='rgba(255,255,255,0.08)';ctx.fillRect(x+3,y+3,cw-6,ch-24);ctx.fillStyle='#8ab';ctx.font='900 12px system-ui';ctx.textAlign='center';ctx.fillText('COMING SOON',x+cw/2,y+ch/2-6)}
-  const o=!b.soon&&bgOwn(i),eqd=(ST.bg<0?myT():ST.bg)===i;ctx.fillStyle=eqd?'#7fd38a':o?'#fff':GOLD;ctx.font='900 11px system-ui';ctx.textAlign='center';ctx.fillText((eqd?'✔ ':'')+b.name+(b.soon?'':o?'':' · 🪙 '+b.price),x+cw/2,y+ch-7);
+  const o=!b.soon&&bgOwn(i),eqd=(ST.bg<0?myT():ST.bg)===i;ctx.fillStyle=eqd?'#7fd38a':o?'#fff':GOLD;ctx.font='900 11px system-ui';ctx.textAlign='center';ctx.fillText((eqd?'✔ ':'')+(o?'':'🔒 ')+b.name+(b.soon?'':o?'':' · 🪙 '+b.price.toLocaleString()),x+cw/2,y+ch-7);
   if(!b.soon)btn(x,y,cw,ch,()=>{if(o){ST.bg=i;SV('fgfST',ST);toast('🖼️ '+b.name+' set as home backdrop')}else buy5(b.id,b.price,()=>{BGO.push(b.id);SV('fgfBGO',BGO);ST.bg=i;SV('fgfST',ST)})})})}
  else if(stTab===1){if(!ST.un&&!TESTER){panel(W*0.08,y0+20,W*0.84,140);ctx.fillStyle='#fff';ctx.font='900 16px system-ui';ctx.textAlign='center';ctx.fillText('STADIUM CREATOR',W/2,y0+52);ctx.fillStyle='#bcd';ctx.font='12px system-ui';ctx.fillText('Crowd colors · sky · weather · end zone text · name',W/2,y0+76);bx(W*0.2,y0+96,W*0.6,44,'UNLOCK · 🪙 2,000',()=>buy5('stun',2000,()=>{ST.un=1;SV('fgfST',ST)}),true,14)}
   else{let y=y0;const rh=48;const R=(l,v,s,p,n,t)=>{cyc(y,l,v,s,p,n,t);y+=rh};const S=()=>SV('fgfST',ST);
@@ -151,7 +151,7 @@ function drawST(){txt('MY STADIUM',W/2,H*0.06,Math.min(30,W*0.08),GOLD,'#063');c
    R('STADIUM NAME (tap)',ST.name||'—','',null,null,()=>{const v=prompt('Stadium name (max 22)',ST.name||'');if(v!=null){ST.name=v.slice(0,22);S()}});
    ctx.fillStyle='#8ab';ctx.font='11px system-ui';ctx.textAlign='center';ctx.fillText('Locked options preview in 👁 but only apply once bought',W/2,y+14)}}
 else if(stTab===3)drawUP(y0);
- else{const rh=Math.min(50,(H*0.82-y0)/TURF.length);TURF.forEach((t,i)=>{const y=y0+i*rh,o=tfOwn(t[0]),e=TFE===t[0];panel(W*0.05,y,W*0.9,rh-4);turfSwatch(t,W*0.07,y+5,40,rh-14);ctx.fillStyle='#fff';ctx.font='900 13px system-ui';ctx.textAlign='left';ctx.fillText((e?'✔ ':'')+t[1],W*0.07+50,y+rh/2+2);ctx.textAlign='right';ctx.fillStyle=o?'#7fd38a':GOLD;ctx.font='900 12px system-ui';ctx.fillText(e?'EQUIPPED':t[0]==='custom'&&TESTER?'🧪 TESTER: UNLOCKED':o?'TAP TO USE':t[4]?t[4]:'🪙 '+t[2],W*0.93,y+rh/2+2);
+ else{const rh=Math.min(50,(H*0.82-y0)/TURF.length);TURF.forEach((t,i)=>{const y=y0+i*rh,o=tfOwn(t[0]),e=TFE===t[0];panel(W*0.05,y,W*0.9,rh-4);turfSwatch(t,W*0.07,y+5,40,rh-14);ctx.fillStyle='#fff';ctx.font='900 13px system-ui';ctx.textAlign='left';ctx.fillText((e?'✔ ':'')+t[1],W*0.07+50,y+rh/2+2);ctx.textAlign='right';ctx.fillStyle=o?'#7fd38a':GOLD;ctx.font='900 12px system-ui';ctx.fillText(e?'EQUIPPED':t[0]==='custom'&&TESTER?'🧪 TESTER: UNLOCKED':o?'TAP TO USE':t[4]?t[4]:'🔒 🪙 '+t[2].toLocaleString(),W*0.93,y+rh/2+2);
   btn(W*0.05,y,W*0.9,rh-4,()=>{if(t[0]==='custom'){if(o)state='cfield';else toast('Coming soon on Google Play');return}if(o){TFE=t[0];LS.fgfTurf=TFE}else buy5('turf_'+t[0],t[2],()=>{TFO.push(t[0]);SV('fgfTurfO',TFO);TFE=t[0];LS.fgfTurf=TFE})})})}
  bx(W*0.05,H*0.93-20,W*0.42,40,'👁 PREVIEW',()=>{state='prev'},false,14);bx(W*0.53,H*0.93-20,W*0.42,40,'◀ BACK',()=>state='title',true,14)}
 // ---- weekly / kotw / settings / friends screens ----

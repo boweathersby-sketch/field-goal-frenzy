@@ -51,7 +51,7 @@ function drawCF(){txt('CUSTOM FIELD',W/2,H*0.06,Math.min(28,W*0.075),GOLD,'#063'
  bx(W*0.05,H*0.93-20,bw,40,CFC?'✔ SAVE & USE':'✔ SAVE',()=>{SV('fgfCF',CF);if(CFC){TFE='custom';LS.fgfTurf='custom';toast('🏟️ Custom Field on for home games')}state='stad'},true,13);bx(W*0.05+bw+8,H*0.93-20,bw,40,'◀ BACK',()=>{state='stad'},false,13)}
 // ---- uprights (cosmetic only; physics uses the same HALF/BAR/POST constants for every style) ----
 const UPR=[['classic','Classic Yellow',0],['chrome','Chrome',400],['team','Team Color',500],['candy','Candy Cane',700],['neon','Neon Glow',1000],['gold','Gold Legend',1500],['wood','Wooden Retro',600],['ice','Ice Crystal',800],['lava','Lava',1200],['bolt','Lightning',1500]];
-let UPO=J('fgfUpO',['classic']),UPE=LS.fgfUp||'classic';const upOwn=id=>TESTER||UPO.includes(id);
+let UPO=J('fgfUpO',['classic']),UPE=LS.fgfUp||'classic';['classic','chrome','wood',UPE].forEach(id=>{if(id&&!UPO.includes(id))UPO.push(id)});const upOwn=id=>TESTER||UPO.includes(id);
 function postPath(x,b,c,l,r,lt,rt){x.beginPath();x.moveTo(b.x,b.y);x.lineTo(c.x,c.y);x.stroke();x.beginPath();x.moveTo(lt.x,lt.y);x.lineTo(l.x,l.y);x.lineTo(r.x,r.y);x.lineTo(rt.x,rt.y);x.stroke()}
 function drawUprights(x,id,b,c,l,r,lt,rt,w){const P2=(st,lw,extra)=>{x.strokeStyle=st;x.lineWidth=lw;if(extra)extra();postPath(x,b,c,l,r,lt,rt)};x.save();x.lineCap='round';x.lineJoin='round';
  P2('rgba(0,0,0,0.55)',w+2.5);// readable outline on every backdrop
@@ -71,7 +71,7 @@ S5.posts=function(b,c,l,r,lt,rt,w){const id=S5.isHome(stadT())&&upOwn(UPE)?UPE:'
 function drawUP(y0){const rh=Math.min(50,(H*0.82-y0)/UPR.length);UPR.forEach((u,i)=>{const y=y0+i*rh,o=upOwn(u[0]),e=UPE===u[0];panel(W*0.05,y,W*0.9,rh-4);
   // mini preview
   const px=W*0.07,pw=40,ph=rh-14,py=y+5;ctx.save();ctx.fillStyle='#16304a';ctx.beginPath();ctx.roundRect(px,py,pw,ph,4);ctx.fill();const m=v=>v,bb={x:px+pw/2,y:py+ph-2},cc={x:px+pw/2,y:py+ph*0.55},ll={x:px+7,y:py+ph*0.55},rr={x:px+pw-7,y:py+ph*0.55},lt={x:px+7,y:py+3},rt={x:px+pw-7,y:py+3};ctx.lineCap='round';if(u[0]==='classic'){ctx.strokeStyle='rgba(0,0,0,0.55)';ctx.lineWidth=5;postPath(ctx,bb,cc,ll,rr,lt,rt);ctx.strokeStyle='#ffd21f';ctx.lineWidth=3;postPath(ctx,bb,cc,ll,rr,lt,rt)}else drawUprights(ctx,u[0],bb,cc,ll,rr,lt,rt,3);ctx.restore();
-  ctx.fillStyle='#fff';ctx.font='900 13px system-ui';ctx.textAlign='left';ctx.fillText((e?'✔ ':'')+u[1],W*0.07+50,y+rh/2+2);ctx.textAlign='right';ctx.fillStyle=o?'#7fd38a':GOLD;ctx.font='900 12px system-ui';ctx.fillText(e?'EQUIPPED':o?'TAP TO USE':'🪙 '+u[2],W*0.93,y+rh/2+2);
+  ctx.fillStyle='#fff';ctx.font='900 13px system-ui';ctx.textAlign='left';ctx.fillText((e?'✔ ':'')+u[1],W*0.07+50,y+rh/2+2);ctx.textAlign='right';ctx.fillStyle=o?'#7fd38a':GOLD;ctx.font='900 12px system-ui';ctx.fillText(e?'EQUIPPED':o?'TAP TO USE':typeof u[2]==='number'?'🔒 🪙 '+u[2].toLocaleString():u[2],W*0.93,y+rh/2+2);
   btn(W*0.05,y,W*0.9,rh-4,()=>{if(o){UPE=u[0];LS.fgfUp=UPE}else buy5('up_'+u[0],u[2],()=>{UPO.push(u[0]);SV('fgfUpO',UPO);UPE=u[0];LS.fgfUp=UPE})})});
  ctx.fillStyle='#8ab';ctx.font='11px system-ui';ctx.textAlign='center';ctx.fillText('Cosmetic only · same size & hitbox · home games',W/2,y0+UPR.length*rh+12)}
 PACKS.push({id:'custom_field',price:'$4.99',coins:0,name:'Custom Field',desc:'Your own photo as the field (stays on your device)',tag:'NEW'});
