@@ -53,7 +53,7 @@ function kickXform(){if(!KA_NEW())return null;const now=performance.now();
  if(ball.fly){return{dx:0.03,dy:0,r:0.02,sx:1,sy:1}}
  if(swT!=null){const u=eo((now-swT)/260);return{dx:-0.025*u,dy:0.01*u,r:-0.045*u,sx:1-0.015*u,sy:1+0.02*u,kx:-0.04*u}} // gather + plant + hip load
  return{dx:0,dy:0.003*S(now/600),r:0,sx:1,sy:1+0.004*S(now/600)}} // idle breathing
-const odk=drawKicker;drawKicker=function(){let X=null;try{if(state==='play'||state==='pass'||state==='ctick'||state==='vs'){X=kickXform();
+const odk=drawKicker;drawKicker=function(){let X=null;try{if(state==='play'||state==='pass'||state==='ctick'||state==='vs'||(state==='replay'&&window.__MREP)){X=kickXform();
   if(CEL){const a=(performance.now()-CEL.t)/1000;if(a>=DUR||swipe||ball.fly&&!ball.done)CEL=null;else if(LS.fgfRM!=='1'){const m=(M[CEL.m]||M.hop)(a/DUR);X=Object.assign({dx:0,dy:0,r:0,sx:1,sy:1},X||{});X.dx+=(m.dx||0);X.dy+=(m.dy||0);X.r+=(m.r||0);X.sx*=(m.sx==null?1:m.sx);X.sy*=(m.sy==null?1:m.sy)}}}}catch(e){X=null}
  if(!X)return odk.apply(this,arguments);const g=KG(),h=g.h,px=g.x+g.w*0.45,py=g.y+h*0.97;ctx.save();ctx.translate(px+(X.dx||0)*h,py+(X.dy||0)*h);if(X.r)ctx.rotate(X.r);if(X.kx)ctx.transform(1,0,X.kx,1,0,0);ctx.scale(X.sx==null?1:X.sx,X.sy==null?1:X.sy);ctx.translate(-px,-py);
  try{return odk.apply(this,arguments)}finally{ctx.restore()}};

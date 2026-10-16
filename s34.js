@@ -63,5 +63,5 @@ const osc=S3.screen;S3.screen=function(){if(state==='cloud'){BTN=[];txt('☁ CLO
    ctx.fillStyle='#9ab';ctx.font='11px system-ui';ctx.fillText('We only use the email to sign you in. No spam.',W/2,H*0.32+130,W*0.9)}
   bx(W/2-90,H*0.93-18,180,38,'◀ BACK',()=>state='mset');return true}
  // inject entry on More Settings
- const r=osc.apply(this,arguments);if(state==='mset'&&(window.FGF_CLOUDON||window.TESTER)){const bw=Math.min(300,W*0.84);window.FGF_MSR=window.FGF_MSR||(i=>{const t=!!window.TESTER,st=t?40:44;return{y:H*0.16+(t?310:262)+i*st,h:t?36:38}});const q=FGF_MSR(3);bx(W/2-bw/2,q.y,bw,q.h,'☁ CLOUD SAVE',()=>state='cloud',false,13)}return r};
+ const r=osc.apply(this,arguments);if(state==='mset'&&(window.FGF_CLOUDON||window.TESTER)){const bw=Math.min(300,W*0.84);window.FGF_MSR=window.FGF_MSR||(i=>{const t=!!window.TESTER,st=40;return{y:H*0.16+(t?310:262)+i*st,h:36}});const q=FGF_MSR(3);bx(W/2-bw/2,q.y,bw,q.h,'☁ CLOUD SAVE',()=>state='cloud',false,13)}return r};
 })();

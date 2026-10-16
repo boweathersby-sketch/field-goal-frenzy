@@ -14,7 +14,7 @@ const oKick=S3.onKick;S3.onKick=function(pw){late=waitT>=4;TR=[];RP=null;// shar
 const oRes=S3.onResult;S3.onResult=function(good){oRes(good);const blk=ball.res==='BLOCKED!';
  if(good){zoomT=0.55;unlock('first');if(dist>=50)unlock('fifty');if(dist>=60)unlock('sixty');if(dist>=80)unlock('legend');if(mode==='hurricane'&&dist>=60)unlock('storm');if(streak>=10)unlock('streak10');if(!WXM.includes(weather)){WXM.push(weather);SV('fgfWx',WXM)}if(['clear','rain','snow','gust','hurricane','hlite','fog','heat'].every(w=>WXM.includes(w)))unlock('wx');if(S3.cl())unlock('clutch');
   if(late){iceN++;if(iceN>=5)unlock('ice')}else iceN=0;
-  if(dist>=50&&TR.length>8&&mode!=='tut')pendNext={good,cl:S3.cl()}}else iceN=0;
+  if(dist>=50&&TR.length>8&&mode!=='tut'&&LS.fgfLongRep!=='0')pendNext={good,cl:S3.cl()}}else iceN=0;
  if(mode==='daily')dailyDone(good);if(mode==='tut')tutRes(good)};
 const oNext=S3.next;S3.next=function(good){if(pendNext&&!RP){RP={t:0,good,cl:pendNext.cl};pendNext=null;state='replay';return true}if(mode==='daily'){state='dres';return true}if(mode==='tut'){tutNext();return true}return oNext(good)};
 function contAfter(good){if(!RP)return;if(RP.rec){clipEnd();return}const g=RP.good;RP=null;if(mode==='daily'){state='dres';return}if(oNext(g))return;if(lives<=0||(mode==='time'&&timeLeft<=0)){endGame();return}if(g)dist=Math.min(mode==='hurricane'?65:80,dist+(dist<40?3:dist<70?2:dist<76?2:4));state='play';newWind();resetBall()}
@@ -101,7 +101,7 @@ function tutDraw(){if(msg||ball.fly)return;const t=TUT[TS];const Y=H*0.185;panel
 addEventListener('pointerdown',e=>{if(state==='play'&&mode==='tut'&&!ball.fly&&!msg){const x=e.clientX,y=e.clientY;if(Math.abs(x-(W*0.95-40))<40&&Math.abs(y-(H*0.185+17))<18){e.stopImmediatePropagation();tutEnd()}}},true);
 if(!LS.fgfTut){const go2=()=>{if(state==='title'&&team>=0&&LS.fgfHow&&!LS.fgfTut){S4.tut()}else setTimeout(go2,400)};setTimeout(go2,300)}
 // ---- screens ----
-const oScreen=S3.screen;S3.screen=function(){if(state==='replay'){BTN=[];drawReplay();return true}if(state==='dres'){BTN=[];drawDres();return true}if(state==='ach'){BTN=[];drawAch();return true}if(state==='share'&&SH){BTN=[];drawShare();return true}return oScreen()};
+window.FGF_RPSKIP=()=>{if(state==='replay'&&RP&&!RP.rec)RP.t=(TR.length+60)/60};const oScreen=S3.screen;S3.screen=function(){if(state==='replay'){BTN=[];drawReplay();return true}if(state==='dres'){BTN=[];drawDres();return true}if(state==='ach'){BTN=[];drawAch();return true}if(state==='share'&&SH){BTN=[];drawShare();return true}return oScreen()};
 function drawReplay(){if(RP&&RP.rec&&CLIP){BTN=[];if(CLIP.t0){clipFrame();if(CLIP.vt)CLIP.vt.requestFrame()}clipOverlay();return}const a=0.6+0.4*Math.sin(T*6);ctx.fillStyle='rgba(200,20,20,'+(0.85)+')';ctx.beginPath();ctx.roundRect(12,160,96,30,6);ctx.fill();ctx.fillStyle='#fff';ctx.globalAlpha=a;ctx.beginPath();ctx.arc(28,175,6,0,7);ctx.fill();ctx.globalAlpha=1;ctx.font='900 14px system-ui';ctx.textAlign='left';ctx.fillText('REPLAY',40,180);ctx.fillStyle='rgba(0,0,0,0.25)';ctx.fillRect(0,0,W,8);ctx.fillRect(0,H-8,W,8);
  txt((RP&&RP.cl?'GAME-WINNER! ':'')+dist+' YARDS',W/2,H*0.3,Math.min(30,W*0.075),GOLD);ctx.fillStyle='#ddd';ctx.font='12px system-ui';ctx.textAlign='center';ctx.fillText('0.35× slow motion',W/2,H*0.3+20);
  if(RP&&RP.good)bx(W*0.06,H-96,92,32,'📤 Share',()=>share(dist>=80?'I just nailed an 80-yard LEGEND kick':'I just nailed a '+dist+'-yard field goal'),false,12);bx(W-W*0.06-120,H-100,120,40,'SKIP ▶▶',()=>contAfter(),true,15)}

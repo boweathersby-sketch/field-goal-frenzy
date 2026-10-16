@@ -1,10 +1,10 @@
 // s67 (Kirk, Oct 15): calm EVENTS & MORE hub. One column, 4 small gold section headers, big rows on a subtle dark panel
 // with a thin muted border, touch drag-scroll (same scroller as the leaderboards), fixed MENU button. Same actions + red dots.
 (function(){const T_=t=>window.FGF_TR?FGF_TR(t):t;
-const G=[['PLAY',['LEGEND CHALLENGE','WEEKEND EVENT','RIVAL','TRICK SHOTS','MORE MODES','K-I-C-K','ONLINE H2H','CAREER BRACKET']],
- ['REWARDS',['BONUS CENTER','DAILY SPIN','WEEKLY MISSIONS','SEASON PASS','DEAL OF THE DAY','WATCH AD']],
+const G=[['PLAY',['DAILY STORM','LEGEND CHALLENGE','WEEKEND EVENT','RIVAL','TRICK SHOTS','MORE MODES','K-I-C-K','ONLINE H2H','CAREER BRACKET']],
+ ['REWARDS',['BONUS CENTER','DAILY SPIN','WEEKLY MISSIONS','SEASON PASS','STARTER QUESTS','DEAL OF THE DAY','WATCH AD']],
  ['COMPETE & FRIENDS',['ONLINE BOARD','WEEKLY BOARD','SOCIAL','CHALLENGE A FRIEND','INVITE FRIENDS']],
- ['YOU',['STATS','HALL OF FAME','COLLECTION','GET IT ON ANDROID','CREDITS & PRIVACY']]];
+ ['YOU',['STORM BADGES','STATS','HALL OF FAME','COLLECTION','GET IT ON ANDROID','CREDITS & PRIVACY']]];
 function layout(){const L=FGF_HUBITEMS(),by={};L.forEach(c=>by[c[1]]=c);const used=new Set(),out=[];
  G.forEach(([h,ks],gi)=>{const it=ks.map(k=>by[k]).filter(Boolean);if(gi===3)L.forEach(c=>{if(!G.some(g=>g[1].includes(c[1])))it.push(c)});if(!it.length)return;out.push({h});it.forEach(c=>out.push({c}))});return out}
 const RH=()=>Math.max(56,Math.min(64,H*0.075)),HH=34,GAP=8;

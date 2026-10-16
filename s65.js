@@ -3,10 +3,10 @@
 // HARD RULE: every kick is checked by FGF_SOLVER (s65a.js, exact replica of the flight code) before it is shown; unmakeable kicks are re-rolled.
 // Chaos kicks with moving posts get the same check.
 (function(){
-const SV=window.FGF_SOLVER,R=Math.random,RI=(a,b)=>a+Math.round(R()*(b-a)),HK=2.4,STEP=1/60;
+const SV=window.FGF_SOLVER,R=()=>(window.__SRNG||Math.random)(),RI=(a,b)=>a+Math.round(R()*(b-a)),HK=2.4,STEP=1/60;
 WX.tornado=['🌪️','TORNADO'];
-try{MODES.push(['storm','🌀 HURRICANE POSTS','Hurricane winds + moving posts'],['tornado','🌪️ TORNADO','EF0–EF5 swirling winds'],['twister','🌪️ TWISTER POSTS','Tornado winds + moving posts'])}catch(e){}
-const HM=m=>m==='hurricane'||m==='storm',TM=m=>m==='tornado'||m==='twister',SM=m=>HM(m)||TM(m),POSTM=m=>m==='storm'||m==='twister';
+try{MODES.push(['storm','🌀 HURRICANE POSTS','Hurricane winds + moving posts'],['tornado','🌪️ TORNADO','EF0–EF5 swirling winds'],['twister','🌪️ TWISTER POSTS','Tornado winds + moving posts'],['dstorm','📅 DAILY STORM','Same storm for everyone today · 10 kicks'])}catch(e){}
+const DT=()=>window.FGF_DSTYPE?FGF_DSTYPE():'h',HM=m=>m==='hurricane'||m==='storm'||(m==='dstorm'&&DT()==='h'),TM=m=>m==='tornado'||m==='twister'||(m==='dstorm'&&DT()==='t'),SM=m=>HM(m)||TM(m),POSTM=m=>m==='storm'||m==='twister';
 const EF=mph=>mph<86?0:mph<111?1:mph<136?2:mph<166?3:mph<201?4:5;
 let SW=null,tf=0,acc=0;window.FGF_STORMSTAT={gen:0,reroll:0};
 const amp=()=>2.6*Math.min(1,(dist-20)/25+0.4),PX=()=>{const A=amp();return[-A,-A/2,0,A/2,A]};
@@ -15,7 +15,7 @@ function gen(){const m=mode;if(HM(m)){dist=RI(25,55);const mph=RI(70,170),a=(R()
 function cfg(){return{dist,weather,wind:{x:wind.x,z:wind.z},wp:ball.wp,gust:weather==='hurricane'?'h':weather==='gust'||weather==='hlite'?'g':null,swirl:SW,pox:(POSTM(mode)||(mode==='chaos'&&window.__CHMOV))?PX():[0]}}
 window.FGF_STORMCFG=cfg;
 function ensure(){const S=window.FGF_STORMSTAT;S.gen++;
- if(SM(mode)){for(let i=0;i<60;i++){gen();if(SV.makeable(cfg()))return;S.reroll++}dist=25}
+ if(SM(mode)){for(let i=0;i<60;i++){if(window.__SRNG)ball.wp=__SRNG()*6.28;gen();if(SV.makeable(cfg()))return;S.reroll++}dist=25}
  else if(mode==='chaos'&&window.__CHMOV){for(let i=0;i<15;i++){if(SV.makeable(cfg()))return;S.reroll++;const a=R()*6.283,mph=weather==='hlite'?30+RI(0,20):Math.max(0,Math.round(wind.mph*0.8));wind={mph,a,x:Math.sin(a)*mph,z:Math.cos(a)*mph}}wind={mph:0,a:0,x:0,z:0};if(!SV.makeable(cfg()))window.__CHMOV=false}}
 const oRB=resetBall;resetBall=function(){const r=oRB.apply(this,arguments);tf=0;acc=0;try{if(state==='play'||state==='pass'||state==='ctick'||SM(mode))ensure()}catch(e){}return r};
 const oNW=newWind;newWind=function(){const r=oNW.apply(this,arguments);if(!SM(mode))SW=null;else{weather=HM(mode)?'hurricane':'tornado';try{windAudio(true)}catch(e){}}return r};
