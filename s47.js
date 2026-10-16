@@ -32,7 +32,7 @@ const osc=S3.screen;S3.screen=function(){
    bx(W*0.38-34,yy,30,28,'−',()=>{LS['fgfVol'+k]=Math.max(0,v-10);applyVol()},false,15);bx(W*0.38+bw+4,yy,30,28,'+',()=>{LS['fgfVol'+k]=Math.min(100,v+10);applyVol();if(k!=='U')try{(k==='C'?sfx.cheer:sfx.kick)()}catch(e){}},false,15);ctx.textAlign='right';ctx.fillStyle='#bcd';ctx.font='11px system-ui';ctx.fillText(v+'%',W*0.97,yy+19)});
   bx(W/2-80,H*0.93-22,160,42,'◀ BACK',()=>state='mset',false,14);return true}
  const r=osc.apply(this,arguments);
- if(state==='mset')bx(W/2-Math.min(150,W*0.42),H*0.16+314,Math.min(300,W*0.84),40,'♿ ACCESSIBILITY & VOLUME',()=>state='a11y',false,13);
+ if(state==='mset'){window.FGF_MSR=window.FGF_MSR||(i=>{const t=!!window.TESTER,st=t?40:44;return{y:H*0.16+(t?310:262)+i*st,h:t?36:38}});const q=FGF_MSR(2);bx(W/2-Math.min(150,W*0.42),q.y,Math.min(300,W*0.84),q.h,'♿ ACCESSIBILITY & VOLUME',()=>state='a11y',false,13)}
  return r};
 // tap on the slider track sets the value directly
 addEventListener('pointerdown',e=>{if(state!=='a11y')return;const sm=H<640,g=sm?52:60,y0=H*0.11+g*4+(sm?44:50),bx0=W*0.38,bw=W*0.4;ROWS.forEach(([k],i)=>{const yy=y0+i*(sm?34:40);if(e.clientX>=bx0&&e.clientX<=bx0+bw&&e.clientY>=yy&&e.clientY<=yy+28){LS['fgfVol'+k]=Math.round((e.clientX-bx0)/bw*10)*10;applyVol()}})},true);

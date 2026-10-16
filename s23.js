@@ -21,7 +21,7 @@ window.FGF_FOUNDER=function(){if(LS.fgfFounder==='1'){toast('🏅 Founding Kicke
 window.FGF_REDEEM=function(){const c=(prompt('Enter a code')||'').trim().toUpperCase().replace(/\s/g,'');if(!c)return;if(CODES.includes(c))FGF_FOUNDER();else toast('❌ Code not recognized')};
 try{const q=new URLSearchParams(location.search);if(q.get('founder')==='1'||CODES.includes((q.get('code')||'').toUpperCase())){setTimeout(()=>{FGF_FOUNDER();q.delete('founder');q.delete('code');history.replaceState(null,'',location.pathname+(q.toString()?'?'+q:''))},1500)}}catch(e){}
 const osc=S3.screen;S3.screen=function(){const r=osc.apply(this,arguments);
- if(state==='mset'){const bw=Math.min(300,W*0.84);bx(W/2-bw/2,H*0.16+(window.TESTER?310:262),bw,40,'🎟️ REDEEM A CODE',FGF_REDEEM,false,13)}
+ if(state==='mset'){const bw=Math.min(300,W*0.84);window.FGF_MSR=window.FGF_MSR||(i=>{const t=!!window.TESTER,st=t?40:44;return{y:H*0.16+(t?310:262)+i*st,h:t?36:38}});const q=FGF_MSR(0);bx(W/2-bw/2,q.y,bw,q.h,'🎟️ REDEEM A CODE',FGF_REDEEM,false,13)}
  if(state==='stats'&&LS.fgfFounder==='1')txt('🏅 FOUNDING KICKER',W/2,H*0.115,13,'#f2c230','#063');
  return r};
 })();
