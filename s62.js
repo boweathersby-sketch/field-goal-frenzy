@@ -26,6 +26,7 @@ function passUI(){if(X){X=null;if(String(mode).startsWith('xm_'))mode='classic'}
   d.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{save(d);n=+b.dataset.n;LS.fgfPassN=n;draw()});d.querySelector('#xpx').onclick=()=>{closeCard();menu()};d.querySelector('#xpgo').onclick=()=>{save(d);closeCard();const P=nm.slice(0,n).map((s,i)=>(s||'').trim()||'P'+(i+1));start('pass',{P})}};
  const save=d=>{d.querySelectorAll('[data-i]').forEach(i=>nm[+i.dataset.i]=i.value);LS.fgfPassNames=JSON.stringify(nm)};draw()}
 // --- run ---
+const oNGx=newGame;newGame=function(){X=null;return oNGx.apply(this,arguments)};
 function start(t,o){closeCard();newGame('classic');mode='xm_'+t;lives=99;prevLives=99;X=Object.assign({t,k:0,pts:0,made:0,log:[]},o);
  if(t==='pass'){const P=X.P;X.sc={};P.forEach(p=>X.sc[p]=0);X.q=P.length===4?[[0,1],[2,3]]:[[0,1]];X.win=[];X.mi=0;newMatch()}
  setup()}
@@ -85,6 +86,6 @@ function hype(good,r){try{if(mode==='pressure'&&good&&state==='play'){const t=TE
 let gk=0,gRun=null;const MMf=()=>window.FGF_MM&&FGF_MM();
 const oR=S3.onResult;S3.onResult=function(){const r=oR.apply(this,arguments);try{const m=MMf();if(m&&m.t==='posts')gk++}catch(e){}return r};
 const oDP=drawPosts;drawPosts=function(){const r=oDP.apply(this,arguments);try{const m=MMf();if(m&&m.t==='posts'){if(gRun!==m){gRun=m;gk=0;LS.fgfGhostN=+(LS.fgfGhostN||0)+1}
- if(state==='play'&&!ball.fly&&gk<3&&+(LS.fgfGhostN||0)<=5){const t=performance.now()/1000+1.1,px=Math.sin(t*1.3)*2.6*Math.min(1,(dist-20)/25+0.4),a=P(px,0,dist+0.2),b=P(px,BAR+4,dist+0.2);if(a&&b){ctx.save();ctx.globalAlpha=0.55+0.25*Math.sin(performance.now()/180);ctx.strokeStyle='#7fffd4';ctx.lineWidth=Math.max(2,a.s*0.12);ctx.setLineDash([6,6]);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();ctx.setLineDash([]);ctx.font='900 11px system-ui';ctx.textAlign='center';ctx.fillStyle='#7fffd4';ctx.fillText('AIM HERE · '+(3-gk)+' left',b.x,b.y-6);ctx.restore()}}}}catch(e){}return r};
+ if(state==='play'&&!ball.fly&&LS.fgfAimHelp!=='0'&&(LS.fgfAimHelp==='1'||(gk<3&&+(LS.fgfGhostN||0)<=5))){const t=performance.now()/1000+1.1,px=Math.sin(t*1.3)*2.6*Math.min(1,(dist-20)/25+0.4),a=P(px,0,dist+0.2),b=P(px,BAR+4,dist+0.2);if(a&&b){ctx.save();ctx.globalAlpha=0.55+0.25*Math.sin(performance.now()/180);ctx.strokeStyle='#7fffd4';ctx.lineWidth=Math.max(2,a.s*0.12);ctx.setLineDash([6,6]);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();ctx.setLineDash([]);ctx.font='900 11px system-ui';ctx.textAlign='center';ctx.fillStyle='#7fffd4';ctx.fillText('AIM HERE · '+(3-gk)+' left',b.x,b.y-6);ctx.restore()}}}}catch(e){}return r};
 window.FGF_XMTEST={start,menu,seeded,normCode,truth,codeUI,passUI};
 })();

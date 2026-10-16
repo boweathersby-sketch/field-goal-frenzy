@@ -43,6 +43,8 @@ const VIPT=['cTvip','VIP Tee',-1],VIPN='sy_n_vip';try{if(window.FGF_GEAR2){FGF_G
 // hide never-sold items (price -1) from the coin shop lists unless owned
 try{const odS=drawShop;drawShop=function(){const sv=[];SHOP.forEach(c=>{if(['TEES','KICK FX','SIDELINE'].includes(c[0])){sv.push([c,c[1]]);c[1]=c[1].filter(m=>m[2]>=0||own.includes(m[0]))}});try{return odS.apply(this,arguments)}finally{sv.forEach(([c,a])=>c[1]=a)}}}catch(e){}
 const oOn=B.onPurchased.bind(B);B.onPurchased=function(id){
+ const ONCE=/^(pro_bundle|noads_lifetime|starter|coin_doubler|bundle_[a-z]+)$/;if(ONCE.test(id)){const G=JSON.parse(LS.fgfGranted||'[]');if(G.includes(id)){toast('✔ Already unlocked');return}G.push(id);LS.fgfGranted=JSON.stringify(G)}
+ if(id==='pro_bundle'){LS.fgfPro2='1';return oOn(id)}
  if(id==='coins_45000'||id==='coins_125000'){addCoins(id==='coins_45000'?45000:125000);toast('✔ Coins added');return}
  if(id.startsWith('bundle_')||id==='deal_week'){const k=id==='deal_week'?dealKey():id.slice(7);const b=BUN[k];if(!b)return;let back=0;b.items.forEach(x=>back+=giveItem(x));addCoins(b.c);toast('✔ '+b.n+(back?' · 🪙 +'+back+' for pieces you owned':''));return}
  if(id==='vip_monthly'){LS.fgfVipExp=String(Date.now()+31*864e5);giveItem('cTvip');if(!own.includes(VIPN)){own.push(VIPN);SV('fgfOwn',own)}toast('👑 Welcome to VIP!');return}

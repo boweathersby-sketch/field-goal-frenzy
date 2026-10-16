@@ -44,13 +44,21 @@ function visorFill(x,X0,Y0,X1,Y1){const vz=VISOR[MK.vz][1];if(!vz)return;const d
   const c=C||[[255,60,60],[255,200,40],[60,220,90],[60,140,255],[190,80,255]][(px/4|0)%5];const sh=(px+py)%14<3?1.6:1;a[i]=Math.min(255,c[0]*0.85*sh);a[i+1]=Math.min(255,c[1]*0.85*sh);a[i+2]=Math.min(255,c[2]*0.85*sh)}
  x.putImageData(d,X0,Y0)}
 const oFront=frontImg;frontImg=function(ti){const k0=FC.k,c=oFront(ti);if(!c||c.__ex===FC.k)return c;const x=c.getContext('2d'),m=BMETA.m[MK.bt],h=BMETA.h,cw=BMETA.cw,fxl=m.fx-MK.bt*cw;
- bandOn(x,0,Math.round(h*0.3),cw,Math.round(h*0.56),wbCol(ti),6,fxl-h*0.06,fxl+h*0.06,[bdImg(),MK.bt*cw,Math.round(h*0.3)]);visorFill(x,0,Math.round(h*0.34),cw,Math.round(h*0.52));c.__ex=FC.k;return c};
+ bandOn(x,0,Math.round(h*0.3),cw,Math.round(h*0.56),wbCol(ti),6,fxl-h*0.06,fxl+h*0.06,[bdImg(),MK.bt*cw,Math.round(h*0.3)]);c.__ex=FC.k;return c};
 const oMy2=mySheet;mySheet=function(ti){const c=oMy2(ti);if(MK.masc>=0||c.__ex)return c;const x=c.getContext('2d'),b=MK.base,wc=wbCol(ti),vz=VISOR[MK.vz][1];
  KMETA[b].forEach((m,f)=>{const X0=f*203,hx=m[4],hy=m[5];bandOn(x,X0,Math.max(0,hy+50),X0+203,Math.min(300,hy+170),wc,4,hx-22,hx+22,[KS,X0,b*300+Math.max(0,hy+50)]);
   if(vz){x.save();x.fillStyle=vz==='rainbow'?'#c060ff':vz;x.strokeStyle='rgba(255,255,255,0.55)';x.lineWidth=1;for(const sd of[-1,1]){x.beginPath();x.ellipse(hx+sd*15,hy+9,2.6,5,sd*0.25,0,7);x.fill();x.stroke()}x.restore()}});c.__ex=1;return c};
+let MKB=null;function mkBack(x0,y0,w,h){const S=2,k=Math.round(w)+'x'+Math.round(h);if(!MKB||MKB.k!==k){const c=document.createElement('canvas');c.width=Math.round(w*S);c.height=Math.round(h*S);const x=c.getContext('2d'),cw=c.width,ch=c.height;
+ let g=x.createLinearGradient(0,0,0,ch);g.addColorStop(0,'#071022');g.addColorStop(0.5,'#10224a');g.addColorStop(0.62,'#1b3a2a');g.addColorStop(1,'#0c2414');x.fillStyle=g;x.fillRect(0,0,cw,ch);
+ x.fillStyle='rgba(0,0,0,0.35)';x.fillRect(0,ch*0.42,cw,ch*0.16);for(let i=0;i<140;i++){const px=(i*97%cw),py=ch*0.43+(i*53%(ch*0.13));x.fillStyle='rgba('+(150+i%100)+','+(140+i*7%100)+','+(160+i*3%90)+',0.18)';x.fillRect(px,py,2*S,2*S)}
+ x.filter='blur('+(6*S)+'px)';for(let i=0;i<9;i++){const lx=cw*(0.06+i*0.11),ly=ch*(0.08+(i%3)*0.035),r=(10+(i%4)*5)*S;const rg=x.createRadialGradient(lx,ly,0,lx,ly,r*2.4);rg.addColorStop(0,'rgba(255,248,220,0.95)');rg.addColorStop(0.35,'rgba(255,230,170,0.45)');rg.addColorStop(1,'rgba(255,230,170,0)');x.fillStyle=rg;x.beginPath();x.arc(lx,ly,r*2.4,0,7);x.fill()}x.filter='none';
+ const bm=x.createLinearGradient(0,0,0,ch*0.45);bm.addColorStop(0,'rgba(255,240,200,0.10)');bm.addColorStop(1,'rgba(255,240,200,0)');x.fillStyle=bm;x.fillRect(0,0,cw,ch*0.45);
+ x.strokeStyle='rgba(255,255,255,0.16)';x.lineWidth=2*S;for(let i=1;i<6;i++){const yy=ch*0.6+i*i*ch*0.016;x.beginPath();x.moveTo(0,yy);x.lineTo(cw,yy);x.stroke()}
+ const vg=x.createRadialGradient(cw/2,ch*0.5,Math.min(cw,ch)*0.25,cw/2,ch*0.5,Math.max(cw,ch)*0.75);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,0.72)');x.fillStyle=vg;x.fillRect(0,0,cw,ch);MKB={k,c}}
+ ctx.save();ctx.beginPath();ctx.roundRect(x0,y0,w,h,14);ctx.clip();ctx.drawImage(MKB.c,x0,y0,w,h);ctx.restore();ctx.save();ctx.strokeStyle=GOLD;ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(x0,y0,w,h,14);ctx.stroke();ctx.restore()}
 function drawMK(){txt('MY KICKER',W/2,H*0.05,Math.min(28,W*0.075),GOLD,'#063');ctx.fillStyle='#bcd';ctx.font='12px system-ui';ctx.textAlign='center';ctx.fillText('🪙 '+CSTR()+' · most options free',W/2,H*0.05+18);
- const py=H*0.075,ph=Math.min(H*0.44,W*1.05),pw=Math.min(W*0.9,ph*0.62);panel(W/2-pw/2,py,pw,ph);
- if(MK.masc>=0){const s=portraitSheet(myT()),h=ph*0.9,w=h*203/300;ctx.drawImage(s,0,0,203,300,W/2-w/2,py+ph*0.05,w,h)}
+ const py=H*0.075,ph=Math.min(H*0.44,W*1.05),pw=Math.min(W*0.9,ph*0.62);mkBack(W/2-pw/2,py,pw,ph);
+ if(MK.masc>=0){window.FGF_MASCNB=1;let s;try{s=portraitSheet(myT())}finally{window.FGF_MASCNB=0}const h=ph*0.9,w=h*203/300;ctx.drawImage(s,0,0,203,300,W/2-w/2,py+ph*0.05,w,h)}
  else{const f=frontImg(myT());if(f){const h=ph*0.95,w=h*BMETA.cw/BMETA.h;ctx.drawImage(f,W/2-w/2,py+ph*0.03,w,h)}else{ctx.fillStyle='#bcd';ctx.fillText('Loading…',W/2,py+ph/2)}
   }
  ctx.fillStyle=GOLD;ctx.font='900 13px system-ui';ctx.textAlign='center';ctx.fillText((MK.name||'MY KICKER')+' #'+myNum(myT())+(MK.on?' · IN USE':' · PREVIEW'),W/2,py+ph+17);if(window.TTL&&TTL()){ctx.fillStyle='#7fe8ff';ctx.font='900 10px system-ui';ctx.fillText('🏆 '+TTL(),W/2,py+ph-6)}

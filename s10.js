@@ -96,11 +96,11 @@ mascSheet=function(mi,ti,num){const k='mh6_'+mi+'_'+num+'_'+(MK.name||'');if(KC5
 // ---- Portraits (My Kicker previews) keep the pre-d4cc12b look: original kickers art + old Bulldogs metrics + old mascot heads; in-game sprites unchanged ----
 const KSP=new Image();KSP.src='kickers_p.webp?v=1';const PSC={},OLD5=[[56,88,50,31,75,24],[278,88,53,31,300,24]];
 // pre-fdadfa7 front-facing painted mascot (as the My Kicker preview looked originally)
-function frontMasc(mi,ti,num){const k='fm4_'+mi+'_'+ti+'_'+num;if(KC5[k])return KC5[k];if(!MSI.complete||!MSI.naturalWidth)return teamSheet(ti);const c=document.createElement('canvas');c.width=812;c.height=300;const x=c.getContext('2d');
+function frontMasc(mi,ti,num){const nb=!!window.FGF_MASCNB,k='fm4_'+mi+'_'+ti+'_'+num+(nb?'nb':'');if(KC5[k])return KC5[k];if(!MSI.complete||!MSI.naturalWidth)return teamSheet(ti);const c=document.createElement('canvas');c.width=812;c.height=300;const x=c.getContext('2d');
  const P=[[0,1,1,0],[-0.08,1.03,0.97,-3],[0.07,0.97,1.03,4],[0.14,0.98,1.02,6]];
  P.forEach(([r,sx,sy,dx],i)=>{const h=176,w=h*0.965,fx=i*203+101+dx,fy=292;x.save();x.beginPath();x.rect(i*203,0,203,300);x.clip();/* keep every frame inside its own cell: no bleed into the neighbour */x.translate(fx,fy);x.rotate(r);x.scale(sx,sy);
   x.drawImage(MSI,mi*193,0,193,200,-w/2,-h,w,h);
-  x.fillStyle=TEAMS[ti].p;x.strokeStyle=TEAMS[ti].s;x.lineWidth=3;x.beginPath();x.arc(0,-h*0.42,19,0,7);x.fill();x.stroke();numOn(x,0,-h*0.42-1,22,num,TEAMS[ti].s);x.restore()});return KC5[k]=c}
+  if(!nb){x.fillStyle=TEAMS[ti].p;x.strokeStyle=TEAMS[ti].s;x.lineWidth=3;x.beginPath();x.arc(0,-h*0.42,19,0,7);x.fill();x.stroke();numOn(x,0,-h*0.42-1,22,num,TEAMS[ti].s)}x.restore()});return KC5[k]=c}
 window.portraitSheet=function(ti){if(MK.masc>=0)return frontMasc(MK.masc,ti,myNum(ti));const key=JSON.stringify(MK)+'|'+ti;if(PSC[key])return PSC[key];if(!KSP.complete||!KSP.naturalWidth)return mySheet(ti);
  const sv=Object.assign({},KC5);for(const k in KC5)delete KC5[k];const k5=[KMETA[5][0].slice(),KMETA[5][1].slice()];KMETA[5][0]=OLD5[0].slice();KMETA[5][1]=OLD5[1].slice();
  const P=CanvasRenderingContext2D.prototype,od=P.drawImage;P.drawImage=function(im,...a){return od.call(this,im===KS?KSP:im,...a)};window.FGF_PORT=1;let s;

@@ -24,7 +24,7 @@ let lastC=coins;setInterval(()=>{if(coins>lastC&&!window.TESTER){wk().coins+=coi
 const oEnd=S3.onEnd;S3.onEnd=function(){const r=oEnd?oEnd.apply(this,arguments):undefined;try{if(G.on){G.done=1;G.score=score;G.earn=coins-G.c0;const w=wk();w.best=Math.max(w.best,score);S2('fgfWk2',WK)}}catch(e){}return r};
 // ---------- slow-mo on misses ----------
 let SC=null,skipNext=false;
-const missOK=()=>LS.fgfMissSlo!=='0'&&!(window.FGF_RM&&FGF_RM())&&!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+const missOK=()=>!(window.FGF_MM&&FGF_MM())&&LS.fgfMissSlo!=='0'&&!(window.FGF_RM&&FGF_RM())&&!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 const oNx=S3.next;S3.next=function(good){if(skipNext){skipNext=false;return oNx.apply(this,arguments)}
  if(!good&&LAST&&!LAST.good&&LAST.tr.length>12&&LAST.d>=35&&missOK()&&!['time','tut','vs'].includes(mode)&&ball.res!=='BLOCKED!'){startScrub(true,'play');return true}return oNx.apply(this,arguments)};
 function afterMiss(){skipNext=true;state='play';if(S3.next(false))return;if(lives<=0||(mode==='time'&&timeLeft<=0)){endGame();return}prevLives=lives;newWind();resetBall()}
