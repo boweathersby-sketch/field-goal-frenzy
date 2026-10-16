@@ -72,10 +72,10 @@ let bestAt=0,shown=false;const oNG=newGame;newGame=function(){const r=oNG.apply(
 const oR=S3.onResult;S3.onResult=function(good){const r=oR.apply(this,arguments);try{if(state==='play'&&!['tut','ghost'].includes(mode)){
   if(good&&bestAt>0&&!shown&&score>bestAt){shown=true;FGF_POP('🏆 NEW BEST! '+Math.round(score).toLocaleString(),'#ffd23f',0.36)}
   if(!good&&LS.fgfWhy!=='0'){const res=String(ball.res||''),k=window.__lastKick||{},wx=+wind.x||0,mph=Math.round(+wind.mph||0);let t='';
-   if(res.startsWith('WIDE')){const side=res.endsWith('LEFT')?'left':'right';const windPush=mph>=5&&((side==='right'&&wx>0)||(side==='left'&&wx<0));t=windPush?'💨 '+mph+' mph wind pushed it '+side+' · aim more '+(side==='right'?'left':'right'):'↔️ Missed '+side+' · aim more '+(side==='right'?'left':'right')}
-   else if(res.startsWith('SHORT'))t=KS_()==='swipe'?'💪 Short · swipe longer and faster':KS_()==='hold'?'💪 Short · release in the white zone':'💪 Short · tap power at the very top';
-   else if(/BLOCK/.test(res))t='✋ Blocked · kick sooner, the rush is coming';
-   if(t)setTimeout(()=>FGF_POP(t,'#bfe6ff',0.42),650)}}}catch(e){}return r};
+   if(res.startsWith('WIDE')){const side=res.endsWith('LEFT')?'left':'right';const windPush=mph>=5&&((side==='right'&&wx>0)||(side==='left'&&wx<0));const TR_=x=>window.FGF_TR?FGF_TR(x):x,o=side==='right'?'left':'right';t=windPush?'💨 '+mph+' '+TR_('mph wind pushed it '+side+' · aim more '+o):'↔️ '+TR_('Missed '+side+' · aim more '+o)}
+   else if(res.startsWith('SHORT'))t='💪 '+(window.FGF_TR?FGF_TR:x=>x)(KS_()==='swipe'?'Short · swipe longer and faster':KS_()==='hold'?'Short · release in the white zone':'Short · tap power at the very top');
+   else if(/BLOCK/.test(res))t='✋ '+(window.FGF_TR?FGF_TR('Blocked · kick sooner, the rush is coming'):'Blocked · kick sooner, the rush is coming');
+   if(t)setTimeout(()=>FGF_POP(t,'#bfe6ff',0.455),650)}}}catch(e){}return r};
 const oT=txt;txt=function(t){if(state==='play'&&KS_()==='hold'&&(t==='SWIPE UP'||t==='TO KICK!'))return;if(t==='SWIPE UP'&&state==='play'&&KS_()!=='swipe')arguments[0]=KS_()==='hold'?'HOLD & RELEASE':'TAP · TAP · TAP';return oT.apply(this,arguments)};
 })();
 
