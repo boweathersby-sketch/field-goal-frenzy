@@ -85,7 +85,7 @@ const hubItems=()=>{const d=deal(),L=[
  ['📚','COLLECTION','Everything you own',()=>state='coll',false],
  ['ℹ️','CREDITS & PRIVACY','',()=>state='cred',false]];
  if(FGF_ADS)L.push(['📺','WATCH AD','+100 coins',FGF_watchAd,false]);return L};
-window.FGF_DAILYREADY=()=>{const r=[];if(LS.fgfSpin!==DK())r.push('Spin');if(LS.fgfLC!==DK())r.push('Legend try');if(window.FGF_EVTON&&FGF_EVTON())r.push('Weekend event');return r};
+window.FGF_HUBITEMS=hubItems;window.FGF_DAILYREADY=()=>{const r=[];if(LS.fgfSpin!==DK())r.push('Spin');if(LS.fgfLC!==DK())r.push('Legend try');if(window.FGF_EVTON&&FGF_EVTON())r.push('Weekend event');return r};
 let SPN=null;const SPZ=[25,50,75,100,150,200,300,500],SPC=['#e74c3c','#f39c12','#f1c40f','#2ecc71','#1abc9c','#3498db','#9b59b6','#ff4fd8'];
 function head(t,s){txt(t,W/2,H*0.07,Math.min(28,W*0.075),GOLD,'#063');if(s){ctx.fillStyle='#bcd';ctx.font='12px system-ui';ctx.textAlign='center';ctx.fillText(s,W/2,H*0.07+22)}}
 function back(to){bx(W/2-80,H*0.93-22,160,42,'◀ BACK',()=>state=to||'hub',false,14)}
