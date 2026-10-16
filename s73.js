@@ -9,3 +9,4 @@ P.strokeText=function(t,x,y,mw){const f=fit(this,t,x,y,mw);return f==null?os.cal
 // Spanish: a few titles that were still English
 try{Object.assign(window.FGF_ES=window.FGF_ES||{},{'DAILY GOALS':'METAS DIARIAS','CREATE A MASCOT':'CREA UNA MASCOTA','🦶 KICK METHOD · CONTROLS':'🦶 MÉTODO · CONTROLES','KICK METHOD · CONTROLS':'MÉTODO · CONTROLES','🎈 Make a kick now: +50':'🎈 Acierta ahora: +50','🎃 PUMPKIN BALL · smash it through for coins':'🎃 BALÓN CALABAZA · mételo para ganar monedas'})}catch(e){}
 })();
+;setInterval(()=>{try{if(state!=='shop'){const e=document.getElementById('fgfs72sh');if(e)e.remove()}}catch(e){}},500);
