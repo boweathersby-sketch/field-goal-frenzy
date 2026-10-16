@@ -63,7 +63,7 @@ const oSc=S3.screen;S3.screen=function(){if(state==='ctl'){BTN=[];txt('🎮 CONT
  const r=oSc?oSc.apply(this,arguments):undefined;
  try{if(state==='mset'){const bw=Math.min(300,W*0.84),x=W/2-bw/2,i=BTN.findIndex(q=>Math.abs(q.y-(H*0.16+72))<2&&Math.abs(q.x-x)<2);if(i>=0){BTN[i].w=bw/2-4}
    // repaint: Left-handed narrowed + CONTROLS beside it
-   const lh=LS.fgfLH==='1';panelFix(x,H*0.16+72,bw,44);bx(x,H*0.16+72,bw/2-4,44,'✋ LEFTY: '+(lh?'ON':'OFF'),()=>LS.fgfLH=lh?'0':'1',lh,12);bx(x+bw/2+4,H*0.16+72,bw/2-4,44,'🎮 CONTROLS',()=>state='ctl',false,12)}
+   const lh=LS.fgfLH==='1';panelFix(x,H*0.16+72,bw,44);bx(x,H*0.16+72,bw/2-4,44,'✋ LEFTY: '+(lh?'ON':'OFF'),()=>LS.fgfLH=lh?'0':'1',lh,12);bx(x+bw/2+4,H*0.16+72,bw/2-4,44,'🦶 KICK METHOD · CONTROLS',()=>state='ctl',false,12)}
   if(state==='title'&&navigator.onLine===false){ctx.save();ctx.fillStyle='rgba(120,20,20,0.85)';ctx.beginPath();ctx.roundRect(8,H-30,86,22,11);ctx.fill();ctx.fillStyle='#fff';ctx.font='900 11px system-ui';ctx.textAlign='center';ctx.fillText(T_('📴 OFFLINE'),51,H-15,82);ctx.restore()}}catch(e){}
  return r};
 function panelFix(x,y,w,h){BTN=BTN.filter(q=>!(Math.abs(q.y-y)<2&&Math.abs(q.x-x)<2&&q.w>=w/2-6&&q.w<=w+1&&q!==null));ctx.save();ctx.fillStyle='#0b2a17';ctx.fillRect(x-3,y-3,w+6,h+6);ctx.restore()}
