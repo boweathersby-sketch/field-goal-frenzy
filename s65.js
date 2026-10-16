@@ -1,11 +1,11 @@
-// s65 (Kirk, Oct 15): STORM modes. HURRICANE rework (70–170 mph, random distance, gusts), 🌀 STORM SLALOM (hurricane + moving posts),
+// s65 (Kirk, Oct 15): STORM modes. HURRICANE rework (70–170 mph, random distance, gusts), 🌀 HURRICANE POSTS (hurricane + moving posts),
 // 🌪️ TORNADO (EF0–EF5, swirling wind that turns mid-flight, funnel sky + debris), 🌪️ TWISTER POSTS (tornado + moving posts).
 // HARD RULE: every kick is checked by FGF_SOLVER (s65a.js, exact replica of the flight code) before it is shown; unmakeable kicks are re-rolled.
 // Chaos kicks with moving posts get the same check.
 (function(){
 const SV=window.FGF_SOLVER,R=Math.random,RI=(a,b)=>a+Math.round(R()*(b-a)),HK=2.4,STEP=1/60;
 WX.tornado=['🌪️','TORNADO'];
-try{MODES.push(['storm','🌀 STORM SLALOM','Hurricane winds + moving posts'],['tornado','🌪️ TORNADO','EF0–EF5 swirling winds'],['twister','🌪️ TWISTER POSTS','Tornado winds + moving posts'])}catch(e){}
+try{MODES.push(['storm','🌀 HURRICANE POSTS','Hurricane winds + moving posts'],['tornado','🌪️ TORNADO','EF0–EF5 swirling winds'],['twister','🌪️ TWISTER POSTS','Tornado winds + moving posts'])}catch(e){}
 const HM=m=>m==='hurricane'||m==='storm',TM=m=>m==='tornado'||m==='twister',SM=m=>HM(m)||TM(m),POSTM=m=>m==='storm'||m==='twister';
 const EF=mph=>mph<86?0:mph<111?1:mph<136?2:mph<166?3:mph<201?4:5;
 let SW=null,tf=0,acc=0;window.FGF_STORMSTAT={gen:0,reroll:0};
@@ -35,9 +35,9 @@ const oBG=drawBG;drawBG=function(){const r=oBG.apply(this,arguments);try{if(weat
  const fx=W*0.72+Math.sin(t*0.4)*W*0.08;for(let k=0;k<3;k++){ctx.beginPath();const top=W*(0.34-k*0.06),bot=W*0.03;ctx.moveTo(fx-top/2,0);for(let i=0;i<=12;i++){const y=hz*i/12,w=top+(bot-top)*Math.pow(i/12,0.7),wob=Math.sin(t*3+i*0.8+k)*W*0.02*(i/12);ctx.lineTo(fx-w/2+wob+Math.sin(i*0.5)*W*0.03*(i/12),y)}for(let i=12;i>=0;i--){const y=hz*i/12,w=top+(bot-top)*Math.pow(i/12,0.7),wob=Math.sin(t*3+i*0.8+k)*W*0.02*(i/12);ctx.lineTo(fx+w/2+wob+Math.sin(i*0.5)*W*0.03*(i/12),y)}ctx.closePath();ctx.fillStyle=['rgba(40,44,40,.55)','rgba(70,74,66,.45)','rgba(110,110,100,.3)'][k];ctx.fill()}
  for(const d of DB){d.x+=d.v*0.01*(SW&&SW.w<0?-1:1);if(d.x>1.1)d.x=-0.1;if(d.x<-0.1)d.x=1.1;const x=d.x*W,y=d.y*hz*1.1+Math.sin(t*2+d.r)*12;ctx.save();ctx.translate(x,y);ctx.rotate(t*4*d.v+d.r);ctx.fillStyle=d.c;ctx.fillRect(-d.s,-d.s/2,d.s*2,d.s);ctx.restore()}ctx.restore()}}catch(e){}return r};
 // mode menu: "🌪️ STORM MODES" entry in MORE MODES
-try{FGF_MODES2.push(['storms','🌪️','STORM MODES','Storm Slalom · Tornado · Twister Posts · every kick makeable'])}catch(e){}
+try{FGF_MODES2.push(['storms','🌪️','STORM MODES','Hurricane Posts · Tornado · Twister Posts · every kick makeable'])}catch(e){}
 const BS='border:2px solid #f2c230;background:#05200f;color:#f2c230;border-radius:16px;padding:10px 14px;font:900 13px system-ui';
-function menu(){const o=document.getElementById('fgfxm');if(o)o.remove();const L=[['hurricane','🌀 HURRICANE','70–170 mph · random distance · gusts'],['storm','🌀 STORM SLALOM','Hurricane winds + moving posts'],['tornado','🌪️ TORNADO','EF0–EF5 · wind swirls mid-flight'],['twister','🌪️ TWISTER POSTS','Tornado winds + moving posts']];
+function menu(){const o=document.getElementById('fgfxm');if(o)o.remove();const L=[['hurricane','🌀 HURRICANE','70–170 mph · random distance · gusts'],['storm','🌀 HURRICANE POSTS','Hurricane winds + moving posts'],['tornado','🌪️ TORNADO','EF0–EF5 · wind swirls mid-flight'],['twister','🌪️ TWISTER POSTS','Tornado winds + moving posts']];
  const d=document.createElement('div');d.id='fgfxm';d.className='fgfov';d.style.cssText='position:fixed;inset:0;background:rgba(2,10,6,.82);z-index:68;display:flex;align-items:center;justify-content:center;padding:14px';
  d.innerHTML=`<div style="background:#062a14;border:2px solid #f2c230;border-radius:16px;padding:14px;max-width:360px;width:100%;color:#fff;font:14px system-ui;max-height:88vh;overflow:auto"><div style="color:#f2c230;font:900 18px system-ui;text-align:center;margin-bottom:6px">🌪️ STORM MODES</div><div style="font:12px system-ui;color:#bcd;text-align:center;margin-bottom:10px">Every kick is checked so at least one swipe can score.</div>`+L.map(m=>`<button data-s="${m[0]}" style="${BS};display:block;width:100%;text-align:left;margin:0 0 8px;color:#fff"><span style="color:#f2c230">${m[1]}</span><br><span style="font:12px system-ui;color:#bcd">${m[2]}${+(LS[BKEY(m[0])]||0)?' · Best '+LS[BKEY(m[0])]:''}</span></button>`).join('')+`<button id="smb" style="${BS};display:block;margin:6px auto 0;min-width:140px">◀ BACK</button></div>`;
  document.body.appendChild(d);d.style.pointerEvents='none';setTimeout(()=>d.style.pointerEvents='',350);d.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{d.remove();try{sfx.whistle()}catch(e){}newGame(b.dataset.s)});d.querySelector('#smb').onclick=()=>d.remove()}
