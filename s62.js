@@ -9,7 +9,7 @@ function card(h,html,id){const o=document.getElementById('fgfxm');if(o)o.remove(
  d.innerHTML=`<div style="background:#062a14;border:2px solid #f2c230;border-radius:16px;padding:14px;max-width:360px;width:100%;color:#fff;font:14px system-ui;max-height:88vh;overflow:auto"><div style="color:#f2c230;font:900 18px system-ui;text-align:center;margin-bottom:10px">${h}</div>${html}</div>`;document.body.appendChild(d);d.style.pointerEvents='none';setTimeout(()=>d.style.pointerEvents='',350);return d}
 const closeCard=()=>{const o=document.getElementById('fgfxm');if(o)o.remove()};
 const XM=[['yladder','📏','YARDAGE LADDER','20 → 80 yds in 5-yard steps · one miss ends it'],['windtr','🌬️','WIND TRAINER','Read the flags, guess the wind, then kick · 5 kicks'],['dprac','📅','DAILY PRACTICE','Today\'s Daily kick · practice as much as you like, never counts'],['kid','🧸','KID MODE','Short kicks, gentle wind · 10 balls'],['code','🔢','CHALLENGE CODE','Same 5 kicks for anyone with the code · works offline'],['pass','👥','PASS & PLAY','2–4 players on one phone · mini bracket']];
-let X=null;window.FGF_XM=()=>X;
+let X=null;window.FGF_XM=()=>X;window.FGF_XMSTART=(t,o)=>start(t,o);window.FGF_XMMENU=()=>menu();
 const best=t=>+(LS['fgfXM_'+t]||0);
 // --- entry in MORE MODES ---
 try{FGF_MODES2.push(['xtra','🧰','PRACTICE & PARTY','Ladder · Wind Trainer · Daily practice · Kid · Codes · Pass & Play'])}catch(e){}
