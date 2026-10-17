@@ -10,8 +10,11 @@ const DT=()=>window.FGF_DSTYPE?FGF_DSTYPE():'h',HM=m=>m==='hurricane'||m==='stor
 const EF=mph=>mph<86?0:mph<111?1:mph<136?2:mph<166?3:mph<201?4:5;
 let SW=null,tf=0,acc=0;window.FGF_STORMSTAT={gen:0,reroll:0};
 const amp=()=>2.6*Math.min(1,(dist-20)/25+0.4),PX=()=>{const A=amp();return[-A,-A/2,0,A/2,A]};
-function gen(){const m=mode;if(HM(m)){dist=RI(25,55);const mph=RI(70,170),a=(R()<0.5?1:-1)*(Math.PI/2+(R()-0.5)*0.5),eff=140*HK*(0.75+0.45*(mph-70)/100);weather='hurricane';SW=null;wind={mph,a,x:Math.sin(a)*eff,z:Math.cos(a)*eff}}
- else{dist=RI(25,50);const mph=RI(65,230),a0=R()*6.283,w=(R()<0.5?-1:1)*(0.8+R()*1.2),eff=140*HK*(0.55+0.5*(mph-65)/165);weather='tornado';SW={a0,w,eff,zk:0.25};wind={mph,a:a0,x:Math.sin(a0)*eff,z:Math.cos(a0)*eff*0.25,ef:EF(mph)}}}
+// Oct 17 (Kirk): storms eased. Same 70–170 mph / EF0–EF5 shown, but the wind pushes the ball less (posts modes a bit more),
+// distances lean shorter (20–50 hurricane, 20–45 tornado), tornado swirl turns slower and gust/swirl pulses are half as strong.
+const EZK=m=>m==='storm'?0.40:m==='twister'?0.65:HM(m)?0.33:0.55;
+function gen(){const m=mode;if(HM(m)){dist=20+Math.round(Math.pow(R(),1.5)*30);const mph=RI(70,170),a=(R()<0.5?1:-1)*(Math.PI/2+(R()-0.5)*0.5),eff=EZK(m)*140*HK*(0.75+0.45*(mph-70)/100);weather='hurricane';SW=null;wind={mph,a,x:Math.sin(a)*eff,z:Math.cos(a)*eff}}
+ else{dist=20+Math.round(Math.pow(R(),1.5)*25);const mph=RI(65,230),a0=R()*6.283,w=(R()<0.5?-1:1)*(0.35+R()*0.55),eff=EZK(m)*140*HK*(0.55+0.5*(mph-65)/165);weather='tornado';SW={a0,w,eff,zk:0.25};wind={mph,a:a0,x:Math.sin(a0)*eff,z:Math.cos(a0)*eff*0.25,ef:EF(mph)}}}
 function cfg(){return{dist,weather,wind:{x:wind.x,z:wind.z},wp:ball.wp,gust:weather==='hurricane'?'h':weather==='gust'||weather==='hlite'?'g':null,swirl:SW,pox:(POSTM(mode)||(mode==='chaos'&&window.__CHMOV))?PX():[0]}}
 window.FGF_STORMCFG=cfg;
 function ensure(){const S=window.FGF_STORMSTAT;S.gen++;
@@ -19,7 +22,7 @@ function ensure(){const S=window.FGF_STORMSTAT;S.gen++;
  else if(mode==='chaos'&&window.__CHMOV){for(let i=0;i<15;i++){if(SV.makeable(cfg()))return;S.reroll++;const a=R()*6.283,mph=weather==='hlite'?30+RI(0,20):Math.max(0,Math.round(wind.mph*0.8));wind={mph,a,x:Math.sin(a)*mph,z:Math.cos(a)*mph}}wind={mph:0,a:0,x:0,z:0};if(!SV.makeable(cfg()))window.__CHMOV=false}}
 const oRB=resetBall;resetBall=function(){const r=oRB.apply(this,arguments);tf=0;acc=0;try{if(state==='play'||state==='pass'||state==='ctick'||SM(mode))ensure()}catch(e){}return r};
 const oNW=newWind;newWind=function(){const r=oNW.apply(this,arguments);if(!SM(mode))SW=null;else{weather=HM(mode)?'hurricane':'tornado';try{windAudio(true)}catch(e){}}return r};
-function swirl(){if(!SW)return;const a=SW.a0+SW.w*tf,gg=1+0.25*Math.sin(gustT*2.7);wind.x=Math.sin(a)*SW.eff*gg;wind.z=Math.cos(a)*SW.eff*SW.zk*gg;wind.a=a}
+function swirl(){if(!SW)return;const a=SW.a0+SW.w*tf,gg=1+0.12*Math.sin(gustT*2.7);wind.x=Math.sin(a)*SW.eff*gg;wind.z=Math.cos(a)*SW.eff*SW.zk*gg;wind.a=a}
 window.FGF_STORMRESET=()=>{tf=0;acc=0};window.FGF_STORMSWIRL=()=>{swirl();tf+=STEP};
 // fixed 60 Hz steps during flight in checked modes so the real flight matches the solver exactly
 const oU=update;update=function(dt){const chk=SM(mode)||(mode==='chaos'&&window.__CHMOV);if(!(chk&&state==='play'&&ball.fly&&!ball.done&&!paused))return oU.apply(this,arguments);
