@@ -1,5 +1,6 @@
 // s75 (Kirk's freeze exception, Oct 17): LEGEND CELEBRATION v2, the approved "disco dance battle" look.
-// A made 80-yard Legend kick in CLASSIC: ~5 s opening (your kicker dances standing next to your mascot), then a ~45 s
+// A made 80-yard Legend kick in CLASSIC: 10 s opening ON THE FIELD (the stadium the kick was made in: your kicker dances
+// standing next to your mascot, loud crowd roar, the stadium shakes), a purple fade into the club, then a ~45 s
 // breakdance battle in a purple neon disco club. Pairs from all 8 team kickers face off in the middle; in each pair one
 // shows off a power move or freeze while the other reacts, then they swap with a new move. 17-move pool, no move twice
 // in a run, order randomized every time and never the same as the previous run. All 8 mascots cheer in the back.
@@ -8,7 +9,7 @@
 (function(){
 const T_=t=>window.FGF_TR?FGF_TR(t):t,now=()=>performance.now()/1000,PI=Math.PI,S=Math.sin,C=Math.cos;
 const RMo=()=>LS.fgfRM==='1',FF=()=>LS.fgfNoFlash==='1'||!!(window.FGF_CF&&FGF_CF.ff);
-const OPEN=5,PAIR=11.25,NP=4,DUR=OPEN+PAIR*NP,SKIP=2,SHR=3.2,BPM=116,BEAT=60/BPM;
+const OPEN=10,PAIR=11.25,NP=4,DUR=OPEN+PAIR*NP,SKIP=2,SHR=3.2,BPM=126,BEAT=60/BPM;
 let LG=null;window.FGF_LGCEL=()=>LG;
 const E=t=>t<0?0:t>1?1:t,sm=t=>{t=E(t);return t*t*(3-2*t)},lerp=(a,b,k)=>a+(b-a)*k;
 // ---------- uniforms (from the team kicker art), plain helmets ----------
@@ -62,7 +63,7 @@ const REACT={
  rock:(t)=>{const b=S(t/BEAT*PI),x=Math.abs(b);return P({T:0.1+0.08*x,sF:PI-0.6+0.4*b,eF:-1.5,sN:PI-0.4-0.4*b,eN:-1.6,hF:PI+0.18,kF:0.25*x,hN:PI-0.18,kN:0.25*x,nk:0.2*x})}};
 const RV=Object.keys(REACT);
 // opening: standing dance only (both feet on the floor)
-function openPose(t){const b=t/BEAT,x=Math.abs(S(b*PI)),y=S(b*PI);
+function openPose(t){t=t%5.1;const b=t/BEAT,x=Math.abs(S(b*PI)),y=S(b*PI);
  if(t<1.7)return P({T:0.06+0.06*x,sF:PI-0.9+0.5*y,eF:-1.4,sN:PI-0.7-0.5*y,eN:-1.5,hF:PI+0.18,kF:0.18+0.22*x,hN:PI-0.18,kN:0.18+0.22*x,nk:0.15*x,dx:0.04*y});
  if(t<3.4)return P({T:-0.05+0.1*y,sF:-0.15+0.3*y,eF:-0.3,sN:PI*0.45,eN:-0.4+0.4*x,hF:PI+0.22,kF:0.12+0.2*x,hN:PI-0.22,kN:0.12+0.2*x,nk:0.2*y,dx:0.05*S(b*PI*0.5)});
  return P({T:0.04,sF:-0.25+0.35*x,eF:-0.25,sN:0.25-0.35*x,eN:-0.25,hF:PI+0.2,kF:0.15+0.25*x,hN:PI-0.2,kN:0.15+0.25*x,nk:-0.1+0.2*y,dx:0.06*y})}
@@ -199,21 +200,31 @@ const oR=S3.onResult;S3.onResult=function(good){const r=oR.apply(this,arguments)
 function ok(){try{if(window.FGF_TRYING||lives>=50)return false;const h=window.FGF_H2&&FGF_H2();if(h&&h.room&&h.room.status==='active')return false}catch(e){}return true}
 function start(){const me=myT();LG={t0:now(),rm:RMo(),ff:FF(),me,seq:makeSeq(me),end:0,cf:[],nb:0,pc:-1};
  try{pendNext=null}catch(e){}msg=null;legendT=0;flash=0;shake=0;try{const K=window.FGF_KANIM;if(K)K.CEL=null}catch(e){}
- try{sfx.cheer()}catch(e){}try{vib&&vib([60,40,120])}catch(e){}}
+ try{sfx.cheer();sfx.roar()}catch(e){}try{vib&&vib(LG.rm?[60,40,120]:[220,60,220,60,320,80,400])}catch(e){}}
 // ---------- music: a simple synth breakbeat, scheduled on the audio clock (respects Sound OFF) ----------
 // Legend anthem (Kirk-approved original track, legend_rock.mp3): loaded once during Classic, played on the MUSIC channel
 // (Master/Music volume, Sound OFF and Use My Music all respected), synced to the celebration clock, stopped on skip/home.
-const SONG='legend_rock.mp3?v=3';let SBUF=null,SLD=null,SFAIL=false;
+const SONG='legend_rock.mp3?v=4',DUCK=0.7;let SBUF=null,SLD=null,SFAIL=false;
 function loadSong(){if(SBUF||SLD||SFAIL)return;let c=null;try{c=typeof AC!=='undefined'&&AC}catch(e){}if(!c)return;
  SLD=fetch(SONG).then(r=>{if(!r.ok)throw 0;return r.arrayBuffer()}).then(b=>new Promise((res,rej)=>c.decodeAudioData(b,res,rej))).then(b=>{SBUF=b}).catch(()=>{SFAIL=true}).finally(()=>{SLD=null})}
 setInterval(()=>{try{if(state==='play'&&mode==='classic')loadSong()}catch(e){}},1500);
 const umm=()=>LS.fgfUMM==='1';
 function songOut(c){const p=window.__CH;window.__CH='music';try{return OUT(c)}finally{window.__CH=p}}
 function playSong(L,a){if(L.src||!SBUF||umm())return;let c;try{c=au()}catch(e){}if(!c)return;const g=c.createGain(),s=c.createBufferSource();s.buffer=SBUF;g.gain.value=1;s.connect(g).connect(songOut(c));
- const off=Math.max(0,a);if(off>=SBUF.duration-0.05)return;s.start(c.currentTime,off);L.src=s;L.sg=g}
+ const off=Math.max(0,a);if(off>=SBUF.duration-0.05)return;const t=c.currentTime;
+ // under the field crowd roar the intro sits a little lower (no clipping), then opens up fully for the drop at the club fade
+ if(off<OPEN){g.gain.setValueAtTime(DUCK,t);if(off<OPEN-0.4)g.gain.setValueAtTime(DUCK,t+OPEN-0.4-off);g.gain.linearRampToValueAtTime(1,t+OPEN-off)}s.start(t,off);L.src=s;L.sg=g}
 function stopSong(L,fade){const s=L&&L.src;if(!s)return;L.src=null;try{const c=s.context,g=L.sg,t=c.currentTime;if(fade){g.gain.setValueAtTime(g.gain.value,t);g.gain.linearRampToValueAtTime(0,t+fade);s.stop(t+fade+0.02)}else s.stop()}catch(e){}}
 const BASS=[55,55,65.4,49,55,55,73.4,65.4];
-function music(a){const L=LG;if(L.end){if(L.src&&!L.sf&&a<DUR-0.05){L.sf=1;stopSong(L,0.5)}return}if(umm())return;if(SBUF){playSong(L,a);return}if(!SFAIL&&a<2){loadSong();return}let c;try{c=au()}catch(e){}if(!c)return;const out=OUT(c);if(L.ac0==null){L.ac0=c.currentTime-a}
+// ---------- crowd roar over the field opening (CROWD channel: Master/Crowd volume and Sound OFF respected) ----------
+function crowd(L,a){if(L.cr||a>OPEN-1)return;L.cr=1;let c;try{c=au()}catch(e){}if(!c)return;const p0=window.__CH;window.__CH='crowd';let out;try{out=OUT(c)}finally{window.__CH=p0}const t=c.currentTime,sr=c.sampleRate,d=Math.max(1,OPEN+0.8-a),n=Math.floor(sr*d);
+ const b=c.createBuffer(2,n,sr);for(let ch=0;ch<2;ch++){const x=b.getChannelData(ch);let p=0,q=0;for(let i=0;i<n;i++){const w=Math.random()*2-1;p=p*0.985+w*0.015;q=q*0.9+w*0.1;x[i]=w*0.25+q*0.9+p*4}}
+ const s=c.createBufferSource();s.buffer=b;const hp=c.createBiquadFilter();hp.type='highpass';hp.frequency.value=90;const bp=c.createBiquadFilter();bp.type='peaking';bp.frequency.value=1100;bp.Q.value=0.7;bp.gain.value=5;
+ const lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=5200;const g=c.createGain(),T=x=>t+Math.max(0,x-a),V=0.45;
+ g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(V,T(0.35));g.gain.setValueAtTime(V,T(1.0));g.gain.linearRampToValueAtTime(V*0.8,T(2.6));g.gain.linearRampToValueAtTime(V,T(4.2));g.gain.linearRampToValueAtTime(V*0.85,T(5.8));g.gain.linearRampToValueAtTime(V,T(7.4));g.gain.linearRampToValueAtTime(V*0.6,T(OPEN-1.2));g.gain.linearRampToValueAtTime(0.0001,T(OPEN+0.5));
+ s.connect(hp).connect(bp).connect(lp).connect(g).connect(out);s.start(t);s.stop(t+d);s.onended=()=>{if(L.crs===s)L.crs=null};L.crs=s;L.crg=g}
+function stopCrowd(L,f){const s=L&&L.crs;if(!s)return;L.crs=null;try{const c=s.context,t=c.currentTime,g=L.crg.gain;g.cancelScheduledValues(t);g.setValueAtTime(g.value,t);g.linearRampToValueAtTime(0,t+(f||0.01));s.stop(t+(f||0.01)+0.02)}catch(e){}}
+function music(a){const L=LG;if(L.end){if(L.crs)stopCrowd(L,0.3);if(L.src&&!L.sf&&a<DUR-0.05){L.sf=1;stopSong(L,0.5)}return}crowd(L,a);if(!L.ch&&a>4.6){L.ch=1;try{sfx.cheer()}catch(e){}}if(umm())return;if(SBUF){playSong(L,a);return}if(!SFAIL&&a<2){loadSong();return}let c;try{c=au()}catch(e){}if(!c)return;const out=OUT(c);if(L.ac0==null){L.ac0=c.currentTime-a}
  const ahead=a+0.25;while(L.nb*BEAT/2<ahead){const i=L.nb++,t=L.ac0+i*BEAT/2;if(t<c.currentTime-0.02)continue;const bar=i%16,vol=a<1?0.6:1;
   if(bar%8===0||bar%8===3||bar%8===5&&bar>8){const o=c.createOscillator(),g=c.createGain();o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(48,t+0.14);g.gain.setValueAtTime(0.32*vol,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.22);o.connect(g).connect(out);o.start(t);o.stop(t+0.25)}
   if(bar%8===4){nz(c,out,t,0.16,1900,0.8,0.16*vol)}
@@ -236,25 +247,39 @@ function confetti(n){const L=LG,cols=['#ff3fd8','#4ad0ff','#ffd23f','#7dff8a','#
 function parts(dt){const L=LG;ctx.save();for(let i=L.cf.length-1;i>=0;i--){const p=L.cf[i];p.l-=dt;if(p.l<=0||p.y>H+20){L.cf.splice(i,1);continue}
  if(p.k){p.vy+=H*0.9*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;ctx.globalCompositeOperation='lighter';ctx.fillStyle=p.c;ctx.globalAlpha=Math.min(1,p.l*2);ctx.fillRect(p.x-1.2,p.y-1.2,2.4,2.4)}
  else{p.ph+=dt*5;p.x+=p.vx*dt+S(p.ph)*0.5;p.y+=p.vy*dt;ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;ctx.fillStyle=p.c;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r+p.ph);ctx.scale(1,C(p.ph));ctx.fillRect(-3,-4,6,8);ctx.restore()}}ctx.restore()}
-function scene(a,dt){const L=LG,on=a<0.5?0.15:sm((a-0.5)/1.6)*0.85+0.15,G=geo();
- club(a,on);
- // mascots: rows behind the dancers; in the opening your mascot dances up front, then joins the crowd
- const sl=slots();const mascotsIn=E((a-3.2)/1.4);
- for(let i=0;i<8;i++){if(i===L.me&&a<OPEN)continue;const s=sl[i],delay=i*0.08,al=a<OPEN?sm((mascotsIn*1.6-delay)):1;if(al<=0.01)continue;const dy=(1-al)*H*0.05;mascotAt(i,s.x,s.fy+dy,s.h,a,i*0.37,al)}
- if(a<OPEN+0.8){const s=sl[L.me],k=sm((a-(OPEN-0.6))/1.2),h=lerp(Math.min(H*0.22,W*0.44),s.h,k),x=lerp(W*0.72,s.x,k),fy=lerp(G.fy,s.fy,k);mascotAt(L.me,x,fy-(k>0&&k<1?S(k*PI)*H*0.08:0),h,a,0,1)}
- // spotlight cone on the opening kicker
- if(a<OPEN){ctx.save();ctx.globalCompositeOperation='lighter';const g=ctx.createRadialGradient(W*0.48,G.fy,0,W*0.48,G.fy,W*0.55);g.addColorStop(0,'rgba(255,220,255,'+(0.25*(1-E((a-3)/2)))+')');g.addColorStop(1,'rgba(255,200,255,0)');ctx.fillStyle=g;ctx.fillRect(0,G.yH,W,H-G.yH);ctx.restore()}
+// ---------- the field opening: the real stadium of this kick (no HUD, ball, score or yard label) ----------
+function fieldBG(){const pz=paused,lt=legendT;legendT=1.2;// the crowd bounces like after a Legend kick
+ try{drawBG();ctx.save();ctx.translate(0,OFF);ctx.fillText=ctx.strokeText=ctx.roundRect=function(){};try{drawPosts();drawFlags()}finally{delete ctx.fillText;delete ctx.strokeText;delete ctx.roundRect;ctx.restore()}
+  paused=true;drawWeather()}catch(e){}finally{paused=pz;legendT=lt}}
+function tconf(n){const L=LG,u=UNI[L.me],cols=[u[0],u[2],u[3],'#ffffff',u[2]];for(let i=0;i<n;i++)L.cf.push({x:Math.random()*W,y:-10-Math.random()*H*0.35,vx:(Math.random()-.5)*50,vy:70+Math.random()*90,l:9,c:cols[i%cols.length],r:Math.random()*6,ph:Math.random()*6})}
+// stadium shake: strong low rumble from the start, easing out as the field fades into the club (light with Reduced Motion)
+function shk(a){const L=LG;if(a>=OPEN+0.2)return null;const env=sm(a/0.2)*(1-sm((a-(OPEN-4))/3.6)),beat=Math.pow(1-((a/BEAT)%1),3),m=Math.min(W,H)*(L.rm?0.005:0.03)*env*(0.7+0.3*beat);if(m<0.05)return null;
+ return{x:m*(0.6*S(a*41)+0.4*S(a*67+1.3)),y:m*0.8*(0.6*S(a*47+0.7)+0.4*S(a*73+2.1)),r:(L.rm?0:1)*m/W*0.35*S(a*29),z:1+2.6*m/Math.min(W,H)}}
+const FX=OPEN-1.1,FXD=1.3;// field -> club crossfade window (club fully in just after the drop at OPEN)
+function scene(a,dt){const L=LG,G=geo(),fk=a<FX?0:sm((a-FX)/FXD),on=0.15+0.85*sm((a-FX)/1.6);
+ if(fk<1)fieldBG();
+ const sl=slots();
+ if(fk>0){ctx.save();ctx.globalAlpha=fk;club(a,on);ctx.restore();
+  // all 8 mascots cheer in the back rows (yours hops over from the field)
+  const mIn=E((a-(OPEN-0.8))/1.1);for(let i=0;i<8;i++){if(i===L.me&&a<OPEN+0.6)continue;const s=sl[i],delay=i*0.08,al=(a<OPEN+0.6?sm(mIn*1.6-delay):1)*fk;if(al<=0.01)continue;const dy=(1-al)*H*0.05;mascotAt(i,s.x,s.fy+dy,s.h,a,i*0.37,al)}}
+ // purple glow dip through the transition
+ if(fk>0&&fk<1){const g=S(fk*PI);ctx.fillStyle='rgba(110,25,210,'+(0.42*g)+')';ctx.fillRect(0,0,W,H);if(!L.ff){ctx.save();ctx.globalCompositeOperation='lighter';const r=ctx.createRadialGradient(W/2,H*0.55,0,W/2,H*0.55,Math.max(W,H)*0.7);r.addColorStop(0,'rgba(255,120,255,'+(0.35*g)+')');r.addColorStop(1,'rgba(120,40,255,0)');ctx.fillStyle=r;ctx.fillRect(0,0,W,H);ctx.restore()}}
+ // your mascot dances next to you on the field, then joins the crowd as the club fades in
+ if(a<OPEN+0.6){const s=sl[L.me],k=sm((a-(OPEN-0.4))/1.0),h=lerp(Math.min(H*0.22,W*0.44),s.h,k),x=lerp(W*0.72,s.x,k),fy=lerp(G.fy,s.fy,k);mascotAt(L.me,x,fy-(k>0&&k<1?S(k*PI)*H*0.08:0),h,a,0,1)}
+ // soft light pool on the opening kicker
+ if(a<OPEN){ctx.save();ctx.globalCompositeOperation='lighter';const g=ctx.createRadialGradient(W*0.48,G.fy,0,W*0.48,G.fy,W*0.55);g.addColorStop(0,'rgba(255,235,210,'+(0.16*(1-fk))+')');g.addColorStop(1,'rgba(255,220,200,0)');ctx.fillStyle=g;ctx.fillRect(0,G.yH,W,H-G.yH);ctx.restore()}
  if(a<OPEN)opening(a);else battle(a);
- // confetti showers at the battle start and the finale
+ // team-colour confetti on the field, then showers at the battle start and the finale
+ if(!L.c0&&a>0.15){L.c0=1;tconf(L.rm?50:140)}if(!L.c5&&a>5.5){L.c5=1;tconf(L.rm?30:90)}
  if(!L.c1&&a>OPEN){L.c1=1;confetti(L.rm?40:110)}if(!L.c2&&a>DUR-5){L.c2=1;confetti(L.rm?50:160);if(!L.rm)pyro()}
  parts(dt);
- // gentle beat glow (none when flash-free)
- if(!L.ff&&!L.rm){const b=Math.pow(1-((a/BEAT)%1),3);ctx.fillStyle='rgba(255,80,220,'+(0.05*b)+')';ctx.fillRect(0,0,W,H)}
+ // gentle beat glow in the club (none when flash-free)
+ if(!L.ff&&!L.rm&&fk>0){const b=Math.pow(1-((a/BEAT)%1),3);ctx.fillStyle='rgba(255,80,220,'+(0.05*b*fk)+')';ctx.fillRect(0,0,W,H)}
  // vignette
- const v=ctx.createRadialGradient(W/2,H*0.55,Math.min(W,H)*0.45,W/2,H*0.55,Math.max(W,H)*0.75);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(5,0,15,0.55)');ctx.fillStyle=v;ctx.fillRect(0,0,W,H)}
+ const v=ctx.createRadialGradient(W/2,H*0.55,Math.min(W,H)*0.45,W/2,H*0.55,Math.max(W,H)*0.75);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(5,0,15,'+(0.3+0.25*fk)+')');ctx.fillStyle=v;ctx.fillRect(0,0,W,H)}
 function draw(){const L=LG,a0=now()-L.t0,dt=Math.min(0.05,Math.max(0,a0-(L.la||a0)));L.la=a0;
  if(!L.end&&a0>=DUR){L.end=DUR;L.endAt=a0}
- ctx.save();try{music(a0)}catch(e){}scene(a0,dt);ctx.restore();
+ ctx.save();try{music(a0)}catch(e){}{const k=shk(a0);if(k){ctx.translate(W/2+k.x,H/2+k.y);ctx.rotate(k.r);ctx.scale(k.z,k.z);ctx.translate(-W/2,-H/2)}}scene(a0,dt);ctx.restore();
  BTN=[];
  if(L.end){const u=a0-L.endAt;if(u>=SHR){finish(false);return}ctx.fillStyle='rgba(8,2,20,'+(0.55*sm(u/0.3))+')';ctx.fillRect(0,0,W,H);
   const al=sm(u/0.3)*(1-sm((u-SHR+0.3)/0.3)),bw=Math.min(220,W*0.6),bh=54;ctx.save();ctx.globalAlpha=al;bx(W/2-bw/2,H*0.5-bh/2,bw,bh,'📤 '+T_('SHARE'),()=>shareLegend(),true,18);ctx.restore()}}
@@ -268,11 +293,11 @@ addEventListener('pointerdown',e=>{if(!LG||state!=='play')return;if(e.target&&e.
 addEventListener('pointerup',e=>{if(!LG||state!=='play')return;if(e.target&&e.target.closest&&e.target.closest('.fgfov,#lngm'))return;e.stopImmediatePropagation();const d=LG.dn;LG.dn=null;if(!d)return;
  const b=(BTN||[]).find(q=>d.x>=q.x&&d.x<=q.x+q.w&&d.y>=q.y&&d.y<=q.y+q.h);if(b&&b.cb&&LG.end){b.cb();return}skip()},true);
 addEventListener('keydown',e=>{if(LG&&state==='play'&&(e.key===' '||e.key==='Enter'||e.key==='Escape')){e.preventDefault();e.stopImmediatePropagation();skip()}},true);
-let hid=0;document.addEventListener('visibilitychange',()=>{if(!LG)return;if(document.hidden){hid=now();stopSong(LG,0)}else if(hid){const d=now()-hid;LG.t0+=d;if(LG.endAt)LG.endAt+=0;LG.ac0=null;LG.nb=Math.ceil((now()-LG.t0)/(BEAT/2));hid=0}});
+let hid=0;document.addEventListener('visibilitychange',()=>{if(!LG)return;if(document.hidden){hid=now();stopSong(LG,0);stopCrowd(LG,0)}else if(hid){const d=now()-hid;LG.t0+=d;if(LG.endAt)LG.endAt+=0;LG.ac0=null;LG.nb=Math.ceil((now()-LG.t0)/(BEAT/2));hid=0}});
 function shareLegend(){if(!LG)return;finish(true);try{share('I just nailed an 80-yard LEGEND kick')}catch(e){}}
 // ---------- finish: save the run, then home ----------
 let goHome=false;
-function finish(forShare){if(!LG)return;stopSong(LG,0.25);LG=null;try{const K=window.FGF_KANIM;if(K)K.CEL=null}catch(e){}msg=null;legendT=0;shake=0;flash=0;
+function finish(forShare){if(!LG)return;stopSong(LG,0.25);stopCrowd(LG,0.2);LG=null;try{const K=window.FGF_KANIM;if(K)K.CEL=null}catch(e){}msg=null;legendT=0;shake=0;flash=0;
  try{endGame()}catch(e){console.warn(e)}
  if(state==='initials'&&LS.fgfIni){try{const ini=J('fgfIni',[0,0,0]),AZ='ABCDEFGHIJKLMNOPQRSTUVWXYZ',lb=J('fgfLB',{}),L=lb[mode]||[];L.push({i:ini.map(k=>AZ[k]||'A').join(''),s:score});L.sort((x,y)=>y.s-x.s);lb[mode]=L.slice(0,25);SV('fgfLB',lb);state='over'}catch(e){}}
  if(state==='over'){state='title';try{toast('🏆 '+T_('Legend run saved')+' · '+score.toLocaleString())}catch(e){}}else goHome=true}
