@@ -36,7 +36,7 @@ function applySession(){try{if(navigator.audioSession)navigator.audioSession.typ
 applySession();
 function toggleUMM(){if(umm()){LS.fgfUMM='0'}else{LS.fgfUMM='1';LS.fgfMusic='0';toast('🎧 Use My Music ON · game music muted, sound effects stay')}applySession()}
 window.FGF_TOGGLEUMM=toggleUMM;
-function sw(x,y,w,h,label,on,cb){panel(x,y,w,h);ctx.textAlign='left';ctx.fillStyle='#fff';ctx.font='900 12px system-ui';const tw=w-60;ctx.fillText(label,x+10,y+h/2+4,tw);
+function sw(x,y,w,h,label,on,cb){panel(x,y,w,h);ctx.textAlign='left';ctx.fillStyle='#fff';ctx.font='900 12px system-ui';const tw=w-66,lw=ctx.measureText(label).width;if(lw>tw)ctx.font='900 '+Math.max(9,12*tw/lw)+'px system-ui';ctx.fillText(label,x+10,y+h/2+4,tw);
  const sx=x+w-50,sy=y+h/2-12;ctx.fillStyle=on?'#3ddc84':'#4a5a66';ctx.beginPath();ctx.roundRect(sx,sy,42,24,12);ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(on?sx+30:sx+12,sy+12,9,0,7);ctx.fill();btn(x,y,w,h,cb)}
 const oH=S3.screen;S3.screen=function(){const r=oH.apply(this,arguments);try{if(state==='mset'){const bw=Math.min(300,W*0.84),x=W/2-bw/2;sw(x+bw/2+4,H*0.16,bw/2-4,48,'🎧 USE MY MUSIC',umm(),toggleUMM);ctx.fillStyle='#9bc';ctx.font='11px system-ui';ctx.textAlign='center';ctx.fillText(umm()?'Use My Music: game music muted · SFX stay · MUSIC still works':'Use My Music: play your own music app while you kick',W/2,H*0.16+63,bw)}}catch(e){}return r};
 })();
