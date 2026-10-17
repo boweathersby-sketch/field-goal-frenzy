@@ -23,7 +23,7 @@ function rvStart(tier){tier=tier||'pro';const t=[0,1,2,3,4,5,6,7].filter(i=>i!==
 window.rvStart=rvStart;
 const ores=S3.onResult;S3.onResult=function(good){const r=ores.apply(this,arguments);
  if(ball&&ball.res&&/DOINK/.test(ball.res)){const n=(+LS.fgfDoinks||0)+1;LS.fgfDoinks=n;if(n>=5)unlock('doink')}
- if(good&&ball&&ball.gold){addCoins(150);toast('✨ GOLDEN BALL  🪙 +150');unlock('golden');burst(['#ffd23f','#fff6c0','#ffb300'])}
+ if(good&&ball&&ball.gold){const gc=mode==='classic'?90:150;addCoins(gc);toast('✨ GOLDEN BALL  🪙 +'+gc);unlock('golden');burst(['#ffd23f','#fff6c0','#ffb300'])}
  if(good&&eq.e==='e10'&&ball.res!=='BLOCKED!')for(let i=0;i<5;i++)setTimeout(()=>burst(['#8b4513','#ff8c1a','#ffd23f']),i*280);
  if(good&&eq.e==='e11'&&ball.res!=='BLOCKED!')for(let i=0;i<5;i++)setTimeout(()=>burst(['#ffffff','#bfe6ff','#e6283c','#2fbf4f']),i*280);
  if(mode==='rival'&&RV){if(good)RV.me++;const pr=Math.max(0.2,Math.min(0.97,0.97-(dist-30)*0.013+({rookie:-0.2,pro:0,legend:0.05})[RV.tier||'pro']));const ag=Math.random()<pr;if(ag)RV.ai++;RV.log.push([good,ag,dist]);RV.last=ag;msg.s='YOU '+RV.me+'  ·  '+RV.n.split(' ')[0].toUpperCase()+' '+RV.ai;try{pendNext=null}catch(e){}}

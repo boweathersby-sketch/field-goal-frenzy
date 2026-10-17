@@ -4,7 +4,7 @@
 const DK=()=>{const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()};window.FGF_DK=DK;
 const vibOn=()=>LS.fgfVib!=='0',buzz=p=>{try{if(vibOn()&&navigator.vibrate)navigator.vibrate(p)}catch(e){}};window.FGF_BUZZ=buzz;
 // ---- daily cap for FREE coin rewards (new bonus sources only) ----
-const CAP=600;window.FGF_FREE=function(n,label){const k=DK(),c=J('fgfFreeC',{d:'',n:0});if(c.d!==k){c.d=k;c.n=0}const g=Math.max(0,Math.min(n,CAP-c.n));c.n+=g;SV('fgfFreeC',c);if(g>0){addCoins(g);toast((label||'Bonus')+'  🪙 +'+g)}else toast((label||'Bonus')+' · daily bonus cap reached');return g};
+const CAP=400;window.FGF_FREE=function(n,label){if(mode==='classic')n=Math.max(1,Math.round(n*0.6));/* Oct 17: Classic bonus coins trimmed */const k=DK(),c=J('fgfFreeC',{d:'',n:0});if(c.d!==k){c.d=k;c.n=0}const g=Math.max(0,Math.min(n,CAP-c.n));c.n+=g;SV('fgfFreeC',c);if(g>0){addCoins(g);toast((label||'Bonus')+'  🪙 +'+g)}else toast((label||'Bonus')+' · daily bonus cap reached');return g};
 // ---- popups ----
 const PO=[];window.FGF_POP=(t,c,y)=>PO.push({t,c:c||GOLD,y:y||0.5,t0:performance.now()});
 const isCh=()=>['rival','legendc','horse','trick'].includes(mode);

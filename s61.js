@@ -7,7 +7,7 @@ const MN=m=>{try{return(MODES.find(x=>x[0]===m)||[0,m])[1]}catch(e){return m}};
 // ---------- per-kick track (own copy, same data the built-in replay uses) ----------
 let TK=[],LAST=null,kickD=0,kickM='',kickW='',snapC=null;
 const oTop=S3.top;S3.top=function(dt){if(state==='play'&&ball.fly&&!paused&&TK.length<900)TK.push({x:ball.x,y:ball.y,z:ball.z,r:ball.rot});
- if(state==='scrub'&&SC){if(SC.auto){SC.t+=dt*0.35;SC.i=Math.min(LAST.tr.length-1,Math.floor(SC.t*60));if(SC.i>=LAST.tr.length-1){SC.hold=(SC.hold||0)+dt;if(SC.hold>0.6)endScrub()}}const p=LAST.tr[SC.i];if(p){Object.assign(ball,{x:p.x,y:p.y,z:p.z,rot:p.r,fly:true});trail=LAST.tr.slice(Math.max(0,SC.i-18),SC.i+1).map(q=>({x:q.x,y:q.y,z:q.z}))}const sl=document.getElementById('fgfscr');if(sl&&SC.auto)sl.value=SC.i}
+ if(state==='scrub'&&SC){if(SC.auto){SC.t+=dt*0.35;SC.i=Math.min(LAST.tr.length-1,Math.floor(SC.t*60));if(SC.i>=LAST.tr.length-1){SC.hold=(SC.hold||0)+dt;if(SC.hold>0.6)endScrub()}}const p=SC&&LAST.tr[SC.i];/* Oct 17: endScrub() may have just cleared SC */if(p){Object.assign(ball,{x:p.x,y:p.y,z:p.z,rot:p.r,fly:true});trail=LAST.tr.slice(Math.max(0,SC.i-18),SC.i+1).map(q=>({x:q.x,y:q.y,z:q.z}))}const sl=document.getElementById('fgfscr');if(sl&&SC&&SC.auto)sl.value=SC.i}
  return oTop(dt)};
 const oK=kick;kick=function(){if(!ball.fly){TK=[];snapC=coins;kickD=dist;kickM=mode;kickW=typeof weather!=='undefined'?weather:''}return oK.apply(this,arguments)};
 // ---------- game + week stats ----------

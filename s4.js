@@ -89,10 +89,10 @@ S4.daily=()=>{const d=DL();if(d.day===dkey(new Date())&&d.done){state='dres';ret
 function dailyDone(good){const d=DL(),t=dkey(new Date()),y=new Date();y.setDate(y.getDate()-1);d.streak=good?(d.last===dkey(y)?d.streak+1:1):0;if(good)d.last=t;d.day=t;d.done=true;d.made=good;let rw=0;if(good){rw=150+(dist-45)*10;addCoins(rw)}d.rw=rw;d.dist=dist;SV('fgfDaily',d);if(d.streak>=7)unlock('daily7')}
 // ---- tutorial ----
 const TUT=[{d:25,mph:0,a:0,h:'Swipe from the ball TOWARD THE POSTS',s:'Nice and smooth. Aim for the middle.'},{d:30,mph:12,a:-Math.PI/2,h:'Wind blows LEFT ← · curve your swipe RIGHT into it',s:'Bend your swipe like a ) to fight the wind.'},{d:45,mph:0,a:0,h:'Long kick! Swipe FAST for full power',s:'Speed = power. Watch the KICK POWER bar.'}];let TS=0,tutMsg='';
-S4.tut=()=>{TS=0;mode='tut';newGame('tut');tutSet()};
+S4.tut=()=>{TS=0;window.FGF_TUTASSIST=0;window.__tutLast=null;mode='tut';newGame('tut');tutSet()};
 function tutSet(){const t=TUT[TS];dist=t.d;weather='clear';wind={mph:t.mph,a:t.a,x:Math.sin(t.a)*t.mph,z:0};resetBall();msg=null;state='play'}
-function tutRes(good){msg.s=good?['Perfect! 🎯','You fought the wind! 💨','BOOM! 💥'][TS]:'Close! '+TUT[TS].s}
-function tutNext(){TS++;if(TS>=TUT.length){LS.fgfTut='1';state='title';toast('🎓 Tutorial done! Good luck');return}tutSet()}
+function tutRes(good){window.__tutLast=good;/* Oct 17: a miss repeats the step with aim help, so the tutorial always ends with makes */if(good){window.FGF_TUTASSIST=0;msg.s=['Perfect! 🎯','You fought the wind! 💨','BOOM! 💥'][TS]}else{window.FGF_TUTASSIST=1;msg.s='So close! Try again, we will help you aim.'}}
+function tutNext(){if(window.__tutLast===false){window.__tutLast=null;tutSet();return}window.__tutLast=null;TS++;if(TS>=TUT.length){LS.fgfTut='1';state='title';toast('🎓 Tutorial done! Good luck');return}tutSet()}
 function tutEnd(){LS.fgfTut='1';state='title'}
 function tutDraw(){if(msg||ball.fly)return;const t=TUT[TS];const Y=H*0.185;panel(W*0.05,Y,W*0.9,74);txt('TUTORIAL '+(TS+1)+'/3',W/2,Y+22,15,GOLD);ctx.fillStyle='#fff';ctx.font='bold 14px system-ui';ctx.textAlign='center';ctx.fillText(t.h,W/2,Y+44);ctx.fillStyle='#bcd';ctx.font='12px system-ui';ctx.fillText(t.s,W/2,Y+62);
  ctx.fillStyle='rgba(6,30,16,0.9)';ctx.strokeStyle=GOLD;ctx.lineWidth=1.5;ctx.beginPath();ctx.roundRect(W*0.95-72,Y+6,64,22,11);ctx.fill();ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 11px system-ui';ctx.fillText('SKIP ▶▶',W*0.95-40,Y+21);
