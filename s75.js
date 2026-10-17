@@ -195,10 +195,47 @@ function makeSeq(me){let prev='';try{prev=LS.fgfLgSeq||''}catch(e){}let q,sig,n=
   const mv=shuf(MV.slice()).slice(0,NP*4),rc=[];let lr='';for(let i=0;i<NP*4;i++){let r;do{r=RV[Math.random()*RV.length|0]}while(r===lr);lr=r;rc.push(r)}
   q={pairs,mv,rc,first:pairs.map(()=>Math.random()<0.5?0:1)};sig=JSON.stringify([pairs,mv,q.first])}while(sig===prev&&++n<20);
  try{LS.fgfLgSeq=sig}catch(e){}return q}
+// ---------- rewards moment: right after the Legend kick goes through (~2.8 s), then the celebration ----------
+// Everything is already awarded by the normal kick hooks (coins, achievements, XP, quests, stats); this only shows it.
+let RW=null,RC0=null;const RWD=2.8;
+try{const oRs=result;result=function(){try{RC0={c:coins,s:score,ach:Object.assign({},typeof AD!=='undefined'?AD:{}),xp:+LS.fgfXP||0}}catch(e){RC0=null}return oRs.apply(this,arguments)}}catch(e){}
+function pre(){const b=RC0||{c:coins,s:score,ach:{},xp:+LS.fgfXP||0};RW={t0:now(),c0:b.c,s0:b.s,ach0:b.ach,xp0:b.xp,tl:[],rm:RMo()};try{pendNext=null}catch(e){}msg=null;try{tone(660,990,0.22,0.08,'triangle')}catch(e){}}
+function rwData(){const r=RW,lb=J('fgfLB',{})[mode]||[];let rank=1;for(const e of lb)if(e.s>score)rank++;
+ // trophies newly in the save (authoritative: toasts can be cleared by other popups), then any other unlock toasts
+ const ach=[];try{const tro=typeof TRO!=='undefined'?TRO:null;for(const id in AD){if(r.ach0[id])continue;const q=tro&&tro.find(x=>x[1]===id);if(q)ach.push([['🥉','🥈','🥇','💎'][q[0]]||'🏅',T_(q[2]),q[4]]);else{const a=ACH.find(x=>x[0]===id);if(a)ach.push(['🎖️',T_(a[1]),a[3]])}}}catch(e){}
+ const extra=r.tl.filter(s=>!ach.some(a=>s.includes(a[1])));
+ let lv=null,ti='';try{lv=FGF_LV().l;ti=FGF_TITLE()}catch(e){}
+ return{coins:Math.max(0,coins-r.c0),pts:Math.max(0,score-r.s0),score,rank:rank<=25?rank:0,lv,ti,xp:Math.max(0,(+LS.fgfXP||0)-r.xp0),ach,extra}}
+function grabToasts(){const r=RW;try{const take=s=>{if(typeof s==='string'&&!r.tl.includes(s))r.tl.push(s)};while(toastQ.length)take(toastQ.shift());if(S3.tq){take(S3.tq);S3.tq=null;toastT=0}}catch(e){}}
+function rwRow(ic,label,val,y,x0,w,fs,al){ctx.globalAlpha=al;ctx.textBaseline='middle';ctx.font=(fs+2)+'px system-ui';ctx.textAlign='left';ctx.fillStyle='#fff';ctx.fillText(ic,x0,y);
+ ctx.font='700 '+fs+'px system-ui';ctx.fillStyle='#f3ecff';ctx.fillText(label,x0+fs*1.9,y,w-fs*1.9-(val?fs*4.2:0));if(val){ctx.textAlign='right';ctx.font='900 '+fs+'px system-ui';ctx.fillStyle=GOLD;ctx.fillText(val,x0+w,y)}}
+function drawRewards(){const r=RW,u=now()-r.t0;grabToasts();msg=null;try{msgT=Math.max(msgT,1)}catch(e){}
+ if(u>=RWD){RW=null;start();return}
+ const d=rwData(),inA=sm(u/0.3),out=1-sm((u-(RWD-0.3))/0.3),al=Math.min(inA,out);
+ ctx.save();ctx.fillStyle='rgba(8,3,22,'+(0.74*al)+')';ctx.fillRect(0,0,W,H);
+ const cw=Math.min(W*0.9,360),x=W/2-cw/2,pad=Math.max(12,cw*0.06),fs=Math.max(12,Math.min(15,cw*0.045)),list=d.ach.map(a=>[a[0],a[1],'🪙 +'+a[2]]).concat(d.extra.map(s=>{const m=s.match(/^(\S+)\s+(.*?)(?:\s+(🪙 \+\d+))?$/u);return m?[m[1],m[2].replace(/\s+$/,''),m[3]||'']:['⭐',s,'']})),big0=Math.min(44,cw*0.12),fixed=pad*2+cw*0.06+big0*0.85+fs*(2.6+1.8+1.6+1.1+2.1+1.4)+fs*2.9,maxR=Math.max(1,Math.floor((H*0.92-fixed)/(fs*2.1))),over=list.length>maxR?list.length-(maxR-1):0,shown=over?list.slice(0,maxR-1):list,rows=shown.length+(over?1:0),ch=Math.min(H*0.94,fixed+rows*fs*2.1-(rows?0:fs*2.9)),y=H/2-ch/2;
+ ctx.globalAlpha=al;ctx.fillStyle='rgba(28,10,58,0.96)';ctx.strokeStyle=GOLD;ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(x,y,cw,ch,18);ctx.fill();ctx.stroke();
+ let yy=y+pad+cw*0.06;const big=Math.min(44,cw*0.12);ctx.textAlign='center';ctx.textBaseline='middle';
+ ctx.font='900 '+big+'px system-ui';ctx.lineWidth=big*0.12;ctx.strokeStyle='#5a2a00';ctx.lineJoin='round';ctx.strokeText(T_('LEGEND KICK!'),W/2,yy,cw-pad*2);ctx.fillStyle=GOLD;ctx.fillText(T_('LEGEND KICK!'),W/2,yy,cw-pad*2);
+ yy+=big*0.85;ctx.font='700 '+fs+'px system-ui';ctx.fillStyle='#d8c8ff';ctx.fillText(dist+' '+T_('YARDS')+' · '+T_('JACKPOT'),W/2,yy);
+ // coins count-up
+ yy+=fs*2.6;const k=r.rm?1:sm((u-0.25)/1.1),cn=Math.round(d.coins*k);ctx.font='900 '+Math.min(38,cw*0.105)+'px system-ui';ctx.fillStyle='#ffe28a';ctx.fillText('🪙 +'+cn.toLocaleString(),W/2,yy);
+ yy+=fs*1.8;ctx.font='600 '+(fs-1)+'px system-ui';ctx.fillStyle='#bfb0e8';ctx.fillText(T_('COINS EARNED')+' · '+T_('Total')+' '+coins.toLocaleString(),W/2,yy,cw-pad*2);
+ // achievements + other unlocks
+ const x0=x+pad,w=cw-pad*2;yy+=fs*1.6;
+ if(list.length){ctx.strokeStyle='rgba(242,194,48,0.35)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x0,yy);ctx.lineTo(x0+w,yy);ctx.stroke();yy+=fs*1.3;
+  ctx.font='900 '+(fs-2)+'px system-ui';ctx.textAlign='left';ctx.fillStyle=GOLD;ctx.fillText(T_('UNLOCKED'),x0,yy);yy+=fs*1.6;
+  shown.forEach((a,i)=>{rwRow(a[0],a[1],a[2],yy,x0,w,fs,al*(r.rm?1:sm((u-0.5-i*0.15)/0.3)));yy+=fs*2.1});
+  if(over){rwRow('➕',T_('more unlocked')+' ('+over+')','',yy,x0,w,fs,al);yy+=fs*2.1}}
+ ctx.globalAlpha=al;ctx.strokeStyle='rgba(242,194,48,0.35)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x0,yy-fs*0.4);ctx.lineTo(x0+w,yy-fs*0.4);ctx.stroke();
+ // score + rank
+ yy+=fs*1.1;rwRow('🏈',T_('SCORE')+' '+d.score.toLocaleString(),'+'+d.pts.toLocaleString(),yy,x0,w,fs,al);yy+=fs*2.1;
+ rwRow('🏆',(d.rank?T_('Leaderboard')+' #'+d.rank:T_('Run saves after the dance'))+(d.lv?' · '+T_('LEVEL')+' '+d.lv:''),d.xp?'+'+d.xp+' XP':'',yy,x0,w,fs,al);
+ ctx.restore()}
 // ---------- start ----------
-const oR=S3.onResult;S3.onResult=function(good){const r=oR.apply(this,arguments);try{if(good&&mode==='classic'&&dist>=80&&ball&&ball.res!=='BLOCKED!'&&state==='play'&&ok())start()}catch(e){console.warn(e)}return r};
+const oR=S3.onResult;S3.onResult=function(good){const r=oR.apply(this,arguments);try{if(good&&mode==='classic'&&dist>=80&&ball&&ball.res!=='BLOCKED!'&&state==='play'&&ok())pre()}catch(e){console.warn(e)}return r};
 function ok(){try{if(window.FGF_TRYING||lives>=50)return false;const h=window.FGF_H2&&FGF_H2();if(h&&h.room&&h.room.status==='active')return false}catch(e){}return true}
-function start(){const me=myT();LG={t0:now(),rm:RMo(),ff:FF(),me,seq:makeSeq(me),end:0,cf:[],nb:0,pc:-1};
+function start(){RW=null;const me=myT();LG={t0:now(),rm:RMo(),ff:FF(),me,seq:makeSeq(me),end:0,cf:[],nb:0,pc:-1};
  try{pendNext=null}catch(e){}msg=null;legendT=0;flash=0;shake=0;try{const K=window.FGF_KANIM;if(K)K.CEL=null}catch(e){}
  try{sfx.cheer();sfx.roar()}catch(e){}try{vib&&vib(LG.rm?[60,40,120]:[220,60,220,60,320,80,400])}catch(e){}}
 // ---------- music: a simple synth breakbeat, scheduled on the audio clock (respects Sound OFF) ----------
@@ -284,24 +321,31 @@ function draw(){const L=LG,a0=now()-L.t0,dt=Math.min(0.05,Math.max(0,a0-(L.la||a
  if(L.end){const u=a0-L.endAt;if(u>=SHR){finish(false);return}ctx.fillStyle='rgba(8,2,20,'+(0.55*sm(u/0.3))+')';ctx.fillRect(0,0,W,H);
   const al=sm(u/0.3)*(1-sm((u-SHR+0.3)/0.3)),bw=Math.min(220,W*0.6),bh=54;ctx.save();ctx.globalAlpha=al;bx(W/2-bw/2,H*0.5-bh/2,bw,bh,'📤 '+T_('SHARE'),()=>shareLegend(),true,18);ctx.restore()}}
 // take over the whole frame while dancing (drawn last, over the stadium and HUD)
-const oTop=S3.top;S3.top=function(){const r=oTop?oTop.apply(this,arguments):undefined;try{if(LG&&state==='play')draw()}catch(e){console.warn(e)}return r};
+const oTop=S3.top;S3.top=function(){const r=oTop?oTop.apply(this,arguments):undefined;try{if(RW&&state==='play')drawRewards();else if(RW)RW=null;if(LG&&state==='play')draw()}catch(e){console.warn(e)}return r};
 const oCam=S3.cam;S3.cam=function(){if(LG)return;return oCam.apply(this,arguments)};
 const oM=S3.masc;S3.masc=function(){if(LG)return;return oM.apply(this,arguments)};
 // input: share button, tap-to-skip after 2 s (goes to the brief SHARE), nothing reaches the kick
 function skip(){const L=LG;if(!L)return;const a=now()-L.t0;if(L.end){finish(false);return}if(a>=SKIP){L.end=Math.min(a,DUR);L.endAt=a}}
-addEventListener('pointerdown',e=>{if(!LG||state!=='play')return;if(e.target&&e.target.closest&&e.target.closest('.fgfov,#lngm'))return;e.stopImmediatePropagation();e.preventDefault&&e.preventDefault();LG.dn={x:e.clientX,y:e.clientY}},true);
-addEventListener('pointerup',e=>{if(!LG||state!=='play')return;if(e.target&&e.target.closest&&e.target.closest('.fgfov,#lngm'))return;e.stopImmediatePropagation();const d=LG.dn;LG.dn=null;if(!d)return;
+addEventListener('pointerdown',e=>{if(RW&&state==='play'){e.stopImmediatePropagation();e.preventDefault&&e.preventDefault();return}if(!LG||state!=='play')return;if(e.target&&e.target.closest&&e.target.closest('.fgfov,#lngm'))return;e.stopImmediatePropagation();e.preventDefault&&e.preventDefault();LG.dn={x:e.clientX,y:e.clientY}},true);
+addEventListener('pointerup',e=>{if(RW&&state==='play'){e.stopImmediatePropagation();if(now()-RW.t0>1.2)RW.t0=now()-RWD;return}if(!LG||state!=='play')return;if(e.target&&e.target.closest&&e.target.closest('.fgfov,#lngm'))return;e.stopImmediatePropagation();const d=LG.dn;LG.dn=null;if(!d)return;
  const b=(BTN||[]).find(q=>d.x>=q.x&&d.x<=q.x+q.w&&d.y>=q.y&&d.y<=q.y+q.h);if(b&&b.cb&&LG.end){b.cb();return}skip()},true);
-addEventListener('keydown',e=>{if(LG&&state==='play'&&(e.key===' '||e.key==='Enter'||e.key==='Escape')){e.preventDefault();e.stopImmediatePropagation();skip()}},true);
+addEventListener('keydown',e=>{if(RW&&state==='play'&&(e.key===' '||e.key==='Enter'||e.key==='Escape')){e.preventDefault();e.stopImmediatePropagation();if(now()-RW.t0>1.2)RW.t0=now()-RWD;return}if(LG&&state==='play'&&(e.key===' '||e.key==='Enter'||e.key==='Escape')){e.preventDefault();e.stopImmediatePropagation();skip()}},true);
 let hid=0;document.addEventListener('visibilitychange',()=>{if(!LG)return;if(document.hidden){hid=now();stopSong(LG,0);stopCrowd(LG,0)}else if(hid){const d=now()-hid;LG.t0+=d;if(LG.endAt)LG.endAt+=0;LG.ac0=null;LG.nb=Math.ceil((now()-LG.t0)/(BEAT/2));hid=0}});
-function shareLegend(){if(!LG)return;finish(true);try{share('I just nailed an 80-yard LEGEND kick')}catch(e){}}
+function shareLegend(){if(!LG)return;let snap=null;try{snap=document.createElement('canvas');snap.width=cv.width;snap.height=cv.height;snap.getContext('2d').drawImage(cv,0,0)}catch(e){snap=null}
+ HOLDCB=()=>{try{if(snap){const x=cv.getContext('2d');x.save();x.setTransform(1,0,0,1,0,0);x.drawImage(snap,0,0);x.restore()}share('I just nailed an 80-yard LEGEND kick')}catch(e){}};finish(true)}
+// run-end hooks (stats/games played, online + weekly leaderboard, missions, events) poll for state==='over' every 150-500 ms.
+// Going straight home skipped them, so the run sits in 'over' for 0.8 s behind a calm curtain, then goes home.
+let HOLD=0,HOLDCB=null,CUR=null;
+function curtain(on){try{if(on){if(!CUR){CUR=document.createElement('div');CUR.style.cssText='position:fixed;inset:0;background:#0b0420;z-index:2147483000;opacity:1;transition:opacity .25s;pointer-events:auto';document.body.appendChild(CUR)}CUR.style.opacity='1'}else if(CUR){const c=CUR;CUR=null;c.style.opacity='0';setTimeout(()=>c.remove(),300)}}catch(e){}}
+function hold(){HOLD=now();curtain(true)}
+setInterval(()=>{if(!HOLD||now()-HOLD<0.8)return;HOLD=0;const cb=HOLDCB;HOLDCB=null;if(state==='over'){state='title';if(!cb)try{toast('🏆 '+T_('Legend run saved')+' · '+score.toLocaleString())}catch(e){}}curtain(false);if(cb)cb()},100);
 // ---------- finish: save the run, then home ----------
 let goHome=false;
 function finish(forShare){if(!LG)return;stopSong(LG,0.25);stopCrowd(LG,0.2);LG=null;try{const K=window.FGF_KANIM;if(K)K.CEL=null}catch(e){}msg=null;legendT=0;shake=0;flash=0;
  try{endGame()}catch(e){console.warn(e)}
  if(state==='initials'&&LS.fgfIni){try{const ini=J('fgfIni',[0,0,0]),AZ='ABCDEFGHIJKLMNOPQRSTUVWXYZ',lb=J('fgfLB',{}),L=lb[mode]||[];L.push({i:ini.map(k=>AZ[k]||'A').join(''),s:score});L.sort((x,y)=>y.s-x.s);lb[mode]=L.slice(0,25);SV('fgfLB',lb);state='over'}catch(e){}}
- if(state==='over'){state='title';try{toast('🏆 '+T_('Legend run saved')+' · '+score.toLocaleString())}catch(e){}}else goHome=true}
-setInterval(()=>{if(goHome&&state==='over'){goHome=false;state='title'}if(goHome&&(state==='title'||state==='hub'))goHome=false},200);
+ if(state==='over')hold();else{goHome=true;if(HOLDCB){const cb=HOLDCB;HOLDCB=null;try{cb()}catch(e){}}}}
+setInterval(()=>{if(goHome&&state==='over'&&!HOLD){goHome=false;hold()}if(goHome&&(state==='title'||state==='hub'))goHome=false},200);
 window.FGF_LGTEST=()=>{mode='classic';dist=80;start()};
-window.FGF_LG2={MOVES:MV,REACT:RV,DUR,OPEN};
+window.FGF_LG2={MOVES:MV,REACT:RV,DUR,OPEN,RWD};window.FGF_LGRW=()=>RW;
 })();
