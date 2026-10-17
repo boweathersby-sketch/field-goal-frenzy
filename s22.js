@@ -12,7 +12,8 @@ const Mock={name:'mock',init(){return Promise.resolve(true)},
   b.onclick=()=>{if(kind==='rewarded'&&LS.fgfAdMockPaid&&window.FGF_AD_PAID)FGF_AD_PAID(+LS.fgfAdMockPaid,LS.fgfAdMockPrec||'PRECISE','USD');fin(true)};const x=d.querySelector('#adx');if(x)x.onclick=()=>{clearInterval(iv);fin(false)}})},
  interstitial(){return this.show('interstitial')},rewarded(){return this.show('rewarded')},banner(v){window.FGF_MOCKBANNER=!!v}};
 // AdMob via a native bridge (e.g. Capacitor @capacitor-community/admob). Not wired yet: only used if the native app injects window.AdMob.
-const IDS=window.FGF_ADMOB_IDS||{interstitial:'',rewarded:'',banner:''};
+// Oct 17: until real AdMob units exist, default to Google's official TEST ad units (serve test ads only, never pay). Replace via window.FGF_ADMOB_IDS.
+const IDS=Object.assign({interstitial:'ca-app-pub-3940256099942544/1033173712',rewarded:'ca-app-pub-3940256099942544/5224354917',banner:'ca-app-pub-3940256099942544/6300978111'},window.FGF_ADMOB_IDS||{});
 const AdMobA={name:'admob',init(){return window.AdMob?AdMob.initialize({}).then(()=>true).catch(()=>false):Promise.resolve(false)},
  interstitial(){return AdMob.prepareInterstitial({adId:IDS.interstitial}).then(()=>AdMob.showInterstitial()).then(()=>true).catch(()=>false)},
  rewarded(){return new Promise(res=>{let got=false,done=false;const hs=[];const fin=()=>{if(done)return;done=true;hs.forEach(h=>{try{h&&h.remove&&h.remove()}catch(e){}});res(got)};
