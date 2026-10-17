@@ -41,13 +41,13 @@ window.FGF_BSKIN=function(p,r){const id=eq.b;if(!id||id==='bl0')return false;con
 const FL=[];for(let i=0;i<40;i++)FL.push({x:Math.random(),y:Math.random(),s:0.5+Math.random()});
 const oBG=drawBG;drawBG=function(){const r=oBG.apply(this,arguments);const th=eq.s;if(!th||th==='th0')return r;let hz=H*0.42;try{const b=P(0,0,dist+0.2);if(b)hz=b.y}catch(e){}
  ctx.save();if(th==='th1'){const g=ctx.createLinearGradient(0,0,0,hz);g.addColorStop(0,'rgba(5,10,40,0.7)');g.addColorStop(1,'rgba(10,20,60,0.25)');ctx.fillStyle=g;ctx.fillRect(0,0,W,hz);ctx.fillStyle='#fff';FL.forEach(f=>{ctx.globalAlpha=0.4+0.6*Math.abs(Math.sin(T*2+f.s*9));ctx.fillRect(f.x*W,f.y*hz*0.8,1.5,1.5)});ctx.globalAlpha=1;for(const x0 of[0.12,0.88]){const gg=ctx.createRadialGradient(W*x0,hz*0.25,2,W*x0,hz*0.25,W*0.25);gg.addColorStop(0,'rgba(255,255,230,0.55)');gg.addColorStop(1,'rgba(255,255,230,0)');ctx.fillStyle=gg;ctx.fillRect(0,0,W,hz)}}
- else if(th==='th2'){ctx.fillStyle='rgba(225,238,255,0.28)';ctx.fillRect(0,0,W,hz);ctx.fillStyle='rgba(255,255,255,0.9)';FL.forEach(f=>{const y=((f.y+T*0.06*f.s)%1)*H,x=(f.x*W+Math.sin(T+f.s*7)*12);ctx.beginPath();ctx.arc(x,y,1.2+f.s*1.4,0,7);ctx.fill()})}
+ else if(th==='th2'){if(weather!=='snow'){ctx.fillStyle='rgba(225,238,255,0.16)';ctx.fillRect(0,0,W,hz)}ctx.fillStyle='rgba(255,255,255,0.9)';FL.forEach(f=>{const y=((f.y+T*0.06*f.s)%1)*H,x=(f.x*W+Math.sin(T+f.s*7)*12);ctx.beginPath();ctx.arc(x,y,1.2+f.s*1.4,0,7);ctx.fill()})}
  else if(th==='th3'){const g=ctx.createLinearGradient(0,0,0,hz);g.addColorStop(0,'rgba(255,140,60,0.45)');g.addColorStop(1,'rgba(255,200,120,0.15)');ctx.fillStyle=g;ctx.fillRect(0,0,W,hz);ctx.fillStyle='#6b4423';const fy=hz-H*0.05;ctx.fillRect(0,fy+H*0.012,W,H*0.008);ctx.fillRect(0,fy+H*0.032,W,H*0.008);for(let x=0;x<W;x+=W/18){ctx.beginPath();ctx.moveTo(x,fy+H*0.05);ctx.lineTo(x,fy+4);ctx.lineTo(x+W/72,fy);ctx.lineTo(x+W/36,fy+4);ctx.lineTo(x+W/36,fy+H*0.05);ctx.fill()}ctx.fillStyle='#ffe98a';FL.slice(0,14).forEach(f=>{ctx.globalAlpha=0.4+0.6*Math.abs(Math.sin(T*3+f.s*5));ctx.beginPath();ctx.arc(f.x*W,hz*(0.55+f.y*0.4),1.6,0,7);ctx.fill()});ctx.globalAlpha=1}
  else if(th==='th4'){const g=ctx.createLinearGradient(0,0,0,hz);g.addColorStop(0,'rgba(40,190,230,0.5)');g.addColorStop(1,'rgba(255,190,120,0.3)');ctx.fillStyle=g;ctx.fillRect(0,0,W,hz);ctx.fillStyle='rgba(255,230,120,0.95)';ctx.beginPath();ctx.arc(W*0.8,hz*0.28,Math.min(W,H)*0.07,0,7);ctx.fill();ctx.fillStyle='rgba(30,140,200,0.55)';ctx.fillRect(0,hz-H*0.03,W,H*0.03);ctx.font=Math.round(H*0.07)+'px system-ui';ctx.textAlign='center';ctx.fillText('🌴',W*0.07,hz-H*0.01);ctx.fillText('🌴',W*0.93,hz-H*0.01)}
  
  // turf wash so themes read clearly on the field
  if(th==='th1'){ctx.fillStyle='rgba(8,12,40,0.22)';ctx.fillRect(0,hz,W,H-hz)}
- else if(th==='th2'){ctx.fillStyle='rgba(220,235,255,0.2)';ctx.fillRect(0,hz,W,H-hz)}
+ else if(th==='th2'&&weather!=='snow'){ctx.fillStyle='rgba(220,235,255,0.1)';ctx.fillRect(0,hz,W,H-hz)}
  else if(th==='th3'){ctx.fillStyle='rgba(120,80,30,0.18)';ctx.fillRect(0,hz,W,H-hz)}
  else if(th==='th4'){ctx.fillStyle='rgba(230,200,100,0.16)';ctx.fillRect(0,hz,W,H-hz)}
  // name pill
