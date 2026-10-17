@@ -26,10 +26,13 @@ const oPM=pauseMenu;pauseMenu=function(){const r=oPM.apply(this,arguments);try{i
  bx(px+16,py+148,pw-32,44,T_('KEEP PLAYING'),()=>{HC=0},true,14)}catch(e){}return r};
 setInterval(()=>{if(!paused||state!=='play')HC=0},300);
 // ---- 4) calmer home screen: softer borders and a muted gold (only when no menu theme is equipped) ----
-const SOFT={fill:'rgba(6,28,16,0.86)',on:'#d8b552',stroke:'rgba(242,194,48,0.42)',text:'#fff',textOn:'#0b3d1a'};
+const SOFT={fill:'rgba(4,20,10,0.93)',on:'#f2c230',stroke:'rgba(242,194,48,0.6)',text:'#fff',textOn:'#063'};
 const oTH=window.FGF_MENUTH;window.FGF_MENUTH=function(){const t=oTH?oTH.apply(this,arguments):null;if(t)return t;return state==='title'?SOFT:null};
 
 // gold borders on the home screen (chips, panels) are drawn softer too; text and fills keep their colors
 try{const P=CanvasRenderingContext2D.prototype,d=Object.getOwnPropertyDescriptor(P,'strokeStyle'),G1=/^(#f2c230|#F2C230|rgba\(242,194,48,0?\.8\d*\))$/;
- Object.defineProperty(P,'strokeStyle',{get:d.get,set(v){if(typeof v==='string'&&state==='title'&&G1.test(v))v='rgba(242,194,48,0.3)';d.set.call(this,v)},configurable:true})}catch(e){}
+ Object.defineProperty(P,'strokeStyle',{get:d.get,set(v){if(typeof v==='string'&&state==='title'&&G1.test(v))v='rgba(242,194,48,0.6)';d.set.call(this,v)},configurable:true})}catch(e){}
+
+// Oct 17 (Kirk): home-screen text must be easy to read: every home-screen label gets a dark drop shadow
+try{const P=CanvasRenderingContext2D.prototype,oF=P.fillText;P.fillText=function(t,x,y,m){if(state==='title'&&this.canvas&&this.canvas.id==='c'&&this.shadowBlur===0&&this.shadowColor==='rgba(0, 0, 0, 0)'&&!/^#0[0-9a-f][0-9a-f]{4}$|^#1[0-9a-f]{5}$/.test(String(this.fillStyle))){this.save();this.shadowColor='rgba(0,0,0,0.9)';this.shadowBlur=3;this.shadowOffsetY=1;const r=m===undefined?oF.call(this,t,x,y):oF.call(this,t,x,y,m);this.restore();return r}return m===undefined?oF.call(this,t,x,y):oF.call(this,t,x,y,m)}}catch(e){}
 })();
