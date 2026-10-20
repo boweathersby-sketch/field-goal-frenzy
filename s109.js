@@ -5,7 +5,7 @@
 const MENU=new Set('title hub teams shop mmsel mset social chal career wlb week stad kotw olb h2menu cloud cfield bonus a11y stats spin set perks mis miles marr initials hsel howto hof fstart deal ctl ct cstats cred'.split(' '));
 let buf=null,loading=false,failed=false,src=null,g=null,tapped=false;
 window.FGF_MENUROCK_ON=true;// tells the old synth menu pad (s20) to stay quiet
-const want=()=>!failed&&LS.fgfMusic==='1'&&LS.fgfMute!=='1'&&LS.fgfUMM!=='1'&&!document.hidden&&typeof state!=='undefined'&&MENU.has(state);
+const want=()=>!failed&&LS.fgfMusic==='1'&&LS.fgfMute!=='1'&&LS.fgfUMM!=='1'&&!document.hidden&&typeof state!=='undefined'&&MENU.has(state)&&!document.getElementById('fgfst');
 function ctx(){try{return au()}catch(e){return null}}
 function load(){if(buf||loading||failed)return;const c=ctx();if(!c)return;loading=true;
  fetch(SRC).then(r=>{if(!r.ok)throw 0;return r.arrayBuffer()}).then(a=>c.decodeAudioData(a)).then(b=>{buf=b;loading=false}).catch(()=>{failed=true;loading=false;window.FGF_MENUROCK_ON=false})}
