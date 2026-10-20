@@ -5,7 +5,7 @@ try{const op=sfx.post;sfx.post=function(){try{if(LS.fgfVib!=='0'&&navigator.vibr
 // ---- i18n: translate canvas text at draw time ----
 const LANGS=[['en','English'],['es','Español']];window.FGF_LANGS=LANGS;const lang=()=>LS.fgfLang||'en';
 const P=CanvasRenderingContext2D.prototype,oF=P.fillText,oS=P.strokeText,oM=P.measureText;const cache=new Map();
-const DICT=()=>{const l=lang();return l==='es'?[window.FGF_ES,window.FGF_ESW]:[window['FGF_'+l.toUpperCase()],window['FGF_'+l.toUpperCase()+'W']||{}]};let CL='';
+const DICT=()=>{const l=lang();return l==='es'?[window.FGF_ES,window.FGF_ESW]:[window['FGF_'+(l==='tr'?'TRK':l.toUpperCase())],window['FGF_'+(l==='tr'?'TRK':l.toUpperCase())+'W']||{}]};let CL='';
 function tr(s){if(lang()==='en'||typeof s!=='string')return s;const [D,WM]=DICT();if(!D)return s;if(CL!==lang()){cache.clear();CL=lang()}if(cache.has(s))return cache.get(s);let o=s;
  const TP=x=>{const n=[];const k=x.replace(/\d[\d,.:]*/g,v=>{n.push(v);return '#'});return D[k]&&n.length?D[k].replace(/#/g,()=>n.shift()||''):null};const m=s.match(/^([^A-Za-zÁ-ú]*)(.*?)([^A-Za-zÁ-ú!?]*)$/);if(D[s])o=D[s];else if(TP(s))o=TP(s);else if(m&&D[m[2]])o=m[1]+D[m[2]]+m[3];else{o=s.split(' · ').map(p=>{const q=p.match(/^([^A-Za-z]*)(.*?)([^A-Za-z!?]*)$/);return q&&D[q[2]]?q[1]+D[q[2]]+q[3]:q&&TP(q[2])?q[1]+TP(q[2])+q[3]:(TP(p)||p)}).join(' · ');for(const k in WM)o=o.replace(new RegExp('\\b'+k+'\\b','g'),WM[k])}
  if(o===s&&window.FGF_TRLOG&&/[A-Za-z]{3}/.test(s))FGF_TRLOG.add(s);if(cache.size>4000)cache.clear();cache.set(s,o);return o}

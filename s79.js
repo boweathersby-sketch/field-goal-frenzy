@@ -65,7 +65,7 @@ ar:['📺 شاهد إعلانًا للإكرامية (مجانًا)','شكرًا
 ja:['📺 広告を見てチップ（無料）','見てくれてありがとう！広告はゲームの更新を続ける助けになります。— Kirk','広告チップは Google Play アプリで使えます','今日の上限に達しました · また明日','チップするには動画を最後まで見てください','広告チップありがとう！','今日','次のハートまで','ありがとう！','OK','新しいサポーターハート！','無料 · コインなし · 1日10回まで'],
 ko:['📺 광고 보고 팁 주기 (무료)','시청해 주셔서 감사합니다! 광고는 게임 업데이트에 큰 힘이 됩니다. — Kirk','광고 팁은 Google Play 앱에서 열립니다','오늘 한도에 도달했어요 · 내일 다시 오세요','팁을 주려면 영상을 끝까지 보세요','광고 팁 감사합니다!','오늘','다음 하트까지','감사합니다!','확인','새 후원자 하트!','무료 · 코인 없음 · 하루 최대 10회'],
 zh:['📺 看广告打赏（免费）','感谢观看！每个广告都能帮我持续更新游戏。— Kirk','广告打赏在 Google Play 应用中开放','今日次数已满 · 明天再来','看完整个视频才能打赏','感谢你的广告打赏！','今天','距离下一颗心','谢谢！','好的','新的支持者之心！','免费 · 不给金币 · 每天最多 10 次']};
-function merge(){for(const l in TR){const D=window['FGF_'+l.toUpperCase()];if(D&&!D.__tip){EN.forEach((k,i)=>D[k]=TR[l][i]);if(TR2[l])EN2.forEach((k,i)=>D[k]=TR2[l][i]);try{Object.defineProperty(D,'__tip',{value:1})}catch(e){}}}}
+function merge(){for(const l in TR){const D=window['FGF_'+(l==='tr'?'TRK':l.toUpperCase())];if(D&&!D.__tip){EN.forEach((k,i)=>D[k]=TR[l][i]);if(TR2[l])EN2.forEach((k,i)=>D[k]=TR2[l][i]);try{Object.defineProperty(D,'__tip',{value:1})}catch(e){}}}}
 merge();setTimeout(merge,3000);
 // ---- drawing ----
 function thanks(){const cw=Math.min(W*0.88,360),cx=(W-cw)/2;ctx.font='14px system-ui';const tl=wrapP(T_(KIRK_AD),(cw-44)*11/14);const ch=150+tl.length*19+(adNewH?24:0),cy=Math.max(8,(H-ch)/2);
