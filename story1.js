@@ -414,6 +414,6 @@ function kid(b){const SK=(typeof SKIN!=='undefined'&&MK.on&&SKIN[MK.skin]&&SKIN[
 Object.assign(KD,{w:46,hb:30,hy:6,rx:17,ry:21,fy:262,fr:24,hw:34,st:22,sw0:0.92,sw1:0.74,sx:0.82,sy:8,sr:20,ak:0.72,av:0.4,cr:14});
 window.FGF_KIDSHEET=kid;
 const JGON=()=>{try{return mode==='story'&&state==='play'&&window.FGF_STORY&&FGF_STORY._jg&&FGF_STORY._jg()}catch(e){return false}};
-{const ok=S5.kimg;S5.kimg=function(ti,p2){const s=ok.apply(this,arguments);try{if(!p2&&JGON()){const k=window.FGF_KID2?FGF_KID2.sheet({sk:(MK.on&&SKIN[MK.skin]&&SKIN[MK.skin][1]&&MK.skin<6&&SKIN[MK.skin][1])||'#d9a27a',hr:(MK.on&&HAIR[MK.hair]&&HAIR[MK.hair][1]&&MK.hair<6&&HAIR[MK.hair][1])||'#5b3a22'}):kid(MK.on&&MK.masc<0?MK.base:ti);if(k)return k}}catch(e){}return s}}
+{const ok=S5.kimg;S5.kimg=function(ti,p2){const s=ok.apply(this,arguments);try{if(!p2&&JGON()){const k=window.FGF_KID2?FGF_KID2.sheet({sk:'#d8a283',hr:'#4a3626'}):kid(MK.on&&MK.masc<0?MK.base:ti);if(k)return k}}catch(e){}return s}}
 {const od=S3.decal;S3.decal=function(){if(JGON())return;return od.apply(this,arguments)}}
 })();
