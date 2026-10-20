@@ -36,3 +36,5 @@ function open(){const d=card('♿ '+T_('COMFORT & ASSIST'),`<div style="${SUB};t
 window.FGF_COMFORT=open;
 const oHI=window.FGF_HUBITEMS;if(oHI)window.FGF_HUBITEMS=function(){const L=oHI.apply(this,arguments);try{L.push(['♿','COMFORT & ASSIST','High-vis ball · aim by ear · stereo wind · glossary',()=>open(),false])}catch(e){}return L};
 })();
+// 🎥 Steady camera also stops the follow-the-ball camera pan on big kicks (game.js camK)
+(function(){if(typeof update!=='function')return;const oU=update;update=function(){const r=oU.apply(this,arguments);try{if(LS.fgfSteady==='1'&&typeof camK!=='undefined')camK=0}catch(e){}return r}})();
