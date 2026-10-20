@@ -6,7 +6,7 @@ const LOCAL=/^(localhost|127\.|0\.0\.0\.0)/.test(location.hostname)&&!/sbtest=1/
 const WK=()=>U.WEEK();const coin=n=>{if(!n)return;addCoins(n)};
 const fmt=n=>(+n||0).toLocaleString();
 // ---------- event feed ----------
-const LST=[];const on=f=>LST.push(f);const emit=(e)=>{for(const f of LST){try{f(e)}catch(x){}}};
+const LST=[];const on=f=>LST.push(f);window.FGF_ON=on;const emit=(e)=>{for(const f of LST){try{f(e)}catch(x){}}};
 const RUNM=new Set();
 const oR=S3.onResult;S3.onResult=function(good){const cl=mode==='career'&&S3.cl();const doink=!!(ball&&ball.hitPost);const r=oR.apply(this,arguments);
  try{if(mode!=='tut'&&!window.FGF_TRYING){RUNM.add(mode);emit({t:good?'make':'miss',d:dist,m:mode,wx:weather,stk:streak,doink:doink&&good,cl,lead:mode==='career'&&CG?CG.my-CG.op:0})}}catch(e){}return r};
