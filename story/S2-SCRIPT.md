@@ -73,7 +73,7 @@ Avoid: text, letters, numbers, signs, logos, watermarks, real team names, jersey
 
 **Beats**
 - Pop's garage. The single bulb. Your line from last year is still on the wall: "{why}".
-- Pop takes Old Faithful down off its nail and tosses it to you. "Senior year. It's yours now. Don't let it sit on a nail."
+- Pop picks Old Faithful up off the workbench and tosses it to you. "Senior year. It's yours now. Don't let it sit on a bench."
 - {if rit} He's noticed your ritual. "{ritual line}" He almost smiles.
 
 **Choices → payoff**
@@ -448,7 +448,7 @@ Avoid: text, letters, numbers, signs, logos, watermarks, real team names, jersey
 **Mood:** `mystery`
 
 **Beats**
-- That night, Pop's garage. Old Faithful back on its nail for the first time in a year.
+- That night, Pop's garage. Old Faithful back on the workbench for the first time in a year.
 - {if line2} Your second line is under the first. {else} Pop: "Good. One line. Means you meant it."
 - Pop: "Coastal Tech. Huh." He takes a yellowed envelope from a coffee can and doesn't open it. "Walk-on tryouts at Hometown State are in August. Somebody I know is watching."
 - To be continued in Season 3: "Walk-On".
