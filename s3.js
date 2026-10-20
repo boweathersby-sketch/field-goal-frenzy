@@ -10,7 +10,7 @@ const TEAMS=[
  {k:'rams',n:'MOUNTAIN RAMS',a:'MTN',p:'#7a1730',s:'#c8ccd2',rv:'Tate Granger',amb:'cold',ch:'s.s.sss'},
  {k:'hawks',n:'HARBOR HAWKS',a:'HAR',p:'#1b2a5a',s:'#ffffff',rv:'Finn Callahan',amb:'harbor',ch:'k.k.c.c'}];
 const LS=localStorage,J=(k,d)=>{try{return JSON.parse(LS[k])??d}catch(e){return d}},SV=(k,v)=>{if(window.TESTER&&/^fgf(Own|Teams|MKO|BGO|TurfO|STO)$/.test(k))return;LS[k]=JSON.stringify(v)};
-const IMG=s=>{const i=new Image();i.src=s;return i},STI=TEAMS.map((t,i)=>IMG('st'+i+'.webp')),BASEY=[486,460,490,486,490,481,488,400].map(v=>v*1.5),MSI=IMG('mascots.webp?v=20'),LGI=IMG('logos.webp');
+window.FGF_LAZY=window.FGF_LAZY||(()=>{const Q=[];let go=0;const run=()=>{go=1;let k=0;const nx=()=>{const q=Q.shift();if(!q)return;q[0].src=q[1];setTimeout(nx,k++<2?60:150)};nx()};addEventListener('load',()=>setTimeout(run,1500));return(im,s)=>{if(go)im.src=s;else Q.push([im,s])}})();const IMG=s=>{const i=new Image();i.src=s;return i},STI=TEAMS.map((t,i)=>{const im=new Image(),sr='st'+i+'.webp';if(i===(LS.fgfTeam!=null?+LS.fgfTeam:3))im.src=sr;else FGF_LAZY(im,sr);return im}),BASEY=[486,460,490,486,490,481,488,400].map(v=>v*1.5),MSI=IMG('mascots.webp?v=20'),LGI=IMG('logos.webp');
 let team=LS.fgfTeam!=null?+LS.fgfTeam:-1,own=J('fgfOwn',['c0','t0','t1','e0']),eq=J('fgfEq',{c:'c0',g:'',v:'',t:'t0',e:'e0'}),tOwn=J('fgfTeams',[]);
 const SHOP=[
  ['CLEATS',[['c0','Starter Cleats',0,'p',0],['c1','Speed Cleats',350,'p',.03],['c2','Glow Cleats',3500,'p',.06],['c3','Gold Cleats',12000,'p',.10]]],

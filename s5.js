@@ -59,7 +59,7 @@ function saveMK(){for(const[k,L]of[['skin',SKIN],['hair',HAIR],['wb',WBAND],['vz
 const BGS=TEAMS.map((t,i)=>({id:'bg'+i,name:t.n.split(' ').slice(-1)[0]+' Field',im:STI[i],by:BASEY[i],price:[600,700,900,800,800,700,900,600][i],team:i})).concat([
  {id:'beach',name:'Beach',src:'bg_beach.webp?v=1',by:729,price:1200},{id:'space',name:'Space',src:'bg_space.webp?v=1',by:729,price:1500},{id:'volcano',name:'Volcano',src:'bg_volcano.webp?v=1',by:729,price:1500},{id:'roof',name:'City Rooftop',src:'bg_roof.webp?v=1',by:729,price:1200}]);
 // art drop-in: {id:'beach',name:'Beach',src:'bg_beach.webp',by:<field-top y in the 960x1080 image>,price:800}
-BGS.forEach(b=>{if(b.src&&!b.im)b.im=IMG(b.src)});
+BGS.forEach((b,i)=>{if(b.src&&!b.im){if(i===(J('fgfST',{}).bg??-1))b.im=IMG(b.src);else{b.im=new Image();FGF_LAZY(b.im,b.src)}}});
 let BGO=J('fgfBGO',[]),ST=Object.assign({bg:-1,un:0,crowd:0,sky:0,wx:0,ez:'',name:''},J('fgfST',{})),STO=J('fgfSTO',[]);const T5=t=>window.FGF_TR?FGF_TR(t):t;try{if(!LS.fgfTSmig){LS.fgfTSmig='1';if(ST.bg>=0&&ST.bg<TEAMS.length&&ST.bg===myT()){ST.bg=-1;SV('fgfST',ST)}}}catch(e){}
 const bgOwn=i=>TESTER||BGS[i].team===myT()||BGO.includes(BGS[i].id);
 const CROWD=[['Team colors',null,0],['Fire','#ff4a1a','#ffd23a',300],['Ice','#5ad0ff','#ffffff',300],['Royal','#4b2aa8','#f2c230',300],['Neon','#39ff14','#ff2bd6',500],['Mono','#222222','#dddddd',300]];
