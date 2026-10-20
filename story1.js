@@ -172,7 +172,7 @@ let pend=null;
 function play(k){close();window.__wx=WK[K.w].wx||'clear';newGame('story');dist=k[0];newWind();window.__wx=null;roundN=1;resetBall();ST.kick={d:k[0],lab:K.ot?'OT':(K.i+1)+'/'+kicksFor().length}}
 // ---------- Milk Jug Challenge (outline Ch1: hit the jug from 20 yards three times in a row) ----------
 let JG=null;function jugStart(done){mood('hopeful');JG={n:0,streak:0,done};jugKick()}
-function jugKick(){const e=shell('yard');e.insertAdjacentHTML('beforeend',pic('jq','sm')+'<h1>🥛 MILK JUG CHALLENGE</h1><h2>20 yards · 3 in a row · streak '+JG.streak+'/3</h2>');const c=card(P(JG.streak?'The jug is still swinging. Again.':'Rae watches from the steps, coffee in hand.'));btn(c,JG.last===0?'TRY AGAIN ▶':'SWIPE ▶',()=>{close();newGame('story');dist=20;window.__wx='clear';newWind();window.__wx=null;roundN=1;resetBall();ST.kick={d:20,lab:'JUG '+(JG.streak+1)+'/3',jug:1}},'go');btn(c,'CONTINUE STORY ▶',()=>{const d=JG.done;JG=null;d()})}
+function jugKick(){const e=shell('yard');e.insertAdjacentHTML('beforeend',pic('jq','sm')+'<h1>🥛 MILK JUG CHALLENGE</h1><h2>20 yards · 3 in a row · streak '+JG.streak+'/3</h2>');const c=card(P(JG.streak?'The jug is still swinging. Again.':'Rae watches from the steps, coffee in hand.'));btn(c,JG.last===0?'TRY AGAIN ▶':'SWIPE ▶',()=>{close();newGame('story');dist=20;window.__wx='clear';newWind();window.__wx=null;roundN=1;resetBall();ST.kick={d:20,lab:'JUG '+(JG.streak+1)+'/3',jug:1};ST.hit=0;ST.cross=null},'go');btn(c,'CONTINUE STORY ▶',()=>{const d=JG.done;JG=null;d()})}
 function jugAfter(good){JG.n++;JG.last=good?1:0;JG.streak=good?JG.streak+1:0;if(JG.streak>=3){const first=!S.fl.jug&&!S.jugPaid;S.fl.jug=1;S.jugPaid=1;fx({fam:3,coach:2});if(first)addC(150);save();const e=shell('yard');e.insertAdjacentHTML('beforeend',pic('c2')+'<h1>THREE IN A ROW!</h1>');const c=card(P('The jug spins off the post and rolls into Rae\'s tomato plants. Rae is on her feet, coffee everywhere.')+'<p class="say">'+N(T_('"Okay," Rae says. "Okay. Don\'t tell your grandpa I lost a bet."'))+'</p>'+P(first?'🪙 +150 bonus coins':'You\'ve already earned the bonus. Still felt good.'));const d=JG.done;JG=null;btn(c,'CONTINUE ▶',d,'go');return}
  const tries=JG.n>=8;const e=shell('yard');e.insertAdjacentHTML('beforeend','<div class="big '+(good?'ok':'no')+'">'+(good?'✓':'✕')+'</div><h1>'+(good?'THUNK!':'MISSED THE JUG')+'</h1><h2>Streak '+JG.streak+'/3</h2>');const c=card(P(good?'Dead center on the tape.':tries?'Your leg is jelly. The jug will be here tomorrow.':'Back to zero. The jug doesn\'t care how close it was.'));if(!tries)btn(c,good?'NEXT KICK ▶':'TRY AGAIN ▶',jugKick,'go');btn(c,tries?'CONTINUE ▶':'CONTINUE STORY ▶',()=>{const d=JG.done;JG=null;d()},tries?'go':'')}
 function after(good){mood('tense');const ks=kicksFor(),W_=WK[K.w],last=!K.ot&&K.i===ks.length-1;K.res.push(good?1:0);
@@ -198,12 +198,13 @@ function recap(then){if(!S.log.length||S.done)return then();mood('mystery');cons
  const c=card(S.log.slice(-3).map(l=>'<p>▸ '+l.replace(/</g,'&lt;')+'</p>').join(''));btn(c,'▶ CONTINUE THE STORY',then,'go')}
 function open(){dailyText(()=>recap(home))}
 // ---------- hooks into the normal kick ----------
+const GP=(x,y,z)=>window.P(x,y,z);// game projection (the local P is the HTML paragraph helper)
 const ST={kick:null};
 const oR=S3.onResult;S3.onResult=function(good){const r=oR.apply(this,arguments);try{if(mode==='story'&&ST.kick){lives=3;prevLives=3;const j=ST.kick.jug;ST.kick=null;ST.tb=0;setTimeout(()=>j&&JG?jugAfter(!!good):after(!!good),1700)}}catch(e){}return r};
-const odb=drawBall;drawBall=function(){const r=odb.apply(this,arguments);try{if(state==='play'&&mode==='story'&&(ST.kick||ball.fly)){ctx.save();ctx.fillStyle='rgba(0,0,0,.55)';const w=210,x=W/2-w/2,y=H*0.2;ctx.beginPath();ctx.roundRect(x,y,w,26,12);ctx.fill();ctx.strokeStyle=GOLD;ctx.lineWidth=1.5;ctx.stroke();ctx.fillStyle=GOLD;ctx.font='900 12px system-ui';ctx.textAlign='center';ctx.fillText('📖 STORY · '+(K?WK[K.w].opp.split(' ').slice(-1)[0].toUpperCase():'')+' · KICK '+(ST.kick?ST.kick.lab:''),W/2,y+17,w-10);ctx.restore()}}catch(e){}return r};
+const odb=drawBall;drawBall=function(){const r=odb.apply(this,arguments);try{if(state==='play'&&mode==='story'&&(ST.kick||ball.fly)){ctx.save();ctx.fillStyle='rgba(0,0,0,.55)';const w=210,x=W/2-w/2,y=H*0.2;ctx.beginPath();ctx.roundRect(x,y,w,26,12);ctx.fill();ctx.strokeStyle=GOLD;ctx.lineWidth=1.5;ctx.stroke();ctx.fillStyle=GOLD;ctx.font='900 12px system-ui';ctx.textAlign='center';ctx.fillText(JG?'📖 STORY · KICK THE JUG '+Math.min(3,JG.streak+1)+'/3':'📖 STORY · '+(K?WK[K.w].opp.split(' ').slice(-1)[0].toUpperCase()+' · ':'')+'KICK '+(ST.kick?ST.kick.lab:''),W/2,y+17,w-10);ctx.restore()}}catch(e){}return r};
 // ---------- Hollow Creek field: Friday night lights + small bleachers (story kicks only) ----------
 const HC=new Image();if(ART.has('field'))HC.src=IMG('field');const SKY=()=>state==='play'&&mode==='story';
-const oBG=drawBG;drawBG=function(){const r=oBG.apply(this,arguments);try{if(SKY()&&HC.complete&&HC.naturalWidth){const b=P(0,0,dist+0.2),hz=(window.EZ||(b&&b.y)||H*0.42)-((window.SCL||1)*7);
+const oBG=drawBG;drawBG=function(){const r=oBG.apply(this,arguments);try{if(SKY()&&!JG&&(!K||WK[K.w].home)&&HC.complete&&HC.naturalWidth){const b=GP(0,0,dist+0.2),hz=(window.EZ||(b&&b.y)||H*0.42)-((window.SCL||1)*7);
  // painted backdrop above the end line: sky, mill chimneys, water tower, light tower and the little home bleachers
  const iw=HC.naturalWidth,ih=HC.naturalHeight,sy=ih*0.53,sc=Math.max(W/iw,hz/sy);ctx.save();ctx.beginPath();ctx.rect(0,0,W,hz);ctx.clip();ctx.drawImage(HC,0,0,iw,sy,W/2-iw*sc/2,hz-sy*sc,iw*sc,sy*sc);
  const g=ctx.createLinearGradient(0,hz-40,0,hz);g.addColorStop(0,'rgba(10,40,20,0)');g.addColorStop(1,'rgba(10,40,20,.55)');ctx.fillStyle=g;ctx.fillRect(0,hz-40,W,40);
@@ -211,11 +212,9 @@ const oBG=drawBG;drawBG=function(){const r=oBG.apply(this,arguments);try{if(SKY(
  const fs=Math.max(9,19*(window.SCL||1));ctx.save();ctx.fillStyle='rgba(140,22,30,.92)';ctx.fillRect(0,hz,W,fs*0.72);ctx.translate(W/2,hz+fs*0.36);ctx.scale(1,0.6);ctx.fillStyle='#f2c230';ctx.font='900 '+fs+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('HOLLOW CREEK HAWKS',0,0);ctx.restore()}}catch(e){}return r};
 // Fog Game: the uprights stay hidden in the mist until the ball is in the air, then fade in
 const oDP=drawPosts;drawPosts=function(){if(!(SKY()&&weather==='fog'))return oDP.apply(this,arguments);ctx.save();let a=0.05;try{if(ball.fly)a=Math.min(1,0.05+Math.max(0,ball.z)/Math.max(1,dist)*1.3)}catch(e){}ctx.globalAlpha=a;const fl=window.FGF_FLAG;if(a<0.5)window.FGF_FLAG=()=>true;let r;try{r=oDP.apply(this,arguments)}finally{window.FGF_FLAG=fl;ctx.restore()}
- try{if(a<0.5){const z=dist+0.2,b=P(0,BAR,z),t=P(0,POST+1.5,z);if(b&&t){const cx=b.x,cy=(b.y+t.y)/2,rw=Math.max(60,(P(HALF,BAR,z).x-b.x)*2.6),rh=Math.abs(b.y-t.y)*0.9;ctx.save();const g=ctx.createRadialGradient(cx,cy,4,cx,cy,rw);g.addColorStop(0,'rgba(196,204,212,.92)');g.addColorStop(.7,'rgba(196,204,212,.6)');g.addColorStop(1,'rgba(196,204,212,0)');ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(cx,cy,rw,rh,0,0,7);ctx.fill();ctx.restore()}}}catch(e){}
+ try{if(a<0.5){const z=dist+0.2,b=GP(0,BAR,z),t=GP(0,POST+1.5,z);if(b&&t){const cx=b.x,cy=(b.y+t.y)/2,rw=Math.max(60,(GP(HALF,BAR,z).x-b.x)*2.6),rh=Math.abs(b.y-t.y)*0.9;ctx.save();const g=ctx.createRadialGradient(cx,cy,4,cx,cy,rw);g.addColorStop(0,'rgba(196,204,212,.92)');g.addColorStop(.7,'rgba(196,204,212,.6)');g.addColorStop(1,'rgba(196,204,212,0)');ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(cx,cy,rw,rh,0,0,7);ctx.fill();ctx.restore()}}}catch(e){}
  return r};
 const oDF=drawFlags;drawFlags=function(){if(!(SKY()&&weather==='fog'))return oDF.apply(this,arguments);let a=0.0;try{if(ball.fly)a=Math.min(1,Math.max(0,ball.z)/Math.max(1,dist)*1.3)}catch(e){}if(a<0.05)return;ctx.save();ctx.globalAlpha=a;try{return oDF.apply(this,arguments)}finally{ctx.restore()}};
-// Milk jug on the crossbar during the challenge
-const oDP2=drawPosts;drawPosts=function(){const r=oDP2.apply(this,arguments);try{if(SKY()&&JG){const p=P(0,BAR+0.9,dist+0.2);if(p){const s=p.s*1.1;ctx.save();ctx.fillStyle='#f4f4ee';ctx.strokeStyle='#666';ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(p.x-s*0.45,p.y-s*0.5,s*0.9,s*1.1,s*0.2);ctx.fill();ctx.stroke();ctx.fillRect(p.x-s*0.15,p.y-s*0.75,s*0.3,s*0.3);ctx.fillStyle='#9aa0a6';ctx.fillRect(p.x-s*0.45,p.y,s*0.9,s*0.18);ctx.restore()}}}catch(e){}return r};
 // Three Breaths: hide the power meter and show Pop's count instead
 const oHUD=hud;hud=function(){if(!(SKY()&&ST.tb))return oHUD.apply(this,arguments);const sw=swipe;swipe=null;let r;try{r=oHUD.apply(this,arguments)}finally{swipe=sw}
  try{const t=performance.now()/1000,ph=(t%3.6)/1.2|0,k=(t%1.2)/1.2,mw=W*0.6,mx=W/2-mw/2,my=H*0.3;panel(mx-8,my-26,mw+16,40);ctx.save();ctx.fillStyle=GOLD;ctx.font='900 10px system-ui';ctx.textAlign='left';ctx.fillText("🌬️ POP'S THREE BREATHS",mx,my-11);ctx.fillStyle='#fff';ctx.font='900 15px system-ui';ctx.fillText(['ONE…','TWO…','THREE. SWING.'][ph],mx,my+8);for(let i=0;i<3;i++){ctx.beginPath();ctx.arc(mx+mw-40+i*16,my+2,5+(i===ph?k*2:0),0,7);ctx.fillStyle=i<=ph?GOLD:'rgba(255,255,255,.25)';ctx.fill()}ctx.restore()}catch(e){}return r};
@@ -251,6 +250,115 @@ function restartAsk(){if(document.getElementById('fgfrs'))return;const d=documen
  d.innerHTML='<div style="background:#fffbea;color:#1a1408;border:3px solid #111;box-shadow:4px 4px 0 #000;border-radius:6px;max-width:320px;margin:16px;padding:18px"><p style="font:500 17px/1.45 Georgia,serif;margin:0 0 14px">Restart Season 1 from the beginning? Your story choices for this season will be cleared.</p><button id="fgfrsY" style="display:block;width:100%;min-height:48px;margin:0 0 8px;border:2px solid #111;border-radius:12px;background:#f2c230;color:#111;font:900 16px system-ui">↺ Restart</button><button id="fgfrsN" style="display:block;width:100%;min-height:48px;border:2px solid #111;border-radius:12px;background:#fff;color:#111;font:800 16px system-ui">Cancel</button></div>';
  document.body.appendChild(d);const x=()=>d.remove();d.querySelector('#fgfrsN').onclick=x;d.querySelector('#fgfrsY').onclick=()=>{x();restartSeason()}}
 if(typeof pauseMenu==='function'){const oPM=pauseMenu;pauseMenu=function(){const r=oPM.apply(this,arguments);try{if(mode==='story'&&!setOpen){const bw=Math.min(280,W*0.8),x=W/2-bw/2;bx(x,H*0.36+198,bw,52,'↺ RESTART SEASON 1',()=>restartAsk())}}catch(e){}return r}}
+// =====================================================================
+// Story difficulty tiers (data-driven). Seasons map to a level per BIBLE:
+// S1–S2 high school, S3–S6 college, S7+ pro. Every kick stays makeable:
+// max power is floored so it always clears the bar at the kick's distance with margin.
+const TIERS={
+ hs:     {name:'High school',pw:0.80,aim:1.30,curve:1.30,windMax:10},
+ college:{name:'College',    pw:0.90,aim:1.15,curve:1.15,windMax:16},
+ pro:    {name:'Pro',        pw:1.00,aim:1.00,curve:1.00,windMax:null}};
+const SEASON=1,tierOf=n=>n<=2?'hs':n<=6?'college':'pro',TIER=()=>TIERS[tierOf(SEASON)];
+const VMAX=35,ANG=0.72;// game.js: v=14+power*21 (dist<80), launch angle 0.72
+function vNeed(d,h){const c=Math.cos(ANG),den=2*c*c*(d*Math.tan(ANG)-h);return den>0?Math.sqrt(10.7*1.07*d*d/den):99}// rain gravity worst case
+function pwFor(d){const t=TIER();return Math.min(1,Math.max(t.pw,vNeed(d+2,BAR+2.5)*1.15/VMAX))}// >=15% speed margin, 2 yds past the bar, 2.5 yds over it
+window.FGF_STORY_TIERS={TIERS,tierOf,pwFor,vNeed};
+const isStory=()=>state==='play'&&mode==='story';
+// cosmetics off during story kicks (tees, trails, ball skins, themes); restored as soon as the kick screen closes
+let EQS=null;function eqOff(){if(EQS||typeof eq!=='object')return;EQS=Object.assign({},eq);for(const k in eq)delete eq[k];Object.assign(eq,{c:'c0',g:'',v:'',t:'t0',e:'e0'})}
+function eqOn(){if(!EQS)return;for(const k in eq)delete eq[k];Object.assign(eq,EQS);EQS=null}
+let HALF0=null;
+setInterval(()=>{try{if(isStory()){eqOff();if(!ball.fly&&(ball.pump||ball.gold||ball.bonus)){ball.pump=0;ball.gold=0;ball.bonus=0}}else eqOn();if(isStory()&&JG){if(HALF0==null){HALF0=HALF;HALF=40}}else if(HALF0!=null){HALF=HALF0;HALF0=null}}catch(e){}},100);
+// wind cap per tier
+const oNW2=newWind;newWind=function(){const r=oNW2.apply(this,arguments);try{if(mode==='story'){const t=TIER();if(JG||weather==='fog'){wind.mph=Math.min(wind.mph,JG?3:6)}else if(t.windMax!=null)wind.mph=Math.min(wind.mph,t.windMax);wind.x=Math.sin(wind.a)*wind.mph;wind.z=Math.cos(wind.a)*wind.mph}}catch(e){}return r};
+// tier applied right after the launch: speed scale + tighter aim/curve; jug kicks get a flatter, power-mapped arc
+const JUG={y:4.2,ry:1.7,rx:1.35,arm:6.6};
+const oKick=S3.onKick;S3.onKick=function(power){const r=oKick.apply(this,arguments);try{if(mode==='story'&&ball.fly){const t=TIER(),k=(14+power*21)>0?((14+power*21*pwFor(dist))/(14+power*21)):1;
+  ball.vx*=k*t.aim;ball.vy*=k;ball.vz*=k;ball.ax*=t.curve;
+  if(JG){const tt=dist/Math.max(4,ball.vz),yt=0.9+power*7.6;ball.vy=(yt-0.15+0.5*G*tt*tt)/tt}
+  ST.cross=null}}catch(e){}return r};
+// remember where the ball crossed the target plane (for the jug)
+const odb3=drawBall;drawBall=function(){try{if(isStory()&&JG&&ball.fly&&!ST.cross&&ball.z>=dist)ST.cross={x:ball.x,y:ball.y,t:performance.now()}}catch(e){}return odb3.apply(this,arguments)};
+// jug: only a hit on the jug counts
+const oR2=S3.onResult;S3.onResult=function(good){try{if(mode==='story'&&JG&&ST.kick&&ST.kick.jug){const c=ST.cross;good=!!(c&&Math.abs(c.x)<=JUG.rx&&Math.abs(c.y-JUG.y)<=JUG.ry);ST.hit=good?performance.now():0;
+  msg={t:good?'THUNK!':(c&&c.y>JUG.y+JUG.ry?'OVER THE JUG':c&&c.y<JUG.y-JUG.ry?'SHORT OF THE JUG':'MISSED THE JUG'),s:good?'Right on the tape':'',c:good?GOLD:'#ff5a4f'}}}catch(e){}return oR2.call(this,good)};
+// Old Faithful: tape patch on the ball during story kicks
+const odb4=drawBall;drawBall=function(){const r=odb4.apply(this,arguments);try{if(isStory()){const p=window.SP?SP(ball.x,ball.y,ball.z):null;if(p){const s2=Math.max(2,p.s*0.12);ctx.save();ctx.translate(p.x,p.y);ctx.rotate((ball.rot||0)+0.5);ctx.fillStyle='rgba(170,170,165,.9)';ctx.fillRect(-s2*0.9,-s2*0.35,s2*1.4,s2*0.7);ctx.restore()}}}catch(e){}return r};
+// ---- Hollow Creek kicker: recolor whatever look the player has to Hawks red + white trim (name/number kept) ----
+const hx=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+function hsv(r,g,b){r/=255;g/=255;b/=255;const M=Math.max(r,g,b),m=Math.min(r,g,b),d=M-m;let h=0;if(d){h=M===r?((g-b)/d)%6:M===g?(b-r)/d+2:(r-g)/d+4;h*=60;if(h<0)h+=360}return[h,M?d/M:0,M]}
+const HAWK={p:[176,28,40],s:[244,244,240]},RC=new WeakMap();
+function hawkify(src,ti){if(!src||!src.width)return src;let m=RC.get(src);if(m&&m.ti===ti)return m.c;const t=TEAMS[ti]||TEAMS[0],P0=hsv(...hx(t.p)),S0=hsv(...hx(t.s));
+ const c=document.createElement('canvas');c.width=src.width;c.height=src.height;const x=c.getContext('2d');x.drawImage(src,0,0);let d;try{d=x.getImageData(0,0,c.width,c.height)}catch(e){return src}
+ const a=d.data,near=(H,T,tol)=>T[1]<0.2?(H[1]<0.2&&Math.abs(H[2]-T[2])<0.16):(H[1]>0.3&&Math.min(Math.abs(H[0]-T[0]),360-Math.abs(H[0]-T[0]))<tol);
+ for(let i=0;i<a.length;i+=4){if(a[i+3]<20)continue;const H=hsv(a[i],a[i+1],a[i+2]);let to=null,ref=null;if(near(H,P0,26)){to=HAWK.p;ref=P0}else if(near(H,S0,S0[0]>20&&S0[0]<70?10:20)&&H[1]>0.45){to=HAWK.s;ref=S0}
+  if(to){const k=Math.max(0.35,Math.min(1.5,H[2]/Math.max(0.15,ref[2])));a[i]=Math.min(255,to[0]*k);a[i+1]=Math.min(255,to[1]*k);a[i+2]=Math.min(255,to[2]*k)}}
+ x.putImageData(d,0,0);RC.set(src,{ti,c});return c}
+{const ok=S5.kimg;S5.kimg=function(ti,p2){const s=ok.apply(this,arguments);try{if(isStory()&&!p2&&!(MK.on&&MK.masc>=0))return hawkify(s,ti)}catch(e){}return s}}
+// ---- Hawks mascot on our sideline: the game's hawk mascot, tinted Hollow Creek red ----
+const HAWKS_T=Math.max(0,TEAMS.findIndex(t=>t.k==='hawks'));
+const oM=S3.masc;S3.masc=function(){if(!isStory())return oM.apply(this,arguments);if(JG){try{drawYardRae()}catch(e){}return}
+ const om=myT;let r;ctx.save();try{ctx.filter='hue-rotate(135deg) saturate(1.5)';myT=()=>HAWKS_T;r=oM.apply(this,arguments)}catch(e){}finally{myT=om;ctx.restore()}return r};
+// no stadium crowd / storm ambience over our HS fields
+const oAmb=S3.amb;S3.amb=function(){if(isStory()&&weather!=='fog'&&weather!=='rain')return;return oAmb.apply(this,arguments)};
+// ---- away HS field (opponent colors) ----
+const OPPC={'Mill Valley Millers':['#2f5d8a','#e8e2d0'],'Cedar Bluff Bobcats':['#c96a1b','#1d1d1d'],'Prairie Creek Plowmen':['#6b4a2b','#e0c35a'],'Ironwood Foxes':['#d4581c','#1f2a36'],'Ridgeline High Rattlers':['#1f4d2b','#111111']};
+function hz0(){const b=GP(0,0,dist+0.2);return (window.EZ||(b&&b.y)||H*0.42)-((window.SCL||1)*7)}
+function bleach(x0,y0,w,h,col,rows){ctx.fillStyle='#8d949b';for(let i=0;i<rows;i++){const yy=y0+h*i/rows;ctx.fillRect(x0+i*w*0.02,yy,w-i*w*0.04,h/rows*0.42)}ctx.fillStyle=col;ctx.fillRect(x0,y0+h,w,h*0.12)}
+function tower(x,base,top){ctx.fillStyle='#2b2f36';ctx.fillRect(x-2,top,4,base-top);ctx.fillStyle='#fff6d8';ctx.shadowColor='#fff3c0';ctx.shadowBlur=18;ctx.fillRect(x-14,top-8,28,10);ctx.shadowBlur=0}
+function awayField(){const hz=hz0(),o=WK[K.w],C=OPPC[o.opp]||['#444','#ddd'],fog=weather==='fog';ctx.save();
+ const g=ctx.createLinearGradient(0,0,0,hz);g.addColorStop(0,'#070b1a');g.addColorStop(0.7,'#16223f');g.addColorStop(1,'#2b3550');ctx.fillStyle=g;ctx.fillRect(0,0,W,hz);
+ ctx.fillStyle='rgba(255,255,255,.6)';for(let i=0;i<30;i++){const u=(i*0.618)%1,v=(i*0.377)%1;ctx.fillRect(u*W,v*hz*0.4,1.2,1.2)}
+ ctx.fillStyle='#0d1410';ctx.beginPath();ctx.moveTo(0,hz);for(let x=0;x<=W;x+=W/14)ctx.lineTo(x,hz-24-((x*7)%19));ctx.lineTo(W,hz);ctx.fill();// tree line
+ bleach(W*0.04,hz-64,W*0.36,46,C[0],6);bleach(W*0.6,hz-64,W*0.36,46,C[0],6);// visitors' small bleachers
+ tower(W*0.08,hz-10,hz*0.25);tower(W*0.92,hz-10,hz*0.25);
+ if(fog){ctx.fillStyle='rgba(190,200,208,.62)';ctx.fillRect(0,0,W,hz)}ctx.restore();
+ const fs=Math.max(9,19*(window.SCL||1));ctx.save();ctx.fillStyle=C[0];ctx.fillRect(0,hz,W,fs*0.72);ctx.translate(W/2,hz+fs*0.36);ctx.scale(1,0.6);ctx.fillStyle=C[1];ctx.font='900 '+fs+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(o.opp.toUpperCase(),0,0);ctx.restore()}
+// ---- backyard (Milk Jug Challenge): early-morning yard, clothesline post with the duct-taped jug, Rae on the back steps ----
+function yard(){const hz=hz0();ctx.save();
+ const g=ctx.createLinearGradient(0,0,0,hz);g.addColorStop(0,'#3a4c6e');g.addColorStop(0.55,'#c99a78');g.addColorStop(1,'#e9c79a');ctx.fillStyle=g;ctx.fillRect(0,0,W,hz);
+ // mill chimneys with smoke, far away in the haze
+ ctx.fillStyle='rgba(84,90,98,.85)';[[0.66,0.58],[0.72,0.54]].forEach(([u,t])=>{ctx.fillRect(W*u,hz*t,W*0.022,hz*(1-t))});
+ ctx.fillStyle='rgba(200,200,205,.35)';for(let i=0;i<7;i++){ctx.beginPath();ctx.arc(W*0.735+i*W*0.035,hz*0.5-i*hz*0.025,6+i*3,0,7);ctx.fill()}
+ ctx.fillStyle='rgba(120,128,130,.7)';ctx.fillRect(0,hz*0.8,W,hz*0.2);// far rooftops
+ ctx.fillStyle='rgba(225,215,200,.45)';ctx.fillRect(0,hz*0.72,W,hz*0.28);// morning fog
+ // wooden backyard fence
+ ctx.fillStyle='#7a6248';for(let x=-4;x<W;x+=11){ctx.fillRect(x,hz-30,9,30);ctx.beginPath();ctx.moveTo(x,hz-30);ctx.lineTo(x+4.5,hz-35);ctx.lineTo(x+9,hz-30);ctx.fill()}ctx.fillStyle='rgba(0,0,0,.18)';ctx.fillRect(0,hz-22,W,3);ctx.fillRect(0,hz-9,W,3);
+ // house siding + back steps on the left
+ ctx.fillStyle='#b9b2a2';ctx.fillRect(0,hz*0.18,W*0.17,hz*0.82+40);ctx.fillStyle='rgba(0,0,0,.12)';for(let y=hz*0.2;y<hz+40;y+=7)ctx.fillRect(0,y,W*0.17,1.5);ctx.fillStyle='#5b4632';ctx.beginPath();ctx.moveTo(0,hz*0.14);ctx.lineTo(W*0.21,hz*0.22);ctx.lineTo(W*0.21,hz*0.25);ctx.lineTo(0,hz*0.18);ctx.fill();
+ ctx.restore();
+ // yard grass over the field (no lines, no logos)
+ const g2=ctx.createLinearGradient(0,hz,0,H);g2.addColorStop(0,'#5d7a3a');g2.addColorStop(1,'#3b5525');ctx.fillStyle=g2;ctx.fillRect(0,hz,W,H-hz);
+ ctx.fillStyle='rgba(0,0,0,.06)';for(let i=0;i<40;i++){const u=(i*0.618)%1,v=(i*0.377)%1;ctx.fillRect(u*W,hz+v*(H-hz),2+v*6,1+v*2)}
+ ctx.fillStyle='#6f5a44';ctx.fillRect(0,hz+4,W*0.24,16);ctx.fillRect(0,hz+18,W*0.27,14);// back steps
+}
+function drawYardRae(){const p=GP(-3.6,0,Math.max(3,dist*0.42));if(!p)return;const s=p.s,x=p.x,y=p.y;ctx.save();
+ ctx.fillStyle='rgba(0,0,0,.25)';ctx.beginPath();ctx.ellipse(x,y,s*0.5,s*0.12,0,0,7);ctx.fill();
+ ctx.fillStyle='#3d6fa6';ctx.fillRect(x-s*0.2,y-s*0.95,s*0.16,s*0.95);ctx.fillRect(x+s*0.04,y-s*0.95,s*0.16,s*0.95);// scrub pants
+ ctx.fillStyle='#2b2b2b';ctx.fillRect(x-s*0.22,y-s*0.06,s*0.2,s*0.07);ctx.fillRect(x+s*0.03,y-s*0.06,s*0.2,s*0.07);// shoes
+ ctx.fillStyle='#4a7fb8';ctx.beginPath();ctx.roundRect(x-s*0.3,y-s*1.75,s*0.6,s*0.86,s*0.12);ctx.fill();// scrub top
+ ctx.fillStyle='rgba(0,0,0,.12)';ctx.beginPath();ctx.moveTo(x-s*0.12,y-s*1.75);ctx.lineTo(x,y-s*1.55);ctx.lineTo(x+s*0.12,y-s*1.75);ctx.fill();// v-neck
+ ctx.fillStyle='#4a7fb8';ctx.fillRect(x+s*0.22,y-s*1.68,s*0.13,s*0.5);ctx.fillStyle='#d7a98a';ctx.fillRect(x+s*0.22,y-s*1.2,s*0.13,s*0.22);// arm
+ ctx.fillStyle='#e9e6df';ctx.fillRect(x+s*0.16,y-s*1.12,s*0.2,s*0.2);// mug
+ ctx.strokeStyle='rgba(255,255,255,.45)';ctx.lineWidth=Math.max(1,s*0.03);ctx.beginPath();const t=performance.now()/600;ctx.moveTo(x+s*0.26,y-s*1.15);ctx.quadraticCurveTo(x+s*(0.2+0.06*Math.sin(t)),y-s*1.35,x+s*0.28,y-s*1.5);ctx.stroke();
+ ctx.fillStyle='#4a7fb8';ctx.fillRect(x-s*0.35,y-s*1.68,s*0.13,s*0.6);ctx.fillStyle='#d7a98a';ctx.fillRect(x-s*0.35,y-s*1.1,s*0.13,s*0.15);
+ ctx.fillStyle='#d7a98a';ctx.beginPath();ctx.arc(x,y-s*1.98,s*0.21,0,7);ctx.fill();// face
+ ctx.fillStyle='#2a1d17';ctx.beginPath();ctx.arc(x,y-s*2.04,s*0.22,Math.PI*0.95,Math.PI*2.05);ctx.fill();ctx.beginPath();ctx.arc(x+s*0.04,y-s*2.26,s*0.13,0,7);ctx.fill();// hair + messy bun
+ ctx.fillRect(x-s*0.22,y-s*2.02,s*0.07,s*0.22);ctx.restore()}
+function drawJugPost(){const z=dist+0.2,b=GP(0,0,z),arm=GP(0,JUG.arm,z),j=GP(0,JUG.y,z);if(!b||!arm||!j)return;const s=b.s,pw=Math.max(5,s*0.32);ctx.save();
+ ctx.fillStyle='#6e543a';ctx.fillRect(b.x-pw/2,arm.y,pw,b.y-arm.y);ctx.fillStyle='rgba(0,0,0,.18)';ctx.fillRect(b.x+pw*0.15,arm.y,pw*0.35,b.y-arm.y);// 4x4 post
+ ctx.fillStyle='#6e543a';ctx.fillRect(b.x-s*1.6,arm.y-pw*0.2,s*3.2,pw*0.7);// cross-arm
+ ctx.strokeStyle='rgba(235,235,230,.8)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(b.x+s*1.5,arm.y+pw*0.2);ctx.quadraticCurveTo(b.x+W*0.35,arm.y+s*0.9,W+20,arm.y+s*0.4);ctx.stroke();// clothesline wire
+ // the jug, duct-taped to the post (knocked spinning when hit)
+ let jx=j.x,jy=j.y,rot=0;const ht=ST.hit?(performance.now()-ST.hit)/1000:0;if(ST.hit&&ht<2.5){jx+=ht*s*2.2;jy+=-s*1.5*ht+s*2.4*ht*ht;rot=ht*9}else if(ST.hit)jy=-999;
+ const js=s*1.25;ctx.translate(jx,jy);ctx.rotate(rot);ctx.fillStyle='#f6f4ee';ctx.strokeStyle='#8a8f94';ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(-js*0.45,-js*0.55,js*0.9,js*1.1,js*0.18);ctx.fill();ctx.stroke();
+ ctx.fillStyle='#f6f4ee';ctx.fillRect(-js*0.14,-js*0.8,js*0.28,js*0.28);ctx.fillStyle='#d9d9d2';ctx.fillRect(-js*0.16,-js*0.86,js*0.32,js*0.1);// neck + cap
+ ctx.strokeStyle='#b8bcc0';ctx.beginPath();ctx.moveTo(js*0.22,-js*0.4);ctx.quadraticCurveTo(js*0.62,-js*0.1,js*0.22,js*0.2);ctx.stroke();// handle
+ if(!ST.hit){ctx.fillStyle='rgba(150,155,160,.95)';ctx.fillRect(-js*0.6,-js*0.12,js*1.2,js*0.22)}// silver duct tape band
+ ctx.restore()}
+const oBG3=drawBG;drawBG=function(){const r=oBG3.apply(this,arguments);try{if(isStory()){if(JG)yard();else if(K&&!WK[K.w].home)awayField()}}catch(e){}return r};
+const oDP3=drawPosts;drawPosts=function(){if(isStory()&&JG){try{drawJugPost()}catch(e){}return}return oDP3.apply(this,arguments)};
+const oDF3=drawFlags;drawFlags=function(){if(isStory()&&JG)return;return oDF3.apply(this,arguments)};
 // back from the Kicker Creator during kicker creation -> return to Story
 setInterval(()=>{if(window.__stMK&&state==='title'){window.__stMK=0;create()}},400);
 window.FGF_STORY={open,go,_restart:restartSeason,_restartAsk:restartAsk,state:()=>S,_mu:MU,_after:after,_play:play,_week:weekIntro};
