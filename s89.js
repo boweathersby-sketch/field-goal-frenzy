@@ -11,7 +11,7 @@ const oRes=result;result=function(r){try{if(mode==='classic'&&!ball.done)pre={d:
  const o=oRes.apply(this,arguments);try{if(mode==='classic'&&r==='GOOD!'&&streak>=10&&LS.fgfMullTok!=='1'){LS.fgfMullTok='1';toast('↺ '+T_('MULLIGAN EARNED! Saves one run-ending miss'))}}catch(e){}return o};
 const oNx=S3.next;S3.next=function(good){
  if(!good&&mode==='classic'&&lives<=0&&pre&&LS.fgfMullTok==='1'&&LS.fgfMullDay!==DK()&&!document.getElementById('fgfs89m')){const P=pre;
-  const d=card('↺ '+T_('USE YOUR MULLIGAN?'),`<div style="${ROW};text-align:center">${T_('That miss ends your run. Re-kick the same')} ${P.d}${T_('-yard kick instead?')}<div style="${SUB};margin-top:4px">${T_('Score')} ${P.sc} · ${T_('one per day · earn another with 10 makes in a row')}</div></div><button id="y" style="${BS};width:100%;${ON}">↺ ${T_('RE-KICK')}</button><button id="n" style="${BS};width:100%;margin-top:8px">${T_('NO THANKS')}</button>`,'fgfs89m',{nox:1});
+  const d=card('↺ '+T_('USE YOUR MULLIGAN?'),`<div style="${ROW};text-align:center">${T_('That miss ends your run. Re-kick the same '+P.d+'-yard kick instead?')}<div style="${SUB};margin-top:4px">${T_('Score')} ${P.sc} · ${T_('one per day · earn another with 10 makes in a row')}</div></div><button id="y" style="${BS};width:100%;${ON}">↺ ${T_('RE-KICK')}</button><button id="n" style="${BS};width:100%;margin-top:8px">${T_('NO THANKS')}</button>`,'fgfs89m',{nox:1});
   d.querySelector('#y').onclick=()=>{d.remove();LS.fgfMullTok='0';LS.fgfMullDay=DK();lives=1;prevLives=1;dist=P.d;wind=P.w;weather=P.wx;streak=P.stk;resetBall();state='play';try{saveRun()}catch(e){}toast('↺ '+T_('Mulligan! Same kick, one more try'))};
   d.querySelector('#n').onclick=()=>{d.remove();endGame()};return true}
  return oNx.apply(this,arguments)};

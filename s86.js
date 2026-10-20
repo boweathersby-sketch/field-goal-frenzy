@@ -17,7 +17,7 @@ on(e=>{if(e.t==='start'&&e.m==='career'){cgM=0;cgX=0}
  if(e.m==='career'){mk?cgM++:cgX++}
  const M=J2('fgfMonth',{});const k=MK();const m=M[k]||{a:0,m:0,b:0,w:{}};m.a++;if(mk){m.m++;if(d>m.b)m.b=d;if(e.wx)m.w[e.wx]=(m.w[e.wx]||0)+1}M[k]=m;const ks=Object.keys(M).sort().slice(-12),M2={};ks.forEach(x=>M2[x]=M[x]);S2('fgfMonth',M2);
  if(!mk)return;
- const b=BANDS.filter(x=>d>=x&&d<x+10)[0];if(b){const B=J2('fgfBands',{});const o=tier(B[b]||0);B[b]=(B[b]||0)+1;S2('fgfBands',B);const n=tier(B[b]);if(n&&n!==o)tst(n[1]+' '+T_(n[2])+' '+T_('medal')+' · '+b+'s '+T_('yds'))}
+ const b=BANDS.filter(x=>d>=x&&d<x+10)[0];if(b){const B=J2('fgfBands',{});const o=tier(B[b]||0);B[b]=(B[b]||0)+1;S2('fgfBands',B);const n=tier(B[b]);if(n&&n!==o)tst(n[1]+' '+T_(n[2]+' medal · '+b+'-'+(b+9)+' yds'))}
  const F=J2('fgfFirsts2',{});const q=(id,txt)=>{if(!F[id]){F[id]=Date.now();S2('fgfFirsts2',F);tst('✨ '+T_(txt))}};
  if(d>=60)q('60','First 60-yard make!');if(d>=70)q('70','First 70-yard make!');if(e.wx==='snow')q('snow','First make in the snow!');if(e.wx==='rain')q('rain','First make in the rain!');if(e.cl)q('cl','First clutch make!')});
 on(e=>{if(e.t!=='cgame')return;try{
