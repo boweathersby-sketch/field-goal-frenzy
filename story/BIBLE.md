@@ -28,7 +28,7 @@ Rating: family-friendly. No real people, teams, schools or leagues. The pro leag
   - River City Kingfishers (the hometown team, 30 minutes from Hollow Creek).
   - Sunburst City Scorpions.
   - Ironwood Owls, Glacier Bay Walruses, Prairie Plains Stampede, Neon Harbor Comets.
-- **FFL records:** the longest field goal is **63 yards**, set by Gus Hollander in his final season, two years before S1. The consecutive-makes record is 44, held by Bram Stoll.
+- **FFL records:** the longest field goal is **80 yards** (the game's Legend kick), set by Gus Hollander with the Harbor City Gulls before S1. He is still active in S1. (Kirk, Oct 20 2026: was 63.) The consecutive-makes record is 44, held by Bram Stoll.
 - **Heirloom: Old Faithful.** Pop's beat-up old lucky leather football: scuffed brown leather, worn and faded laces, a patch of tape on it. It appears in every season. (Canon change from Kirk, Oct 20 2026; it was formerly an orange kicking tee.)
 
 ## 2. Characters (look · wardrobe · voice · how they change)
@@ -118,7 +118,7 @@ The **voice** line is copied word for word from `VOICES.md`. Ages are given **as
 
 ### Gus Hollander ("Iron Toe")
 - **Look:** FFL kicking legend, **36 in S1**. Broad, short beard going early gray at the chin, always a toothpick.
-- **Career:** 14 seasons with the Harbor City Gulls. Holds the 63-yard record and is **still active** in S1, running off-season clinics.
+- **Career:** 14 seasons with the Harbor City Gulls. Holds the 80-yard league record (the Legend kick) and is **still active** in S1, running off-season clinics.
 - **Wardrobe:** plain green ball cap with no logo, faded gray windbreaker.
 - **Voice:** man in his late 30s, big booming warm baritone, slightly hoarse, plain Great Lakes accent, confident relaxed pace, kindly but no-nonsense. Grows raspier with age.
 - **Changes:**
@@ -243,7 +243,7 @@ Arc, branch points, choices that carry forward (⚑), and threads each season mu
 - **→ Pays off:** Pop's secret, begun.
 
 **S15 · "Chasing Iron Toe" (Y9, 30).**
-- **Arc:** Kingfishers captain. Chasing the 63-yard and 44-straight records. Rae retires. Puppy is 14. Riley's career day; Bea's snap camp with Hollis.
+- **Arc:** Kingfishers captain. Chasing Gus's 80-yard Legend record (an 80-yard Legend kick ties it; 81+ would break it) and the 44-straight record. Rae retires. Puppy is 14. Riley's career day; Bea's snap camp with Hollis.
 - **Cliffhanger:** Hollis texts "Snap?"
 
 **S16 · "One More Snap" (Y10, 31).**
