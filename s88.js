@@ -28,7 +28,7 @@ function pick(c){state='xguess';const kick=c.P[c.k%2],darer=c.P[(c.k+1)%2];let D
  const sel=()=>{d.querySelectorAll('[data-d]').forEach(b=>b.style.cssText=BS+';padding:8px 0;'+(+b.dataset.d===D?ON:''));d.querySelectorAll('[data-m]').forEach(b=>b.style.cssText=BS+';padding:8px 0;'+(+b.dataset.m===M?ON:''));d.querySelectorAll('[data-s]').forEach(b=>b.style.cssText=BS+';flex:1;'+(+b.dataset.s===S?ON:''))};sel();
  d.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{D=+b.dataset.d;sel()});d.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{M=+b.dataset.m;sel()});d.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{S=+b.dataset.s;sel()});
  d.querySelector('#go').onclick=()=>{dist=D;weather='clear';setW(M,S);c.cur={kick,D,M};d.remove();resetBall();state='play';toast('🫵 '+kick+' · '+D+' '+T_('yds')+' · '+M+' mph')}}
-XP.dare={setup(c){if(!c.started)intro(c);else pick(c);return 'hold'},
+XP.dare={nobest:1,setup(c){if(!c.started)intro(c);else pick(c);return 'hold'},
  next(c,good){const k=c.cur&&c.cur.kick;if(good&&k){c.sc[k]++;c.made++}c.log.push((good?'✓':'✗'));if(c.k>=10&&c.k%2===0){const [a,b]=c.P;if(c.sc[a]===c.sc[b]){toast('⚖️ '+T_('Tied! Sudden death'));if(c.k>=16)return fin(c);return true}return fin(c)}return true},
  res(c){const [a,b]=c.P;return '🏆 '+esc(c.champ||'')+' '+T_('wins the dare battle')+' · '+esc(a)+' '+c.sc[a]+' – '+c.sc[b]+' '+esc(b)},
  hud(c){const [a,b]=c.P||['',''];return c.P?'🫵 '+esc(a)+' '+c.sc[a]+' – '+c.sc[b]+' '+esc(b)+' · '+T_('kicking')+': '+esc(c.cur?c.cur.kick:''):'🫵 '+T_('DARE MODE')}};

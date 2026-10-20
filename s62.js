@@ -14,7 +14,7 @@ const best=t=>+(LS['fgfXM_'+t]||0);
 // --- entry in MORE MODES ---
 try{FGF_MODES2.push(['xtra','🧰','PRACTICE & PARTY','Ladder · Wind Trainer · Daily practice · Kid · Codes · Pass & Play'])}catch(e){}
 function menu(){X=null;const _t=x=>{try{return window.FGF_UI&&FGF_UI.T_?FGF_UI.T_(x):x}catch(e){return x}};const h=XM.map(m=>`<button data-t="${m[0]}" style="${BS};display:block;width:100%;text-align:left;margin:0 0 8px;color:#fff"><span style="color:#f2c230">${m[1]} ${_t(m[2])}</span><br><span style="font:12px system-ui;color:#bcd">${_t(m[3])}${best(m[0])?' · Best '+best(m[0]):''}</span></button>`).join('')+`<button id="xmb" style="${BS};display:block;margin:6px auto 0;min-width:140px">◀ BACK</button>`;
- const d=card('🧰 PRACTICE & PARTY',h);d.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{closeCard();pre(b.dataset.t)});d.querySelector('#xmb').onclick=closeCard}
+ const d=card('🧰 '+_t('PRACTICE & PARTY'),h);d.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{closeCard();pre(b.dataset.t)});d.querySelector('#xmb').onclick=closeCard}
 // --- setup screens ---
 function pre(t){if(XP[t]&&XP[t].pre)return XP[t].pre();if(t==='code')return codeUI();if(t==='pass')return passUI();start(t,{})}
 const C36='ABCDEFGHJKMNPQRSTUVWXYZ23456789',newCode=()=>'FGF'+Array.from({length:5},()=>C36[R()*C36.length|0]).join('');
@@ -66,7 +66,7 @@ const oNx=S3.next;S3.next=function(good){if(!X)return hype(good,oNx.apply(this,a
     if(c.mi===0&&c.P.length===3){c.q.push([c.P.indexOf(w),2])}else if(c.mi===1&&c.P.length===4){c.q.push([c.P.indexOf(c.win[0]),c.P.indexOf(c.win[1])])}
     c.mi++;if(c.mi>=c.q.length){c.champ=w;return fin()}newMatch()}}setup();return true}
  return fin()};
-function fin(){const c=X;c.done=1;const k='fgfXM_'+c.t,b=best(c.t);let nb=false;if(c.t!=='pass'&&c.pts>b){LS[k]=c.pts;nb=true}state='xres';
+function fin(){const c=X;c.done=1;const k='fgfXM_'+c.t,b=best(c.t);let nb=false;if(c.t!=='pass'&&!(XP[c.t]&&XP[c.t].nobest)&&c.pts>b){LS[k]=c.pts;nb=true}state='xres';
  const L=XP[c.t]?XP[c.t].res(c):c.t==='yladder'?(c.pts>=13?'Made all 13 rungs · 80 yds!':'Reached '+(20+Math.max(0,c.pts-1)*5)+' yds · '+c.pts+' rungs'):c.t==='windtr'?c.pts+' of 15 points (guesses + makes)':c.t==='kid'?c.made+' of 10 made':c.t==='code'?c.made+' of 5 made · '+c.log.join(''):c.t==='dprac'?c.made+' of 5 made at today\'s Daily':'🏆 '+esc(c.champ)+' is the champion!';
  const m=XM.find(x=>x[0]===c.t),share=c.t==='code'?`<button id="xsh" style="${BS}">📤 SHARE CODE</button>`:'';
  const _r=x=>window.FGF_TR?FGF_TR(x):x;const d=card(m[1]+' '+_r(m[2]),`<div style="text-align:center;font:900 18px system-ui;margin:4px 0 6px">${L}</div>${nb?'<div style="text-align:center;color:#f2c230;font-weight:900">'+_r('NEW BEST')+'</div>':''}${c.t==='code'?`<div style="text-align:center;font:900 22px system-ui;letter-spacing:2px;margin:8px 0">${c.code}</div>`:''}<div style="display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap"><button id="xag" style="${BG}">${_r('AGAIN')}</button>${share}<button id="xmd" style="${BS}">${_r('MODES')}</button></div>`);
