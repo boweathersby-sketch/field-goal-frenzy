@@ -1,0 +1,38 @@
+// s102 (Oct 18 #138, #140; Oct 19 #193, #218): PARTY PLAYLIST for game night + menu tap sounds.
+// Party Playlist (More Modes · Party): 2–4 players, 3 random quick modes; everyone plays each mode in turn (fair). Each player gets an emoji avatar
+// (saved on this phone). Before each round, the next kicker can pick one of 6 friendly trash-talk lines. Final standings.
+// Tap feedback: every button on the overlay cards gives a soft tick and a light buzz (follows Mute and Vibration settings).
+(function(){const U=window.FGF_UI,on=window.FGF_ON;if(!U||!on)return;const {T_,BS,ROW,SUB,esc,card}=U;
+const L=window.FGF_XMLIST,XP=window.FGF_XMP=window.FGF_XMP||{};
+try{if(L){if(!L.some(x=>x[0]==='plist'))L.push(['plist','🎶','PARTY PLAYLIST','2–4 players · 3 random modes, everyone plays each one · emoji avatars']);if(window.FGF_XMGROUP)FGF_XMGROUP('plist','pa')}}catch(e){}
+const POOL=['wclimb','wflip','narrow','ring','chip','roul','shrink','layer','xbar','derby','blind'];
+const AV=['🦊','🐯','🐸','🐼','🦄','🐙','🦖','🐝','🐧','🦁','🐨','🐵'];
+const TT=['You might want to look away','Watch and learn','Splitting the uprights, no big deal','This one is for the highlight reel',"I've got ice in my veins","Bet you can't beat that"];
+const nm=()=>{try{return JSON.parse(LS.fgfPassNames||'[]')}catch(e){return []}},av=()=>{try{return JSON.parse(LS.fgfPassAv||'[0,1,2,3]')}catch(e){return [0,1,2,3]}};
+const mt=id=>{const m=(window.FGF_XMLIST||[]).find(x=>x[0]===id);return m?m[1]+' '+T_(m[2]):id};
+let PL=null;window.FGF_PLIST=()=>PL;
+function setup(){let n=Math.max(2,Math.min(4,+(LS.fgfPLN||3)));const N=nm(),A=av();for(let i=0;i<4;i++){A[i]=(A[i]|0)%AV.length;while(A.slice(0,i).includes(A[i]))A[i]=(A[i]+1)%AV.length}
+ const draw=()=>{const d=card('🎶 '+T_('PARTY PLAYLIST'),`<div style="${SUB};text-align:center;margin-bottom:8px">${T_('3 random modes. Everyone plays each one, passing the phone. Most points wins the night.')}</div><div style="display:flex;gap:6px;justify-content:center;margin-bottom:8px">${[2,3,4].map(k=>`<button data-n="${k}" style="${BS};${k===n?'background:#f2c230;color:#0b2a16':''}">${k} ${T_('players')}</button>`).join('')}</div>`+
+  Array.from({length:n},(_,i)=>`<div style="display:flex;gap:6px;align-items:center;margin:0 0 6px"><button data-a="${i}" aria-label="avatar" style="${BS};font-size:22px;padding:4px 8px;min-width:48px">${AV[A[i]%AV.length]}</button><input data-i="${i}" maxlength="10" value="${esc(N[i]||'P'+(i+1))}" style="flex:1;min-width:0;box-sizing:border-box;font:16px system-ui;padding:9px;border-radius:10px;border:1px solid rgba(160,190,175,.4);background:#05200f;color:#fff"></div>`).join('')+
+  `<div style="${SUB};text-align:center;margin:-2px 0 8px">${T_('Tap an avatar to change it')}</div><button id="go" style="${BS};display:block;width:100%;background:#f2c230;color:#0b2a16;text-align:center">${T_('START')} ▶</button>`,'fgfs102');
+  const save=()=>{d.querySelectorAll('[data-i]').forEach(x=>N[+x.dataset.i]=x.value);LS.fgfPassNames=JSON.stringify(N);LS.fgfPassAv=JSON.stringify(A)};
+  d.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{save();n=+b.dataset.n;LS.fgfPLN=n;draw()});
+  d.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{save();const i=+b.dataset.a;const used=new Set(A.slice(0,n).filter((x,j)=>j!==i).map(x=>x%AV.length));let v=A[i];do{v=(v+1)%AV.length}while(used.has(v));A[i]=v;LS.fgfPassAv=JSON.stringify(A);draw()});
+  d.querySelector('#go').onclick=()=>{save();d.remove();const P=N.slice(0,n).map((s,i)=>(s||'').trim()||'P'+(i+1));const have=new Set((window.FGF_XMLIST||[]).map(x=>x[0]));const pool=POOL.filter(x=>have.has(x)&&(XP[x]||['chip','blind'].includes(x)));
+   const list=[];while(list.length<3&&pool.length){list.push(pool.splice(Math.random()*pool.length|0,1)[0])}
+   PL={P,A:A.slice(0,n),list,i:0,sc:P.map(()=>0),log:[]};upNext()}};draw()}
+const who=()=>PL.i%PL.P.length,RN=()=>Math.floor(PL.i/PL.P.length),TOT=()=>PL.list.length*PL.P.length,face=i=>AV[PL.A[i]%AV.length];
+function upNext(){const w=who(),id=PL.list[RN()];const d=card('🎶 '+T_('ROUND')+' '+(RN()+1)+' / '+PL.list.length,`<div style="${ROW};text-align:center"><div style="font-size:40px">${face(w)}</div><div style="font:900 16px system-ui">📱 ${T_('HAND THE PHONE TO')} ${esc(PL.P[w])}</div><div style="${SUB}">${T_('Up next')}: <b style="color:#f2c230">${mt(id)}</b></div></div><div style="${SUB};text-align:center;margin:8px 0 4px">${T_('Say something first? (optional)')}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">${TT.map((t,j)=>`<button data-t="${j}" style="${BS};font-size:12px;text-align:center">${T_(t)}</button>`).join('')}</div><button id="go" style="${BS};display:block;width:100%;margin-top:8px;background:#f2c230;color:#0b2a16;text-align:center">${T_('KICK')} ▶</button>`,'fgfs102');
+ d.addEventListener('click',ev=>{const b=ev.target.closest&&ev.target.closest('button');if(!b)return;if(b.dataset.t!=null){toast('💬 '+face(w)+' '+esc(PL.P[w])+': '+T_(TT[+b.dataset.t]));d.querySelectorAll('[data-t]').forEach(x=>x.style.opacity=x===b?'1':'.4')}else if(b.id==='go'){d.remove();PL.run=1;PL.t0=Date.now();FGF_XMSTART(id,{})}})}
+on(e=>{try{if(!PL||!PL.run||e.t!=='end'||!String(e.m).startsWith('xm_'))return;PL.run=0;const X=e.X||{};const pts=Math.round(X.pts||X.made||e.sc||0),w=who();PL.sc[w]+=pts;PL.log.push([w,PL.list[RN()],pts]);PL.i++;
+ setTimeout(()=>{try{const o=document.getElementById('fgfxm');if(o)o.remove()}catch(x){}PL.i<TOT()?upNext():final()},2200)}catch(x){}});
+function final(){const ord=PL.P.map((p,i)=>i).sort((a,b)=>PL.sc[b]-PL.sc[a]);const top=PL.sc[ord[0]],ch=ord.filter(i=>PL.sc[i]===top);
+ const d=card('🎶 '+T_('PARTY PLAYLIST'),`<div style="${ROW};text-align:center"><div style="font-size:36px">👑 ${ch.map(face).join(' ')}</div><div style="font:900 17px system-ui;color:#f2c230">${ch.map(i=>esc(PL.P[i])).join(' & ')} ${ch.length>1?T_('share the win!'):T_('wins the night!')}</div></div>`+
+  ord.map((i,r)=>`<div style="${ROW};display:flex;justify-content:space-between;margin-top:6px"><span>${r+1}. ${face(i)} ${esc(PL.P[i])}</span><b>${PL.sc[i]} ${T_('pts')}</b></div>`).join('')+
+  `<div style="${SUB};margin-top:8px">${PL.list.map(id=>mt(id)+': '+PL.log.filter(l=>l[1]===id).map(l=>face(l[0])+' '+l[2]).join(' ')).join('<br>')}</div><button id="ag" style="${BS};display:block;width:100%;margin-top:8px;text-align:center">🔁 ${T_('NEW PLAYLIST')}</button>`,'fgfs102');
+ try{const L2=JSON.parse(LS.fgfChalk||'[]');L2.unshift({t:'🎶 '+ch.map(i=>PL.P[i]).join(' & ')+' · '+ord.map(i=>PL.P[i]+' '+PL.sc[i]).join(', '),d:new Date().toLocaleDateString()});LS.fgfChalk=JSON.stringify(L2.slice(0,8))}catch(e){}
+ PL=null;d.querySelector('#ag').onclick=()=>{d.remove();setup()}}
+XP.plist={nobest:1,pre(){PL=null;setup()}};
+// ---- tap feedback on overlay buttons ----
+let lt=0;document.addEventListener('pointerdown',ev=>{try{const b=ev.target.closest&&ev.target.closest('.fgfov button');if(!b||Date.now()-lt<60)return;lt=Date.now();if(LS.fgfMute!=='1'&&LS.fgfTapSnd!=='0')tone(1250,1100,0.03,0.035,'sine');if(LS.fgfVib!=='0'&&navigator.vibrate)navigator.vibrate(6)}catch(e){}},true);
+})();
