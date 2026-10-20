@@ -301,7 +301,7 @@ function hawkify(src,ti){if(!src||!src.width)return src;let m=RC.get(src);if(m&&
 // ---- Hawks mascot on our sideline: the game's hawk mascot, tinted Hollow Creek red ----
 const HAWKS_T=Math.max(0,TEAMS.findIndex(t=>t.k==='hawks'));
 // Hollow Creek's own hawk (new art, same 193x200 cell + same sideline animation)
-const HCM=new Image();HCM.src='story/hc_hawk.webp?v=1';
+const HCM=new Image();/* HCM.src='story/hc_hawk.webp?v=1'; -- enable once the new art file is added */
 const oM=S3.masc;S3.masc=function(){if(!isStory())return oM.apply(this,arguments);if(JG){try{drawYardRae()}catch(e){}return}
  const om=myT,useNew=HCM.complete&&HCM.naturalWidth,odi=ctx.drawImage;let r;ctx.save();try{if(useNew)ctx.drawImage=function(im,sx,sy,sw,sh,dx,dy,dw,dh){if(im===MSI&&arguments.length===9&&sx===HAWKS_T*193)return odi.call(this,HCM,0,0,HCM.naturalWidth,HCM.naturalHeight,dx,dy,dw,dh);return odi.apply(this,arguments)};else ctx.filter='hue-rotate(135deg) saturate(1.5)';myT=()=>HAWKS_T;r=oM.apply(this,arguments)}catch(e){}finally{myT=om;delete ctx.drawImage;ctx.restore()}return r};
 // no stadium crowd / storm ambience over our HS fields
