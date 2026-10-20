@@ -280,6 +280,8 @@ const oKick=S3.onKick;S3.onKick=function(power){const r=oKick.apply(this,argumen
 // remember where the ball crossed the target plane (for the jug)
 const odb3=drawBall;drawBall=function(){try{if(isStory()&&JG&&ball.fly&&!ST.cross&&ball.z>=dist)ST.cross={x:ball.x,y:ball.y,t:performance.now()}}catch(e){}return odb3.apply(this,arguments)};
 // jug: only a hit on the jug counts
+// jug scene: only a jug hit is a score - a miss must not add points/confetti from the wide practice posts
+{const oRes=result;result=function(r){try{if(mode==='story'&&JG&&ST.kick&&ST.kick.jug){const c=ST.cross||{x:ball.x,y:ball.y};const hit=!!(c&&Math.abs(c.x)<=JUG.rx&&Math.abs(c.y-JUG.y)<=JUG.ry);r=hit?'GOOD!':'NO GOOD'}}catch(e){}return oRes.call(this,r)}}
 const oR2=S3.onResult;S3.onResult=function(good){try{if(mode==='story'&&JG&&ST.kick&&ST.kick.jug){const c=ST.cross||{x:ball.x,y:ball.y};good=!!(c&&Math.abs(c.x)<=JUG.rx&&Math.abs(c.y-JUG.y)<=JUG.ry);ST.hit=good?performance.now():0;
   msg={t:good?'THUNK!':(c&&c.y>JUG.y+JUG.ry?'OVER THE JUG':c&&c.y<JUG.y-JUG.ry?'SHORT OF THE JUG':'MISSED THE JUG'),s:good?'Right on the tape':'',c:good?GOLD:'#ff5a4f'}}}catch(e){}return oR2.call(this,good)};
 // Old Faithful: tape patch on the ball during story kicks
@@ -412,6 +414,6 @@ function kid(b){const SK=(typeof SKIN!=='undefined'&&MK.on&&SKIN[MK.skin]&&SKIN[
 Object.assign(KD,{w:46,hb:30,hy:6,rx:17,ry:21,fy:262,fr:24,hw:34,st:22,sw0:0.92,sw1:0.74,sx:0.82,sy:8,sr:20,ak:0.72,av:0.4,cr:14});
 window.FGF_KIDSHEET=kid;
 const JGON=()=>{try{return mode==='story'&&state==='play'&&window.FGF_STORY&&FGF_STORY._jg&&FGF_STORY._jg()}catch(e){return false}};
-{const ok=S5.kimg;S5.kimg=function(ti,p2){const s=ok.apply(this,arguments);try{if(!p2&&JGON()){const k=kid(MK.on&&MK.masc<0?MK.base:ti);if(k)return k}}catch(e){}return s}}
+{const ok=S5.kimg;S5.kimg=function(ti,p2){const s=ok.apply(this,arguments);try{if(!p2&&JGON()){const k=window.FGF_KID2?FGF_KID2.sheet({sk:(MK.on&&SKIN[MK.skin]&&SKIN[MK.skin][1]&&MK.skin<6&&SKIN[MK.skin][1])||'#d9a27a',hr:(MK.on&&HAIR[MK.hair]&&HAIR[MK.hair][1]&&MK.hair<6&&HAIR[MK.hair][1])||'#5b3a22'}):kid(MK.on&&MK.masc<0?MK.base:ti);if(k)return k}}catch(e){}return s}}
 {const od=S3.decal;S3.decal=function(){if(JGON())return;return od.apply(this,arguments)}}
 })();
