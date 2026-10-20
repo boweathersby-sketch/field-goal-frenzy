@@ -300,8 +300,10 @@ function hawkify(src,ti){if(!src||!src.width)return src;let m=RC.get(src);if(m&&
 {const ok=S5.kimg;S5.kimg=function(ti,p2){const s=ok.apply(this,arguments);try{if(isStory()&&!p2&&!(MK.on&&MK.masc>=0))return hawkify(s,ti)}catch(e){}return s}}
 // ---- Hawks mascot on our sideline: the game's hawk mascot, tinted Hollow Creek red ----
 const HAWKS_T=Math.max(0,TEAMS.findIndex(t=>t.k==='hawks'));
+// Hollow Creek's own hawk (new art, same 193x200 cell + same sideline animation)
+const HCM=new Image();HCM.src='story/hc_hawk.webp?v=1';
 const oM=S3.masc;S3.masc=function(){if(!isStory())return oM.apply(this,arguments);if(JG){try{drawYardRae()}catch(e){}return}
- const om=myT;let r;ctx.save();try{ctx.filter='hue-rotate(135deg) saturate(1.5)';myT=()=>HAWKS_T;r=oM.apply(this,arguments)}catch(e){}finally{myT=om;ctx.restore()}return r};
+ const om=myT,useNew=HCM.complete&&HCM.naturalWidth,odi=ctx.drawImage;let r;ctx.save();try{if(useNew)ctx.drawImage=function(im,sx,sy,sw,sh,dx,dy,dw,dh){if(im===MSI&&arguments.length===9&&sx===HAWKS_T*193)return odi.call(this,HCM,0,0,HCM.naturalWidth,HCM.naturalHeight,dx,dy,dw,dh);return odi.apply(this,arguments)};else ctx.filter='hue-rotate(135deg) saturate(1.5)';myT=()=>HAWKS_T;r=oM.apply(this,arguments)}catch(e){}finally{myT=om;delete ctx.drawImage;ctx.restore()}return r};
 // no stadium crowd / storm ambience over our HS fields
 const oAmb=S3.amb;S3.amb=function(){if(isStory()&&weather!=='fog'&&weather!=='rain')return;return oAmb.apply(this,arguments)};
 // ---- away HS field (opponent colors) ----
@@ -364,5 +366,44 @@ const oDP3=drawPosts;drawPosts=function(){if(isStory()&&JG){try{drawJugPost()}ca
 const oDF3=drawFlags;drawFlags=function(){if(isStory()&&JG)return;return oDF3.apply(this,arguments)};
 // back from the Kicker Creator during kicker creation -> return to Story
 setInterval(()=>{if(window.__stMK&&state==='title'){window.__stMK=0;create()}},400);
-window.FGF_STORY={open,go,_restart:restartSeason,_restartAsk:restartAsk,state:()=>S,_mu:MU,_after:after,_play:play,_week:weekIntro};
+window.FGF_STORY={open,go,_restart:restartSeason,_restartAsk:restartAsk,state:()=>S,_mu:MU,_after:after,_play:play,_week:weekIntro,_jg:()=>!!JG};
+})();
+;(function(){// ---- backyard jug kicks: plain kid (jeans, white tee, sneakers, bare head) — same sprite frames, clothes/head redrawn only ----
+const hx=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+function hsv(r,g,b){r/=255;g/=255;b/=255;const M=Math.max(r,g,b),m=Math.min(r,g,b),d=M-m;let h=0;if(d){h=M===r?((g-b)/d)%6:M===g?(b-r)/d+2:(r-g)/d+4;h*=60;if(h<0)h+=360}return[h,M?d/M:0,M]}
+const KC={};const KD=window.FGF_KID={};
+function kid(b){const SK=(typeof SKIN!=='undefined'&&MK.on&&SKIN[MK.skin]&&SKIN[MK.skin][1])||null,HR=(typeof HAIR!=='undefined'&&MK.on&&HAIR[MK.hair]&&HAIR[MK.hair][1])||'#4a2f1c';const key=b+'|'+SK+'|'+HR;if(KC[key])return KC[key];
+ if(!KS.complete||!KS.naturalWidth)return null;const c=document.createElement('canvas');c.width=812;c.height=300;const x=c.getContext('2d');x.drawImage(KS,0,b*300,812,300,0,0,812,300);let d;try{d=x.getImageData(0,0,812,300)}catch(e){return null}
+ const a=d.data,t=TEAMS[b],P0=hsv(...hx(t.p)),S0=hsv(...hx(t.s)),near=(H,T,tol)=>T[1]<0.2?(H[1]<0.2&&Math.abs(H[2]-T[2])<0.2):(H[1]>0.28&&Math.min(Math.abs(H[0]-T[0]),360-Math.abs(H[0]-T[0]))<tol);
+ const skT=SK?hx(SK):[214,160,120],hrT=hx(HR),KM=S5.KMETA[b];const isSkin=H=>H[0]>=6&&H[0]<=(b===4?30:38)&&H[1]>0.2&&H[1]<0.7&&H[2]>0.28;
+ const put=(i,C,k)=>{a[i]=Math.min(255,C[0]*k);a[i+1]=Math.min(255,C[1]*k);a[i+2]=Math.min(255,C[2]*k)};
+ // kicking-foot tip per frame (planted feet = bottom rows)
+ const tip=[null,null,null,null];for(let p=0;p<812*300;p++){if(a[p*4+3]<60)continue;const px=p%812,py=p/812|0,f=px/203|0;if(f===0||py>KD.fy-4)continue;const m=KM[f];if(px<m[0])continue;const sc=f===3?(px-py*0.3):(px+py*0.35);if(!tip[f]||sc>tip[f][2])tip[f]=[px,py,sc]}
+ const HM=new Uint8Array(812*300);for(let f=0;f<4;f++){const m=KM[f];for(let y=m[1]+20;y<Math.min(300,m[1]+88);y++){const R=[];let st=-1;for(let px=f*203;px<=f*203+203;px++){const o=px<f*203+203&&a[(y*812+px)*4+3]>=60;if(o&&st<0)st=px;if(!o&&st>=0){R.push([st,px]);st=-1}}
+  if(R.length>=2){for(const r of [R[0],R[R.length-1]])if(r[1]-r[0]<KD.hw&&Math.abs((r[0]+r[1])/2-m[0])>m[2]*0.6)for(let px=r[0];px<r[1];px++)HM[y*812+px]=1}}}
+ const clothP=H=>b===4&&near(H,P0,10)&&H[1]>0.32;
+ for(let i=0;i<a.length;i+=4){if(a[i+3]<20){a[i+3]=0;continue}const p=i/4,px=p%812,py=p/812|0,f=px/203|0,m=KM[f],H=hsv(a[i],a[i+1],a[i+2]),waist=m[1]+KD.w,hx0=m[4],hy0=m[5];
+  const sk=isSkin(H)&&!clothP(H)&&!(near(H,S0,12)&&H[1]>0.55);
+  if(py<hy0+KD.hb&&Math.abs(px-hx0)<46){const dx=(px-hx0-KD.hx)/KD.rx,dy=(py-hy0-KD.hy)/KD.ry;if(sk&&py>hy0+8){if(SK)put(i,skT,H[2]/0.7);continue}
+   if(dx*dx+dy*dy<=1){put(i,hrT,0.45+H[2]*0.9)}else a[i+3]=0;continue}
+  const xh=m[0]+m[2]*0.5,leg=py>=waist||(f===3&&px>xh&&py>waist-(px-xh)*0.95-10);
+  const inT=Math.abs(px-m[0])<m[2]*KD.ti&&py>hy0+KD.hb;
+  if(sk&&!leg&&!inT){if(SK)put(i,skT,H[2]/0.7);continue}
+  if(f===3&&px>m[0]+m[2]&&py<m[1]&&!leg){put(i,skT,0.45+H[2]*0.7);continue}
+  if(!leg){const out=Math.abs(px-m[0])>m[2]*KD.tw&&py>m[1]+KD.sh;
+   if(out){put(i,skT,0.45+H[2]*0.7);continue}
+   put(i,[246,246,242],0.74+H[2]*0.3);continue}
+  if(HM[p]){put(i,skT,0.45+H[2]*0.7);continue}
+  const T=tip[f]&&tip[f][1]<KD.fy-20?tip[f]:null,shoe=py>KD.fy||(T&&Math.hypot(px-T[0],py-T[1])<KD.fr);
+  if(shoe){const v=H[2];if(v<0.1)put(i,[60,60,64],1);else put(i,[240,240,236],0.7+v*0.35);continue}
+  put(i,[58,86,138],0.55+H[2]*0.6)}
+ x.putImageData(d,0,0);
+ x.save();x.globalCompositeOperation='destination-over';x.fillStyle=SK||'#b07850';KM.forEach(m=>{x.beginPath();x.roundRect(m[4]-8+KD.nx,m[5]+KD.ny,16,KD.nh,5);x.fill()});x.restore();
+ // white sneaker soles on planted feet + subtle tee hem
+ return KC[key]=c}
+Object.assign(KD,{w:46,hb:30,hx:0,hy:6,rx:17,ry:21,tw:0.95,sh:22,fy:262,fr:24,ti:0.85,hw:34,nx:0,ny:14,nh:26});
+window.FGF_KIDSHEET=kid;
+const JGON=()=>{try{return mode==='story'&&state==='play'&&window.FGF_STORY&&FGF_STORY._jg&&FGF_STORY._jg()}catch(e){return false}};
+{const ok=S5.kimg;S5.kimg=function(ti,p2){const s=ok.apply(this,arguments);try{if(!p2&&JGON()){const k=kid(MK.on&&MK.masc<0?MK.base:ti);if(k)return k}}catch(e){}return s}}
+{const od=S3.decal;S3.decal=function(){if(JGON())return;return od.apply(this,arguments)}}
 })();
