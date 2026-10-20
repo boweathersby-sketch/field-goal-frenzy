@@ -13,7 +13,7 @@ const XP=window.FGF_XMP=window.FGF_XMP||{};window.FGF_XMLIST=XM;let X=null;windo
 const best=t=>+(LS['fgfXM_'+t]||0);
 // --- entry in MORE MODES ---
 try{FGF_MODES2.push(['xtra','🧰','PRACTICE & PARTY','Ladder · Wind Trainer · Daily practice · Kid · Codes · Pass & Play'])}catch(e){}
-function menu(){X=null;const h=XM.map(m=>`<button data-t="${m[0]}" style="${BS};display:block;width:100%;text-align:left;margin:0 0 8px;color:#fff"><span style="color:#f2c230">${m[1]} ${m[2]}</span><br><span style="font:12px system-ui;color:#bcd">${m[3]}${best(m[0])?' · Best '+best(m[0]):''}</span></button>`).join('')+`<button id="xmb" style="${BS};display:block;margin:6px auto 0;min-width:140px">◀ BACK</button>`;
+function menu(){X=null;const _t=x=>{try{return window.FGF_UI&&FGF_UI.T_?FGF_UI.T_(x):x}catch(e){return x}};const h=XM.map(m=>`<button data-t="${m[0]}" style="${BS};display:block;width:100%;text-align:left;margin:0 0 8px;color:#fff"><span style="color:#f2c230">${m[1]} ${_t(m[2])}</span><br><span style="font:12px system-ui;color:#bcd">${_t(m[3])}${best(m[0])?' · Best '+best(m[0]):''}</span></button>`).join('')+`<button id="xmb" style="${BS};display:block;margin:6px auto 0;min-width:140px">◀ BACK</button>`;
  const d=card('🧰 PRACTICE & PARTY',h);d.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{closeCard();pre(b.dataset.t)});d.querySelector('#xmb').onclick=closeCard}
 // --- setup screens ---
 function pre(t){if(XP[t]&&XP[t].pre)return XP[t].pre();if(t==='code')return codeUI();if(t==='pass')return passUI();start(t,{})}
