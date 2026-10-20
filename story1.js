@@ -374,34 +374,42 @@ function hsv(r,g,b){r/=255;g/=255;b/=255;const M=Math.max(r,g,b),m=Math.min(r,g,
 const KC={};const KD=window.FGF_KID={};
 function kid(b){const SK=(typeof SKIN!=='undefined'&&MK.on&&SKIN[MK.skin]&&SKIN[MK.skin][1])||null,HR=(typeof HAIR!=='undefined'&&MK.on&&HAIR[MK.hair]&&HAIR[MK.hair][1])||'#4a2f1c';const key=b+'|'+SK+'|'+HR;if(KC[key])return KC[key];
  if(!KS.complete||!KS.naturalWidth)return null;const c=document.createElement('canvas');c.width=812;c.height=300;const x=c.getContext('2d');x.drawImage(KS,0,b*300,812,300,0,0,812,300);let d;try{d=x.getImageData(0,0,812,300)}catch(e){return null}
- const a=d.data,t=TEAMS[b],P0=hsv(...hx(t.p)),S0=hsv(...hx(t.s)),near=(H,T,tol)=>T[1]<0.2?(H[1]<0.2&&Math.abs(H[2]-T[2])<0.2):(H[1]>0.28&&Math.min(Math.abs(H[0]-T[0]),360-Math.abs(H[0]-T[0]))<tol);
- const skT=SK?hx(SK):[214,160,120],hrT=hx(HR),KM=S5.KMETA[b];const isSkin=H=>H[0]>=6&&H[0]<=(b===4?30:38)&&H[1]>0.2&&H[1]<0.7&&H[2]>0.28;
- const put=(i,C,k)=>{a[i]=Math.min(255,C[0]*k);a[i+1]=Math.min(255,C[1]*k);a[i+2]=Math.min(255,C[2]*k)};
- // kicking-foot tip per frame (planted feet = bottom rows)
- const tip=[null,null,null,null];for(let p=0;p<812*300;p++){if(a[p*4+3]<60)continue;const px=p%812,py=p/812|0,f=px/203|0;if(f===0||py>KD.fy-4)continue;const m=KM[f];if(px<m[0])continue;const sc=f===3?(px-py*0.3):(px+py*0.35);if(!tip[f]||sc>tip[f][2])tip[f]=[px,py,sc]}
- const HM=new Uint8Array(812*300);for(let f=0;f<4;f++){const m=KM[f];for(let y=m[1]+20;y<Math.min(300,m[1]+88);y++){const R=[];let st=-1;for(let px=f*203;px<=f*203+203;px++){const o=px<f*203+203&&a[(y*812+px)*4+3]>=60;if(o&&st<0)st=px;if(!o&&st>=0){R.push([st,px]);st=-1}}
-  if(R.length>=2){for(const r of [R[0],R[R.length-1]])if(r[1]-r[0]<KD.hw&&Math.abs((r[0]+r[1])/2-m[0])>m[2]*0.6)for(let px=r[0];px<r[1];px++)HM[y*812+px]=1}}}
- const clothP=H=>b===4&&near(H,P0,10)&&H[1]>0.32;
- for(let i=0;i<a.length;i+=4){if(a[i+3]<20){a[i+3]=0;continue}const p=i/4,px=p%812,py=p/812|0,f=px/203|0,m=KM[f],H=hsv(a[i],a[i+1],a[i+2]),waist=m[1]+KD.w,hx0=m[4],hy0=m[5];
-  const sk=isSkin(H)&&!clothP(H)&&!(near(H,S0,12)&&H[1]>0.55);
-  if(py<hy0+KD.hb&&Math.abs(px-hx0)<46){const dx=(px-hx0-KD.hx)/KD.rx,dy=(py-hy0-KD.hy)/KD.ry;if(sk&&py>hy0+8){if(SK)put(i,skT,H[2]/0.7);continue}
-   if(dx*dx+dy*dy<=1){put(i,hrT,0.45+H[2]*0.9)}else a[i+3]=0;continue}
+ const W8=812,a=d.data,skT=SK?hx(SK):[200,140,100],hrT=hx(HR),KM=S5.KMETA[b];
+ const A=p=>a[p*4+3]>=40,V=p=>Math.max(a[p*4],a[p*4+1],a[p*4+2])/255;
+ const put=(i,C,k)=>{a[i]=Math.min(255,C[0]*k);a[i+1]=Math.min(255,C[1]*k);a[i+2]=Math.min(255,C[2]*k);a[i+3]=255};
+ // kicking-foot tip per frame
+ const tip=[null,null,null,null];for(let p=0;p<W8*300;p++){if(!A(p))continue;const px=p%W8,py=p/W8|0,f=px/203|0;if(f===0||py>KD.fy-4)continue;const m=KM[f];if(px<m[0])continue;const sc=f===3?(px-py*0.3):(px+py*0.35);if(!tip[f]||sc>tip[f][2])tip[f]=[px,py,sc]}
+ for(let f=0;f<4;f++)if(tip[f]&&tip[f][1]>=KD.fy-20)tip[f]=null;
+ // hands below the waist: narrow separate runs at the outside of a row (+3px grow)
+ const HM=new Uint8Array(W8*300);for(let f=0;f<4;f++){const m=KM[f];for(let y=m[1]+30;y<Math.min(300,m[1]+(f>=2?75:92));y++){const R=[];let st=-1;for(let px=f*203;px<=f*203+203;px++){const o=px<f*203+203&&A(y*W8+px);if(o&&st<0)st=px;if(!o&&st>=0){R.push([st,px]);st=-1}}
+  if(R.length>=2)for(const r of [R[0],R[R.length-1]])if(r[1]-r[0]<KD.hw&&Math.abs((r[0]+r[1])/2-m[0])>m[2]*0.6)for(let px=r[0]-3;px<r[1]+3;px++)for(let yy=y-2;yy<=y+2;yy++)if(yy>=0&&yy<300)HM[yy*W8+px]=1}}
+ const shirt=[];// per-pixel shirt flag
+ for(let p=0;p<W8*300;p++){const i=p*4;if(!A(p)){a[i+3]=0;continue}const px=p%W8,py=p/W8|0,f=px/203|0,m=KM[f],v=V(p),hx0=m[4],hy0=m[5],waist=m[1]+KD.w;
+  // head: short hair on a head-sized ellipse; face/ears skin; helmet bulk cleared
+  if(py<hy0+KD.hb&&Math.abs(px-hx0)<46){const dx=(px-hx0)/KD.rx,dy=(py-hy0-KD.hy)/KD.ry;if(dx*dx+dy*dy<=1)put(i,hrT,0.5+v*0.8);else a[i+3]=0;continue}
   const xh=m[0]+m[2]*0.5,leg=py>=waist||(f===3&&px>xh&&py>waist-(px-xh)*0.95-10);
-  const inT=Math.abs(px-m[0])<m[2]*KD.ti&&py>hy0+KD.hb;
-  if(sk&&!leg&&!inT){if(SK)put(i,skT,H[2]/0.7);continue}
-  if(f===3&&px>m[0]+m[2]&&py<m[1]&&!leg){put(i,skT,0.45+H[2]*0.7);continue}
-  if(!leg){const out=Math.abs(px-m[0])>m[2]*KD.tw&&py>m[1]+KD.sh;
-   if(out){put(i,skT,0.45+H[2]*0.7);continue}
-   put(i,[246,246,242],0.74+H[2]*0.3);continue}
-  if(HM[p]){put(i,skT,0.45+H[2]*0.7);continue}
-  const T=tip[f]&&tip[f][1]<KD.fy-20?tip[f]:null,shoe=py>KD.fy||(T&&Math.hypot(px-T[0],py-T[1])<KD.fr);
-  if(shoe){const v=H[2];if(v<0.1)put(i,[60,60,64],1);else put(i,[240,240,236],0.7+v*0.35);continue}
-  put(i,[58,86,138],0.55+H[2]*0.6)}
+  if(!leg){const top=m[1]-KD.st,ax=Math.abs(px-m[0]),half=m[2]*(KD.sw0+(KD.sw1-KD.sw0)*Math.max(0,Math.min(1,(py-top)/(waist-top))));
+   // shoulder points; sleeves = within radius of them (follows the arm direction)
+   const sL=[m[0]-m[2]*KD.sx,top+KD.sy],sR=[m[0]+m[2]*KD.sx,top+KD.sy],inSl=Math.hypot(px-sL[0],py-sL[1])<KD.sr||Math.hypot(px-sR[0],py-sR[1])<KD.sr;
+   if(f===3&&px>m[0]+m[2]*1.15&&py<top+6){put(i,skT,KD.ak+KD.av*Math.max(V(p),0.4));continue}// raised arm/hand
+   if(py<top-2){a[i+3]=0;continue}// pad tops
+   if(py<top+KD.cr&&ax>m[2]*0.55&&!(f===3&&px>m[0])){const u=(ax-m[2]*0.55)/(m[2]*0.5),w=(top+KD.cr-py)/KD.cr;if(u*u+w*w>1){a[i+3]=0;continue}}// rounded natural shoulders
+   if((ax<half&&py>=top)||inSl){shirt.push(p);continue}
+   if(py<top+8&&ax<m[2]*1.25){a[i+3]=0;continue}// pad wings
+   put(i,skT,KD.ak+KD.av*Math.max(v,0.4));continue}// bare arms/hands, tape/gloves flattened
+  if(HM[p]||(px<m[0]-m[2]*(f<2?0.78:0.55)&&py<m[1]+(f<2?95:112))){put(i,skT,KD.ak+KD.av*Math.max(v,0.4));continue}
+  const T=tip[f],shoe=py>KD.fy||(T&&Math.hypot(px-T[0],py-T[1])<KD.fr);
+  if(shoe){put(i,[244,244,240],0.8+v*0.22);continue}
+  put(i,[70,110,170],0.62+1.0*Math.min(v,0.42))}// plain denim, stripes flattened
+ // shirt: soft white with gentle vertical shading
+ for(const p of shirt){const i=p*4,py=p/W8|0,px=p%W8,m=KM[px/203|0],v=V(p);put(i,[248,248,245],0.86+0.1*Math.min(v,0.6)-0.0006*Math.abs(px-m[0]))}
  x.putImageData(d,0,0);
- x.save();x.globalCompositeOperation='destination-over';x.fillStyle=SK||'#b07850';KM.forEach(m=>{x.beginPath();x.roundRect(m[4]-8+KD.nx,m[5]+KD.ny,16,KD.nh,5);x.fill()});x.restore();
- // white sneaker soles on planted feet + subtle tee hem
+ // neck behind, sneaker soles, shirt hem/collar lines
+ x.save();x.globalCompositeOperation='destination-over';x.fillStyle=SK||'#b07850';KM.forEach(m=>{x.beginPath();x.roundRect(m[4]-8,m[5]+14,16,30,5);x.fill()});x.restore();
+ x.save();x.globalCompositeOperation='source-atop';x.strokeStyle='rgba(0,0,0,.12)';x.lineWidth=2;KM.forEach(m=>{x.beginPath();x.moveTo(m[0]-m[2],m[1]+KD.w-2);x.lineTo(m[0]+m[2],m[1]+KD.w-2);x.stroke();x.beginPath();x.ellipse(m[4],m[1]-KD.st+2,10,4,0,0,Math.PI);x.stroke()});
+ x.fillStyle='rgba(90,90,95,.85)';for(let f=0;f<4;f++){x.fillRect(f*203,KD.fy+22,203,8);const T=tip[f];if(T&&f<3){x.save();x.beginPath();x.arc(T[0],T[1],KD.fr,0,7);x.clip();x.fillRect(T[0]-KD.fr,T[1]+KD.fr*0.45,KD.fr*2,KD.fr);x.restore()}}x.restore();
  return KC[key]=c}
-Object.assign(KD,{w:46,hb:30,hx:0,hy:6,rx:17,ry:21,tw:0.95,sh:22,fy:262,fr:24,ti:0.85,hw:34,nx:0,ny:14,nh:26});
+Object.assign(KD,{w:46,hb:30,hy:6,rx:17,ry:21,fy:262,fr:24,hw:34,st:22,sw0:0.92,sw1:0.74,sx:0.82,sy:8,sr:20,ak:0.72,av:0.4,cr:14});
 window.FGF_KIDSHEET=kid;
 const JGON=()=>{try{return mode==='story'&&state==='play'&&window.FGF_STORY&&FGF_STORY._jg&&FGF_STORY._jg()}catch(e){return false}};
 {const ok=S5.kimg;S5.kimg=function(ti,p2){const s=ok.apply(this,arguments);try{if(!p2&&JGON()){const k=kid(MK.on&&MK.masc<0?MK.base:ti);if(k)return k}}catch(e){}return s}}
