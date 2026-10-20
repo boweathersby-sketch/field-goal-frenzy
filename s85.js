@@ -19,11 +19,14 @@ on(e=>{if(e.t!=='make'&&e.t!=='miss')return;const d=Math.round(e.d||0);const Z=J
 on(e=>{if(e.t!=='cgame')return;try{const S=J2('fgfStubs',[]);const o=e.o!=null&&TEAMS[e.o]?TEAMS[e.o].n:'?';S.unshift({o,w:!!e.w,my:e.my|0,op:e.op|0,wk:e.wk|0,s:e.season|0,po:!!e.po,t:Date.now()});S2('fgfStubs',S.slice(0,120));
  if(e.wk===7&&e.w&&!e.po){coin(200);tst('🎉 '+T_('HOMECOMING WIN')+' · 🪙 +200')}}catch(x){}});
 // ---- 107 pregame coin toss (Career only, once per game) ----
-function toss(){if(document.getElementById('fgfs85ct'))return;let n=0;const iv=setInterval(()=>{n++;if(n>60){clearInterval(iv);return}if([...document.querySelectorAll('body>div')].some(x=>x.id!=='fgfs85ct'&&x.id!=='ld'&&getComputedStyle(x).position==='fixed'&&x.offsetWidth>200&&x.offsetHeight>200))return;if(!(state==='play'||state==='ctick')||mode!=='career'||ball&&ball.fly)return;clearInterval(iv);try{paused=true;
+// toss happens BEFORE kickoff: the card shows on the Career screen, then the game starts (forecast etc. follow as usual)
+function willPlay(){try{if(!CAR||!CAR.sched)return true;return !(CAR.done||CAR.wk>=18||(CAR.wk<16&&!CAR.sched[CAR.wk]))}catch(e){return false}}
+const oSCG=startCareerGame;let tossing=false;
+startCareerGame=function(){const self=this,args=arguments;if(tossing||document.getElementById('fgfs85ct')||!willPlay()||LS.fgfTossOff==='1')return oSCG.apply(self,args);
  const d=card('🪙 '+T_('COIN TOSS'),`<div style="${ROW};text-align:center">${T_('Call it! Win the toss for 🪙 25.')}</div><div style="display:flex;gap:8px"><button id="h" style="${BS};flex:1">${T_('HEADS')}</button><button id="tl" style="${BS};flex:1">${T_('TAILS')}</button></div>`,'fgfs85ct',{nox:1});
- const go=c=>{const r=Math.random()<.5?'h':'tl';const w=r===c;if(w)coin(25);d.querySelector('.bd').innerHTML=`<div style="${ROW};text-align:center;font:900 18px system-ui">${r==='h'?T_('HEADS'):T_('TAILS')}</div><div style="${ROW};text-align:center">${w?T_('You won the toss!')+' 🪙 +25':T_('They won the toss. Go get them anyway!')}</div>`;setTimeout(()=>{d.remove();paused=false},1300)};
- d.querySelector('#h').onclick=()=>go('h');d.querySelector('#tl').onclick=()=>go('tl')}catch(x){paused=false}},300)}
-const oSCG=startCareerGame;startCareerGame=function(){const r=oSCG.apply(this,arguments);try{toss()}catch(e){}return r};
+ const go=c=>{d.querySelectorAll('button').forEach(b=>b.disabled=true);const r=Math.random()<.5?'h':'tl';const w=r===c;if(w)coin(25);d.querySelector('.bd').innerHTML=`<div style="${ROW};text-align:center;font:900 18px system-ui">🪙 ${r==='h'?T_('HEADS'):T_('TAILS')}</div><div style="${ROW};text-align:center">${w?T_('You won the toss!')+' 🪙 +25':T_('They won the toss. Go get them anyway!')}</div>`;
+  setTimeout(()=>{d.remove();tossing=true;try{oSCG.apply(self,args)}finally{tossing=false}},1300)};
+ d.querySelector('#h').onclick=()=>go('h');d.querySelector('#tl').onclick=()=>go('tl')};
 // ---- hub card ----
 const row=(a,b)=>`<div style="${ROW}">${a}<div style="${SUB}">${b}</div></div>`;
 function tab(k){const W={

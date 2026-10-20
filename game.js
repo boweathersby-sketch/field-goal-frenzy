@@ -9,7 +9,7 @@
    Career: win 40, playoff win 80, title 250. Daily login +50, first win of day +100.
    Typical 3-5 min session ~100-200 coins. Shop targets: gear 300-500, teams 1500-3000. */
 const cv=document.getElementById('c'),ctx=cv.getContext('2d');
-let W,H,DPR,F,HY,bg;const CAMY=1.5,CAMZ=-8,G=10.7,HALF=3.08,BAR=3.33,POST=11;
+let W,H,DPR,F,HY,bg;const CAMY=1.5,CAMZ=-8,G=10.7,BAR=3.33,POST=11;let HALF=3.08;/* let: s89 Narrow Posts narrows it for that mode only */
 const GREEN='#0f6b3a',GOLD='#f2c230';
 // ---------- audio ----------
 function CSTR(){return window.TESTER?'∞':coins.toLocaleString()}
