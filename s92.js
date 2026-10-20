@@ -26,11 +26,14 @@ window.FGF_WHOOSH=whoosh;
 const GL=[['Field goal','A kick through the uprights and over the crossbar. Worth 3 points in real football.'],['Uprights','The two tall posts. The ball has to pass between them.'],['Crossbar','The flat bar between the posts. The ball has to go over it.'],['Doink','When the ball hits a post or the bar. It can still bounce in!'],['Hash marks','Lines on the field that show where the ball is placed, left, middle or right.'],['PAT','Point After Touchdown: a short kick worth 1 point after a touchdown.'],['Wide left / wide right','The kick missed outside the posts on that side.'],['Short','The kick did not have enough distance to clear the crossbar.'],['Clutch','A big kick at the end of a close game.'],['Overtime','Extra play when the score is tied at the end.'],['Ice the kicker','The other team calls a timeout right before a kick to make the kicker nervous.'],['Yards','Football distance. 1 yard is about 0.9 meters.'],['Hang time','How long the ball stays in the air.'],['Snap and hold','The ball is passed back and a holder sets it up for the kicker.']];
 function glossary(){card('📖 '+T_('FOOTBALL GLOSSARY'),GL.map(g=>`<div style="${ROW}"><b style="color:#f2c230">${T_(g[0])}</b><div style="${SUB};margin-top:2px">${T_(g[1])}</div></div>`).join(''),'fgfs92g')}
 window.FGF_GLOSSARY=glossary;
-function open(){const d=card('♿ '+T_('COMFORT & ASSIST'),`<div style="${SUB};text-align:center;margin-bottom:8px">${T_('All free, all off by default. Nothing here changes your score.')}</div>`+
+function open(){const d=card('♿ '+T_('COMFORT & ASSIST'),`<div style="${SUB};text-align:center;margin-bottom:8px">${T_('All free. Nothing here changes your score.')}</div>`+
  tog('fgfHiVis','👁️ High-visibility ball','A bright outline around the ball so it is easy to follow')+
  tog('fgfAimEar','🎧 Aim by ear','A soft tone rises as your swipe points closer to straight at the posts')+
  tog('fgfStereo','🔊 Stereo wind whoosh','Before each kick, a whoosh moves the way the wind blows (use headphones)')+
  tog('fgfSteady','🎥 Steady camera','No screen shake on big kicks and hits')+
+ tog('fgfSwipeLine','✍️ Swipe path replay','After each kick, the line your finger drew shows for a moment')+
+ tog('fgfAutoPause','⏸️ Auto-pause','Pauses the kick when you leave the app or a call comes in',1)+
+ tog('fgfAutoQ','⚡ Auto quality','On a slow phone, the game lowers its sharpness a little to stay smooth',1)+
  `<button id="gl" style="${BS};display:block;width:100%;margin-top:4px">📖 ${T_('FOOTBALL GLOSSARY')}</button>`,'fgfs92');
  bindTog(d,open);d.querySelector('#gl').onclick=glossary}
 window.FGF_COMFORT=open;
