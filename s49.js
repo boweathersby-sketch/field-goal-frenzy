@@ -25,7 +25,8 @@ window.FGF_LANGPICK=function(first){if(document.getElementById('lngm'))return;co
  b.appendChild(g);const n=document.createElement('div');n.style.cssText='color:#8ab;font-size:11px;text-align:center;margin-top:8px';n.textContent='BETA = machine translated, not yet reviewed';b.appendChild(n);d.appendChild(b);document.body.appendChild(d)};
 // first launch for new players only (existing players keep their language, default English)
 const isNew=!LS.fgfLang&&!LS.fgfLangPicked&&!(+LS.fgfRounds>0);
-if(isNew)setTimeout(()=>FGF_LANGPICK(true),900);else if(!LS.fgfLangPicked)LS.fgfLangPicked='1';
+// Oct 17 (idea 49): new players kick first. The suggested language is applied silently; a 🌐 chip on the first screen opens the picker.
+if(isNew){try{const c=suggest();if(c!=='en')setLang(c);else LS.fgfLang='en'}catch(e){}LS.fgfLangPicked='1';LS.fgfLangAuto='1'}else if(!LS.fgfLangPicked)LS.fgfLangPicked='1';
 // Settings: language button opens the picker instead of cycling
 const oSc=S3.screen;S3.screen=function(){const r=oSc?oSc.apply(this,arguments):undefined;try{if(state==='set'){const bw=Math.min(280,W*0.8),x=W/2-bw/2,y=H*0.3+124,b=BTN.find(q=>Math.abs(q.x-(x+bw/2+4))<2&&Math.abs(q.y-y)<2);if(b)b.cb=()=>FGF_LANGPICK(false)}}catch(e){}return r};
 // ---- Use My Music ----
