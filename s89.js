@@ -27,6 +27,6 @@ XP.narrow={setup(c){HALF=NAR;weather='clear';dist=25+Math.min(30,c.k*3);setW(Mat
  res(c){return T_('Made')+' '+c.made+' '+T_('of')+' 10'+(c.bonus?' · 🪙 +'+c.bonus+' '+T_('event bonus'):'')},
  hud(c){return '🎯 '+T_('NARROW POSTS')+' · '+c.made+'/'+c.k+(NWEEK()?' · 🔥 '+T_('event week'):'')}};
 // safety: posts are normal everywhere else, always
-setInterval(()=>{try{if(mode!=='xm_narrow'&&HALF!==WIDE)HALF=WIDE}catch(e){}},200);
+setInterval(()=>{try{if(mode!=='xm_narrow'&&mode!=='xm_shrink'&&HALF!==WIDE)HALF=WIDE}catch(e){}},200);
 const oNG=newGame;newGame=function(){try{HALF=WIDE}catch(e){}return oNG.apply(this,arguments)};
 })();
