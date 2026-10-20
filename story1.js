@@ -280,10 +280,13 @@ const oKick=S3.onKick;S3.onKick=function(power){const r=oKick.apply(this,argumen
 // remember where the ball crossed the target plane (for the jug)
 const odb3=drawBall;drawBall=function(){try{if(isStory()&&JG&&ball.fly&&!ST.cross&&ball.z>=dist)ST.cross={x:ball.x,y:ball.y,t:performance.now()}}catch(e){}return odb3.apply(this,arguments)};
 // jug: only a hit on the jug counts
-const oR2=S3.onResult;S3.onResult=function(good){try{if(mode==='story'&&JG&&ST.kick&&ST.kick.jug){const c=ST.cross;good=!!(c&&Math.abs(c.x)<=JUG.rx&&Math.abs(c.y-JUG.y)<=JUG.ry);ST.hit=good?performance.now():0;
+const oR2=S3.onResult;S3.onResult=function(good){try{if(mode==='story'&&JG&&ST.kick&&ST.kick.jug){const c=ST.cross||{x:ball.x,y:ball.y};good=!!(c&&Math.abs(c.x)<=JUG.rx&&Math.abs(c.y-JUG.y)<=JUG.ry);ST.hit=good?performance.now():0;
   msg={t:good?'THUNK!':(c&&c.y>JUG.y+JUG.ry?'OVER THE JUG':c&&c.y<JUG.y-JUG.ry?'SHORT OF THE JUG':'MISSED THE JUG'),s:good?'Right on the tape':'',c:good?GOLD:'#ff5a4f'}}}catch(e){}return oR2.call(this,good)};
 // Old Faithful: tape patch on the ball during story kicks
 const odb4=drawBall;drawBall=function(){const r=odb4.apply(this,arguments);try{if(isStory()){const p=window.SP?SP(ball.x,ball.y,ball.z):null;if(p){const s2=Math.max(2,p.s*0.12);ctx.save();ctx.translate(p.x,p.y);ctx.rotate((ball.rot||0)+0.5);ctx.fillStyle='rgba(170,170,165,.9)';ctx.fillRect(-s2*0.9,-s2*0.35,s2*1.4,s2*0.7);ctx.restore()}}}catch(e){}return r};
+// no arcade extras during story kicks (pumpkin/gold/bonus balls, bad snaps, pop-ups)
+const oRB=resetBall;resetBall=function(){const r=oRB.apply(this,arguments);try{if(mode==='story'){ball.pump=0;ball.gold=0;ball.bonus=0;if(ball.snap){ball.snap=0;ball.x=0}}}catch(e){}return r};
+if(window.FGF_POP){const oPop=window.FGF_POP;window.FGF_POP=function(){if(mode==='story')return;return oPop.apply(this,arguments)}}
 // ---- Hollow Creek kicker: recolor whatever look the player has to Hawks red + white trim (name/number kept) ----
 const hx=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
 function hsv(r,g,b){r/=255;g/=255;b/=255;const M=Math.max(r,g,b),m=Math.min(r,g,b),d=M-m;let h=0;if(d){h=M===r?((g-b)/d)%6:M===g?(b-r)/d+2:(r-g)/d+4;h*=60;if(h<0)h+=360}return[h,M?d/M:0,M]}
