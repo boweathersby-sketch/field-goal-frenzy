@@ -12,7 +12,7 @@ const RNICK={tap:'Two-Tap',sock:'Socks',seat:'Seat Check',line:'Whisper'},NK=()=
 const N=t=>t.replace(/\{n\}/g,S.name||'Kid').replace(/\{nick\}/g,NK()).replace(/\{tip\}/g,(S.fl&&S.fl.tip)||'You don\'t. You just kick the next one.').replace(/\{why\}/g,(S.fl&&S.fl.why)||'For Rae. Every Friday.');
 // ---------------- SEASON 1 CONTENT ----------------
 const BG={dark:'#000',dawn:'linear-gradient(#1b2338,#4a3b52 60%,#a8705a)',yard:'linear-gradient(#2a3b5a,#5b6f7a 55%,#2f4a2a)',garage:'linear-gradient(#2a1d14,#4a3424 60%,#1d140e)',field:'linear-gradient(#0b1a33,#12305a 50%,#1d6a34)',night:'linear-gradient(#050a18,#0f1f3d 55%,#155a2c)',hosp:'linear-gradient(#0f2a2e,#1c4a4f 60%,#0c1c1f)',fog:'linear-gradient(#6b7378,#9aa3a8 55%,#3d5a40)',kitchen:'linear-gradient(#2b2117,#4d3b26 60%,#1a130c)',porch:'linear-gradient(#0d1426,#24304d 60%,#3a2d1f)'};
-const IMG=id=>'story/'+id+'.webp'+({c2:'?v=2',c4:'?v=2',c6:'?v=3',jq:'?v=3',jugwin:'?v=1'}[id]||''),PIC={tx1:'tx1',tx2:'tx2',c1:'c1',c2:'c2',jq:'jq',c3:'c3',c4:'c4',c5:'c5',c6:'c6',c7:'c7',c8:'c8',c9:'c9',c10:'c10',c11:'c11',c12:'c12',c13:'c13',c14w:'c14w',c14l:'c14l',c15:'c15',c16:'c16'};
+const IMG=id=>'story/'+id+'.webp'+({c2:'?v=2',c4:'?v=2',c6:'?v=3',jq:'?v=3',jugwin:'?v=1',s2c1:'?v=1792620000',s2c13l:'?v=1792620000',s2c14:'?v=1792620000',s2c16:'?v=1792620000',s2c17:'?v=1792620000',s2tx1:'?v=1792620000',s2tx2:'?v=1792620000',s2wk2:'?v=1792620000',s2wk3:'?v=1792620000',s2wk5:'?v=1792620000',s2field:'?v=1792620000'}[id]||''),PIC={tx1:'tx1',tx2:'tx2',c1:'c1',c2:'c2',jq:'jq',c3:'c3',c4:'c4',c5:'c5',c6:'c6',c7:'c7',c8:'c8',c9:'c9',c10:'c10',c11:'c11',c12:'c12',c13:'c13',c14w:'c14w',c14l:'c14l',c15:'c15',c16:'c16'};
 // panels that exist on disk; add an id here when its art lands (see story/ART-REDO.md). Avoids 404s.
 const ART=new Set(['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10','c11','c12','c13','c14w','c14l','c15','c16','field','end','jq','wk1','wk2','wk3','wk4','wk5','tx1','tx2','jugwin']);
 const pic=(id,cls)=>!ART.has(id)?'':'<div class="pic '+(cls||'')+'"><img src="'+IMG(id)+'" alt="" onerror="this.remove()"></div>';
@@ -123,7 +123,7 @@ Object.assign(SC,{
 Object.assign(MOOD,{s2c1:'sad',s2c2:'home',s2c3:'home',s2c4:'tense',s2c5:'hopeful',s2c6:'hopeful',s2tx1:'home',s2c7:'mystery',s2c8:'hopeful',s2c9:'home',s2c10:'mystery',s2tx2:'home',s2c11:'rival',s2c12:'tense',s2c13w:'triumph',s2c13l:'sad',s2c14:'home',s2c15:'sad',s2c16:'sad',s2c17:'mystery',s2end:'mystery',s2w0:'tense',s2w1:'tense',s2w2:'tense',s2w3:'rival',s2w4:'rival'});
 ['s2c1','s2c2','s2c3','s2c4','s2c5','s2c6','s2tx1','s2c7','s2c8','s2c9','s2c10','s2tx2','s2c11','s2c12','s2c13w','s2c13l','s2c14','s2c15','s2c16','s2c17'].forEach(k=>PIC[k]=k);
 // S2 panels on disk today (add an id when its approved art lands)
-['s2c2','s2c3','s2c4','s2c5','s2c6','s2c7','s2c8','s2c9','s2c10','s2c11','s2c12','s2c13w','s2c15','s2wk1','s2wk4','s2end'].forEach(k=>ART.add(k));
+['s2c2','s2c3','s2c4','s2c5','s2c6','s2c7','s2c8','s2c9','s2c10','s2c11','s2c12','s2c13w','s2c15','s2wk1','s2wk4','s2end','s2c1','s2c13l','s2c14','s2c16','s2c17','s2tx1','s2tx2','s2wk2','s2wk3','s2wk5','s2field'].forEach(k=>ART.add(k));
 // HS kicks: every one 38 yds or less (pw 0.45 tier floors power so each stays makeable)
 const WK2=[
  {n:'Week 1 · Friday Night',opp:'Mill Valley Millers',home:1,intro:'Half of the Millers\' dads worked at the same mill. Nobody in either bleacher is cheering very loud.',k:[[28,'1st quarter · first kick as captain'],[34,'2nd quarter · 0:06 · tied 10-10'],[22,'4th quarter · extra point after the go-ahead TD']],need:2,win:'Hawks win 17-13!',loss:'Millers win 16-13.',go:'s2c6'},
@@ -271,9 +271,8 @@ const ST={kick:null};
 const oR=S3.onResult;S3.onResult=function(good){const r=oR.apply(this,arguments);try{if(mode==='story'&&ST.kick){lives=3;prevLives=3;const j=ST.kick.jug;ST.kick=null;ST.tb=0;setTimeout(()=>j&&JG?jugAfter(!!good):after(!!good),1700)}}catch(e){}return r};
 const odb=drawBall;drawBall=function(){const r=odb.apply(this,arguments);try{if(state==='play'&&mode==='story'&&(ST.kick||ball.fly)){ctx.save();ctx.fillStyle='rgba(0,0,0,.55)';const w=210,x=W/2-w/2,y=H*0.2;ctx.beginPath();ctx.roundRect(x,y,w,26,12);ctx.fill();ctx.strokeStyle=GOLD;ctx.lineWidth=1.5;ctx.stroke();ctx.fillStyle=GOLD;ctx.font='900 12px system-ui';ctx.textAlign='center';ctx.fillText(JG?'📖 STORY · KICK THE JUG '+Math.min(3,JG.streak+1)+'/3':'📖 STORY · '+(K?WK[K.w].opp.split(' ').slice(-1)[0].toUpperCase()+' · ':'')+'KICK '+(ST.kick?ST.kick.lab:''),W/2,y+17,w-10);ctx.restore()}}catch(e){}return r};
 // ---------- Hollow Creek field: Friday night lights + small bleachers (story kicks only) ----------
-const HC1=new Image();if(ART.has('field'))HC1.src=IMG('field');const HC2=new Image();HC2.src='story/field_s2.webp?v=1792610000';// S2: same field, mill closed (smoke painted out)
-let HC=HC1;const SKY=()=>state==='play'&&mode==='story';
-const oBG=drawBG;drawBG=function(){HC=(SEA===2&&HC2.complete&&HC2.naturalWidth)?HC2:HC1;const r=oBG.apply(this,arguments);try{if(SKY()&&!JG&&(!K||WK[K.w].home)&&HC.complete&&HC.naturalWidth){const b=GP(0,0,dist+0.2),hz=(window.EZ||(b&&b.y)||H*0.42)-((window.SCL||1)*7);
+const HC1=new Image();if(ART.has('field'))HC1.src=IMG('field');const HC=HC1;const SKY=()=>state==='play'&&mode==='story';
+const oBG=drawBG;drawBG=function(){const r=oBG.apply(this,arguments);try{if(SKY()&&!JG&&(!K||WK[K.w].home)&&HC.complete&&HC.naturalWidth){const b=GP(0,0,dist+0.2),hz=(window.EZ||(b&&b.y)||H*0.42)-((window.SCL||1)*7);
  // painted backdrop above the end line: sky, mill chimneys, water tower, light tower and the little home bleachers
  const iw=HC.naturalWidth,ih=HC.naturalHeight,sy=ih*0.53,sc=Math.max(W/iw,hz/sy);ctx.save();ctx.beginPath();ctx.rect(0,0,W,hz);ctx.clip();ctx.drawImage(HC,0,0,iw,sy,W/2-iw*sc/2,hz-sy*sc,iw*sc,sy*sc);
  const g=ctx.createLinearGradient(0,hz-40,0,hz);g.addColorStop(0,'rgba(10,40,20,0)');g.addColorStop(1,'rgba(10,40,20,.55)');ctx.fillStyle=g;ctx.fillRect(0,hz-40,W,40);
@@ -375,7 +374,7 @@ function noHair(s,ti){if(MK.on||!LONGHAIR.has(ti)||!NHI.complete||!NHI.naturalWi
  const d=x.getImageData(0,0,812,300),a=d.data,P2=NHI.__d,o=ti*300*812*4;for(let i=0;i<a.length;i+=4){const q=o+i;if(P2[q+3]<128)continue;if(P2[q]<20&&P2[q+1]>230&&P2[q+2]<20){a[i+3]=0;continue}
  a[i]=P2[q];a[i+1]=P2[q+1];a[i+2]=P2[q+2];a[i+3]=Math.min(255,(P2[q+3]-128)*2)}/* retouched neck: rgb + feathered alpha */x.putImageData(d,0,0);c.__s=s;return NHC[ti]=c}
 // Story kicker: a short-hair row of kickers.webp (row 1) recoloured to Hawks maroon/gold; same 4 frames, size and timing (story only)
-const SKI=new Image();SKI.src='story/kicker_story.webp?v=1792610000';let SKC=null;
+const SKI=new Image();SKI.src='story/kicker_story.webp?v=1792621000';let SKC=null;
 {const ok=S5.kimg;S5.kimg=function(ti,p2){const s=ok.apply(this,arguments);try{if(isStory()&&!p2&&!(MK.on&&MK.masc>=0)&&s&&s.width===812){if(SKI.complete&&SKI.naturalWidth){if(!SKC){SKC=document.createElement('canvas');SKC.width=812;SKC.height=300;SKC.getContext('2d').drawImage(SKI,0,0)}return SKC}return hawkify(s,ti)}}catch(e){}return s}}
 // ---- Hawks mascot on our sideline: the game's hawk mascot, tinted Hollow Creek red ----
 const HAWKS_T=Math.max(0,TEAMS.findIndex(t=>t.k==='hawks'));
@@ -403,7 +402,7 @@ function yard(){const hz=hz0();ctx.save();
  const g=ctx.createLinearGradient(0,0,0,hz);g.addColorStop(0,'#3a4c6e');g.addColorStop(0.55,'#c99a78');g.addColorStop(1,'#e9c79a');ctx.fillStyle=g;ctx.fillRect(0,0,W,hz);
  // mill chimneys with smoke, far away in the haze
  ctx.fillStyle='rgba(84,90,98,.85)';[[0.66,0.58],[0.72,0.54]].forEach(([u,t])=>{ctx.fillRect(W*u,hz*t,W*0.022,hz*(1-t))});
- ctx.fillStyle='rgba(200,200,205,.35)';if(SEA!==2)for(let i=0;i<7;i++){ctx.beginPath();ctx.arc(W*0.735+i*W*0.035,hz*0.5-i*hz*0.025,6+i*3,0,7);ctx.fill()}
+ ctx.fillStyle='rgba(200,200,205,.35)';for(let i=0;i<7;i++){ctx.beginPath();ctx.arc(W*0.735+i*W*0.035,hz*0.5-i*hz*0.025,6+i*3,0,7);ctx.fill()}
  ctx.fillStyle='rgba(120,128,130,.7)';ctx.fillRect(0,hz*0.8,W,hz*0.2);// far rooftops
  ctx.fillStyle='rgba(225,215,200,.45)';ctx.fillRect(0,hz*0.72,W,hz*0.28);// morning fog
  // wooden backyard fence
@@ -493,7 +492,7 @@ function drawHolder(p,r){const u=r*0.6;ctx.save();ctx.lineCap='round';ctx.lineJo
  ctx.fillStyle='#2a2a2a';ctx.beginPath();ctx.arc(hdx-u*0.1,hdy+u*0.3,u*0.18,0,7);ctx.fill();// ear hole
  ctx.restore();return tip}
 // painted holder sprite (Wes): ball centre in sprite at (69.2,611.5), ball height 183.4px
-const HIMG={b:new Image(),h:new Image()};HIMG.b.src='story/holder_s2.webp?v=1792600000';HIMG.h.src='story/holder_s2_hand.webp?v=1792600000';
+const HIMG={b:new Image(),h:new Image()};HIMG.b.src='story/holder_s2.webp?v=1792620000';HIMG.h.src='story/holder_s2_hand.webp?v=1792620000';
 function hImg(im,p){const k=2*p.r/183.4;ctx.drawImage(im,p.x-69.2*k,p.y-611.5*k,im.naturalWidth*k,im.naturalHeight*k)}
 const HOLD=()=>isStory()&&SEA===2&&!JG;let HP=null;
 const odb5=drawBall;drawBall=function(){if(!HOLD())return odb5.apply(this,arguments);let p=null;try{p=SP(ball.x,ball.y,ball.z)}catch(e){}
