@@ -229,7 +229,7 @@ const MJ={};function mjr(src,row){const k=row+'_'+(src.__mj||(src.__mj=Math.rand
   // lucky-football charm
   x.fillStyle='#ff7a00';x.beginPath();x.moveTo(m[0]+m[2]*0.55,m[1]-m[3]*0.2);x.lineTo(m[0]+m[2]*0.85,m[1]-m[3]*0.2);x.lineTo(m[0]+m[2]*0.7,m[1]-m[3]*0.65);x.closePath();x.fill()}
  x.restore();return MJ[k]=c}
-const MJON=()=>LS.fgfLookMJR==='1'&&LS.fgfMJROn==='1'&&LS.fgfGoldLook!=='1';
+const MJON=()=>!(typeof mode!=='undefined'&&mode==='story')&&LS.fgfLookMJR==='1'&&LS.fgfMJROn==='1'&&LS.fgfGoldLook!=='1';
 {const ok=S5.kimg;S5.kimg=function(ti,p2){const s=ok(ti,p2);if(p2||!MJON()||(MK.on&&MK.masc>=0)||s._masc||(typeof KS!=='undefined'&&s===KS))return s;return mjr(s,MK.on?MK.base:ti)}}
 if(typeof frontImg==='function'){const of=frontImg,FMJ={};frontImg=function(ti){const f=of.apply(this,arguments);if(!f||!MJON()||MK.masc>=0)return f;const k=JSON.stringify(MK)+ti;if(FMJ.k===k&&FMJ.src===f)return FMJ.c;const c=document.createElement('canvas');c.width=f.width;c.height=f.height;const x=c.getContext('2d');x.drawImage(f,0,0);const m=BMETA.m[MK.bt]||BMETA.m[0],w=c.width,top=m.fy1+4,cx=m.fx-(MK.bt*BMETA.cw)+0;
  const t0=Math.max(0,m.fy1-34),hh=Math.min(c.height-t0,160);try{const d=x.getImageData(0,t0,w,hh),p=d.data;for(let q=0;q<p.length;q+=4){if(p[q+3]<8)continue;const r=p[q],g2=p[q+1],b=p[q+2],mx=Math.max(r,g2,b),mn=Math.min(r,g2,b);
