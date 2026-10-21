@@ -10,7 +10,7 @@ Music cues reuse S1's 7 moods (home, tense, sad, triumph, hopeful, rival, myster
 The mill is dead and the house is at risk. The kicker sweeps Mabel's Diner at 5 a.m., gets voted captain, and gets a nickname drawn from their S1 ritual. Homecoming has a cardboard milk-jug float. A Coastal Tech recruiter starts showing up. Gus Hollander turns up at Pop's kitchen table, and Pop clearly knows him. The team beats or loses to Ridgeline again, then plays the Prairie Creek Plowmen for the regional title in the fog. Whatever the result, the team rallies to save the house. The cliffhanger is Signing Day: Coastal Tech gives its one spot to Dez. That night Pop pulls out an unopened envelope and points the kicker to the Hometown State walk-on tryout.
 
 ## S1 flags read in S2
-- `why` appears on the garage wall (s2c3). `rit` sets the nickname (s2c6) and Pop's line in s2c3. `wes` decides between Wes as snapper and a second chance (s2c5). `tip` and `gus` set Coach D's whiteboard line and Gus's signature line (s2c9, s2c10). `went40` unlocks the 44 in week 2 and the recruiter line. `dez` sets Dez's week 4 opener. `w2` (the Fog Game result) sets Pop's Plowmen line (s2c12). `cap` and `jug` feed the Homecoming float. Meters carry over.
+- `why` appears on the garage wall (s2c3). `rit` sets the nickname (s2c6) and Pop's line in s2c3. `wes` decides between Wes as snapper and a second chance (s2c5). `tip` and `gus` set Coach D's whiteboard line and Gus's signature line (s2c9, s2c10). `went40` unlocks the 38 in week 2 and the recruiter line. `dez` sets Dez's week 4 opener. `w2` (the Fog Game result) sets Pop's Plowmen line (s2c12). `cap` and `jug` feed the Homecoming float. Meters carry over.
 
 ## New S2 flags
 work, line2, cocap, wesHurt, nick, recruit, passBall, toldD, askPop2, gusDrill, dez2, fogPrac, blind, cap2, promise, and w0–w4. Each one has a payoff listed beside it.
@@ -178,7 +178,7 @@ Avoid: text, letters, numbers, signs, logos, watermarks, real team names, jersey
 
 **Beats**
 - Homecoming vs the Cedar Bluff Bobcats. The float is a cardboard milk jug. Jojo made it.
-- Kicks: 31, 38, 44. Need 2 of 3. The 44 only appears if you went for the 40 in S1 (went40).
+- Kicks: 31, 35, 38. Need 2 of 3. The 38 only appears if you went for the 40 in S1 (went40); otherwise 33. (HS cap: pw 0.45, every kick ≤38.)
 
 **IMAGE prompt**
 ```
@@ -191,7 +191,7 @@ Avoid: text, letters, numbers, signs, logos, watermarks, real team names, jersey
 **Mood:** `mystery`
 
 **Beats**
-- A man in a plain navy polo with a clipboard sits alone in the top row of the bleachers. Coastal Tech. He's here for you. Or for the 44.
+- A man in a plain navy polo with a clipboard sits alone in the top row of the bleachers. Coastal Tech. He's here for you. Or for the 38.
 - Coach D, quietly: "He's also been to Ridgeline twice."
 - {if went40} "He liked the 40 from last year. Saw it on someone's dad's tape."
 
@@ -229,7 +229,7 @@ Avoid: text, letters, numbers, signs, logos, watermarks, real team names, jersey
 **Mood:** `tense`
 
 **Beats**
-- Week 3 at the Ironwood Foxes. Lumpy field, loud crowd, again. Kicks: 26, 37, 41. Need 2 of 3.
+- Week 3 at the Ironwood Foxes. Lumpy field, loud crowd, again. Kicks: 26, 33, 37. Need 2 of 3.
 - {if work} You came straight from Saturday at the diner to the bus. You smell like bacon. Tank says it's motivating.
 
 **IMAGE prompt**
@@ -299,7 +299,7 @@ Avoid: text, letters, numbers, signs, logos, watermarks, real team names, jersey
 **Beats**
 - Week 4 vs the Ridgeline Rattlers. Last year's rivalry game. Dez Calloway's last high school game against you.
 - {dez=fire} Dez: "Hope your grandpa's ball still has air in it."  {dez=nice} Dez nods at you across midfield.  {dez=quiet} Dez points at the scoreboard first this time.
-- Kicks: 33, 39, 45. Need 2 of 3.
+- Kicks: 30, 35, 38. Need 2 of 3.
 
 **IMAGE prompt**
 ```
@@ -352,7 +352,7 @@ Avoid: text, letters, numbers, signs, logos, watermarks, real team names, jersey
 
 **Beats**
 - Regional final vs the Prairie Creek Plowmen. Fog rolls in at halftime. Of course it does.
-- Kicks: 30, 36, fog 42. Last kick decides it. OT on a miss. Three Breaths available. {if passBall} The whole team taps the tape first.
+- Kicks: 30, 34, fog 38. Last kick decides it. OT on a miss. Three Breaths available. {if passBall} The whole team taps the tape first.
 
 **IMAGE prompt**
 ```
@@ -477,7 +477,7 @@ Avoid: text, letters, numbers, signs, logos, watermarks, real team names, jersey
 **Mood:** `mystery`
 
 **Beats**
-- End screen: 'Captain of the Hawks · complete'. Unlock: 'Captain's Patch' look (red patch on a gray hoodie).
+- End screen: 'Captain of the Hawks · complete'. Unlock: 'Captain's Patch' shown in the comic only (never on the gameplay kicker or nameplate).
 
 **IMAGE prompt**
 ```
