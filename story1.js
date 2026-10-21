@@ -11,7 +11,7 @@ const addC=n=>{coins+=n;if(!window.TESTER)LS.fgfCoins=coins};
 const N=t=>t.replace(/\{n\}/g,S.name||'Kid').replace(/\{nick\}/g,S.nick||S.name||'Kid');
 // ---------------- SEASON 1 CONTENT ----------------
 const BG={dark:'#000',dawn:'linear-gradient(#1b2338,#4a3b52 60%,#a8705a)',yard:'linear-gradient(#2a3b5a,#5b6f7a 55%,#2f4a2a)',garage:'linear-gradient(#2a1d14,#4a3424 60%,#1d140e)',field:'linear-gradient(#0b1a33,#12305a 50%,#1d6a34)',night:'linear-gradient(#050a18,#0f1f3d 55%,#155a2c)',hosp:'linear-gradient(#0f2a2e,#1c4a4f 60%,#0c1c1f)',fog:'linear-gradient(#6b7378,#9aa3a8 55%,#3d5a40)',kitchen:'linear-gradient(#2b2117,#4d3b26 60%,#1a130c)',porch:'linear-gradient(#0d1426,#24304d 60%,#3a2d1f)'};
-const IMG=id=>'story/'+id+'.webp'+({c2:'?v=2',c4:'?v=2',c6:'?v=2',jq:'?v=2',jugwin:'?v=1'}[id]||''),PIC={tx1:'tx1',tx2:'tx2',c1:'c1',c2:'c2',jq:'jq',c3:'c3',c4:'c4',c5:'c5',c6:'c6',c7:'c7',c8:'c8',c9:'c9',c10:'c10',c11:'c11',c12:'c12',c13:'c13',c14w:'c14w',c14l:'c14l',c15:'c15',c16:'c16'};
+const IMG=id=>'story/'+id+'.webp'+({c2:'?v=2',c4:'?v=2',c6:'?v=3',jq:'?v=2',jugwin:'?v=1'}[id]||''),PIC={tx1:'tx1',tx2:'tx2',c1:'c1',c2:'c2',jq:'jq',c3:'c3',c4:'c4',c5:'c5',c6:'c6',c7:'c7',c8:'c8',c9:'c9',c10:'c10',c11:'c11',c12:'c12',c13:'c13',c14w:'c14w',c14l:'c14l',c15:'c15',c16:'c16'};
 // panels that exist on disk; add an id here when its art lands (see story/ART-REDO.md). Avoids 404s.
 const ART=new Set(['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10','c11','c12','c13','c14w','c14l','c15','c16','field','end','jq','wk1','wk2','wk3','wk4','wk5','tx1','tx2','jugwin']);
 const pic=(id,cls)=>!ART.has(id)?'':'<div class="pic '+(cls||'')+'"><img src="'+IMG(id)+'" alt="" onerror="this.remove()"></div>';
