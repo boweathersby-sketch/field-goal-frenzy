@@ -255,7 +255,7 @@ if(typeof pauseMenu==='function'){const oPM=pauseMenu;pauseMenu=function(){const
 // S1–S2 high school, S3–S6 college, S7+ pro. Every kick stays makeable:
 // max power is floored so it always clears the bar at the kick's distance with margin.
 const TIERS={
- hs:     {name:'High school',pw:0.80,aim:1.30,curve:1.30,windMax:10},
+ hs:     {name:'High school',pw:0.65,aim:1.30,curve:1.30,windMax:10},
  college:{name:'College',    pw:0.90,aim:1.15,curve:1.15,windMax:16},
  pro:    {name:'Pro',        pw:1.00,aim:1.00,curve:1.00,windMax:null}};
 const SEASON=1,tierOf=n=>n<=2?'hs':n<=6?'college':'pro',TIER=()=>TIERS[tierOf(SEASON)];
