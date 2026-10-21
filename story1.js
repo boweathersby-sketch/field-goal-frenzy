@@ -8,7 +8,8 @@ const T_=t=>window.FGF_TR?FGF_TR(t):t,DAY=()=>{const d=new Date();return d.getFu
 const FREE_WEEKS=2,TEXT_GIFT=25,S0={v:1,name:'',nick:'',pr:'they',node:'',fan:0,coach:0,fam:0,fl:{},wk:0,day:'',wd:0,ad:0,td:'',log:[],done:0};
 let S=Object.assign({},S0,J('fgfStory',{}));const save=()=>SV('fgfStory',S);
 const addC=n=>{coins+=n;if(!window.TESTER)LS.fgfCoins=coins};
-const N=t=>t.replace(/\{n\}/g,S.name||'Kid').replace(/\{nick\}/g,S.nick||S.name||'Kid').replace(/\{why\}/g,(S.fl&&S.fl.why)||'For Rae. Every Friday.');
+const RNICK={tap:'Two-Tap',sock:'Socks',seat:'Seat Check',line:'Whisper'},NK=()=>(typeof SEA!=='undefined'&&SEA===2&&S.fl&&RNICK[S.fl.rit])||S.nick||S.name||'Kid';
+const N=t=>t.replace(/\{n\}/g,S.name||'Kid').replace(/\{nick\}/g,NK()).replace(/\{tip\}/g,(S.fl&&S.fl.tip)||'You don\'t. You just kick the next one.').replace(/\{why\}/g,(S.fl&&S.fl.why)||'For Rae. Every Friday.');
 // ---------------- SEASON 1 CONTENT ----------------
 const BG={dark:'#000',dawn:'linear-gradient(#1b2338,#4a3b52 60%,#a8705a)',yard:'linear-gradient(#2a3b5a,#5b6f7a 55%,#2f4a2a)',garage:'linear-gradient(#2a1d14,#4a3424 60%,#1d140e)',field:'linear-gradient(#0b1a33,#12305a 50%,#1d6a34)',night:'linear-gradient(#050a18,#0f1f3d 55%,#155a2c)',hosp:'linear-gradient(#0f2a2e,#1c4a4f 60%,#0c1c1f)',fog:'linear-gradient(#6b7378,#9aa3a8 55%,#3d5a40)',kitchen:'linear-gradient(#2b2117,#4d3b26 60%,#1a130c)',porch:'linear-gradient(#0d1426,#24304d 60%,#3a2d1f)'};
 const IMG=id=>'story/'+id+'.webp'+({c2:'?v=2',c4:'?v=2',c6:'?v=3',jq:'?v=3',jugwin:'?v=1'}[id]||''),PIC={tx1:'tx1',tx2:'tx2',c1:'c1',c2:'c2',jq:'jq',c3:'c3',c4:'c4',c5:'c5',c6:'c6',c7:'c7',c8:'c8',c9:'c9',c10:'c10',c11:'c11',c12:'c12',c13:'c13',c14w:'c14w',c14l:'c14l',c15:'c15',c16:'c16'};
@@ -67,7 +68,7 @@ const SC={
  end:{end:1}
 };
 // game weeks: opp, intro, kicks [dist, situation, weather], need = makes to win; last kick of rivalry branches (OT 31 on miss)
-const WK=[
+const WK1=[
  {n:'Week 1 · Friday Night',opp:'Mill Valley Millers',home:1,intro:'First varsity game. The whole town in the bleachers, and the marching band is slightly out of tune.',k:[[20,'Extra point after the opening TD. "Welcome to the Hawks."'],[28,'2nd quarter · 0:09 · tied 7-7'],[33,'4th quarter · up 4 · make it a two-score game']],need:2,win:'Hawks win 20-13!',loss:'Millers win 17-14.',go:'c7'},
  {n:'Week 2 · Friday Night',opp:'Cedar Bluff Bobcats',home:1,intro:'Coach D\'s goal for you: three field goals from 30+ tonight.',k:[[25,'1st quarter · stalled drive'],[32,'2nd quarter · 0:03 · halftime kick'],[36,'3rd quarter · into the wind'],[30,'4th quarter · 1:10 · up 1']],need:3,win:'Hawks win 26-21!',loss:'Bobcats win 24-19.',go:'c9'},
  {n:'Week 3 · The Fog Game',opp:'Prairie Creek Plowmen',home:0,wx:'fog',intro:'Make 2 field goals by feel. You won\'t see the uprights until the ball is in the air.',k:[[27,'1st quarter · you can\'t see the posts'],[31,'3rd quarter · fog getting thicker'],[34,'4th quarter · 0:40 · down 1']],need:2,win:'Hawks win 9-7 in the fog!',loss:'Plowmen win 7-6.',go:'c11'},
@@ -75,6 +76,63 @@ const WK=[
  {n:'Week 5 · RIVALRY NIGHT',opp:'Ridgeline High Rattlers',home:1,riv:1,intro:'Eleven straight losses to Ridgeline. Rae is coming at halftime, straight off a double shift.',k:[[24,'2nd quarter · Dez just made a 45'],[35,'3rd quarter · down 21-17'],[38,'4th quarter · 0:04 left · down 2 · THIS IS IT']],need:0,go:'c14w'}
 ];
 const TXT=[['Pop','Old Faithful says hi. Here\'s a little something for gas money.'],['Rae','Packed you a lunch. And a few coins. Don\'t tell Jojo.'],['Jojo','I found coins in the couch!! they are yours if you win friday'],['Coach D','Kickers who show up get paid in respect. And this.'],['Wes','found these under the bleachers lol 🪙'],['Mabel (Diner)','Free pie Friday if you make the long one. Coins on the house today.']];
+// ---------------- SEASON 2 CONTENT · "Captain of the Hawks" (script: story/S2-SCRIPT.md) ----------------
+// S1 flags carried in: why rit wes tip gus went40 dez cap jug, s1w2 (Fog Game result), s1w4 (rivalry result). Meters carry over.
+const RIT2={tap:'"Two taps on the tape. Every single time. I noticed."',sock:'"Left sock. Every kick. Your grandma did that with her apron strings."',seat:'"You always look up at your mom\'s seat first. Good. Keep doing that."',line:'"I see your lips move before every kick. Don\'t tell me what you say."'};
+Object.assign(SC,{
+ s2c1:{bg:'dark',who:'',t:['Last December. The paper mill\'s whistle blows one last time at noon. Then the chimneys just... stop.','Pop stands at the chain-link gate with forty years of lunch pails behind him. Rae holds his arm. Nobody says anything.','SEASON 2 · CAPTAIN OF THE HAWKS','Eight months later.'],go:'s2c2'},
+ s2c2:{bg:'dawn',who:'Mabel',t:['August. You sweep the floor of Mabel\'s Diner at 5 a.m. Rae\'s custodian check and her diner weekends don\'t cover the house anymore.','Mabel slides a plate of eggs down the counter. "Eat. You can\'t kick on an empty tank."','Rae, finishing her own shift in the back booth, watches over her coffee and pretends she isn\'t.'],
+  ch:[{t:'Take the extra Saturday shift Mabel offers.',fx:{fam:5,coach:-2},fl:{work:1},say:'Mabel nods once. "Saturdays, six to two. Bring your appetite."'},{t:'Say no. Saturdays are for the leg.',fx:{coach:3},fl:{work:0},say:'Mabel shrugs. "Then you better kick like it."'}],go:'s2c3'},
+ s2c3:{bg:'garage',who:'Pop',t:['Pop\'s garage. The single bulb. Your line from last year is still on the wall: "{why}"','Pop picks Old Faithful up off the workbench and tosses it to you. "Senior year. It\'s yours now. Don\'t let it sit on a bench."',{if:'rit=tap',t:RIT2.tap+' He almost smiles.'},{if:'rit=sock',t:RIT2.sock+' He almost smiles.'},{if:'rit=seat',t:RIT2.seat+' He almost smiles.'},{if:'rit=line',t:RIT2.line+' He almost smiles.'}],
+  ch:[{t:'Write a second line under the first.',fl:{line2:1},say:'The pencil is short and dull. You write it anyway.'},{t:'Leave the wall alone. One line is enough.',fx:{fam:2},say:'Pop doesn\'t say anything. He just turns off the bulb.'}],go:'s2c4'},
+ s2c4:{bg:'field',who:'Coach D',t:['First practice. Coach D lines the team up on the goal line. "Captain vote. Secret ballot. Kicker\'s never been captain here. Doesn\'t mean it can\'t happen."','Tank is the favorite. Everybody knows it, including Tank.','Coach D reads the slips in the equipment shed, alone. He comes out and hands you a plain red patch.'],
+  ch:[{t:'"Tank should have it." Offer to share.',fx:{fan:3},fl:{cocap:1},say:'Tank grins. "Co-captains. I go loud, you go short."'},{t:'Take the patch. Nod once.',fx:{coach:5},fl:{cocap:0},say:'Coach D nods back. That\'s the whole ceremony.'}],go:'s2c5'},
+ s2c5:{bg:'field',who:'Wes',t:[{if:'wes',t:'A year of garage-door snaps paid off. Wes is on varsity now, your snapper and holder. He\'s grown two inches and still won\'t look anyone in the eye.'},{if:'!wes',t:'Wes Tilly is still on the end of the bench. Coach D needs a snapper and a holder, and nobody wants it.'},'Wes: "I can do it. Probably. If you don\'t yell."'],
+  ch:[{t:'"I never yell." Practice with him every night.',fx:{fam:2},fl:{wes:1},say:'By Friday he can set it down laces-out without looking.'},{t:'Ask Coach for a senior instead.',fx:{coach:2},fl:{wesHurt:1},say:'Coach D says there isn\'t one. Wes heard you ask anyway.'}],go:'s2w0'},
+ s2w0:{week:0},
+ s2c6:{bg:'porch',who:'Jojo',t:['After the game, Jojo interviews you with the hairbrush mic on the porch steps. Puppy, a year bigger and twice as fluffy, sits on your cleats again.','Jojo: "The guys are calling you \'{nick}\'. Comment?"','Puppy yawns. Jojo calls it a no comment.'],
+  ch:[{t:'Own it: "Write it down."',fx:{fan:5},fl:{nick:1},say:'Jojo writes it in the scrapbook in giant letters.'},{t:'"Just use my name."',fx:{fam:3},fl:{nick:0},say:'"Fine," Jojo says. "But it\'s going in the scrapbook."'}],go:'s2tx1'},
+ s2tx1:{texts:[['Rae','Mabel says you swept like a pro. Also the eggs are free now? Don\'t ask her why.'],['Coach D','Film at 7. Captains come at 6:45.'],['Wes','snapped 200 into the garage door. your mom yelled at me. worth it.',{if:'wes'}],['Wes','good luck friday.',{if:'!wes'}]],go:'s2w1'},
+ s2w1:{week:1},
+ s2c7:{bg:'night',who:'Coach D',t:['A man in a plain navy polo with a clipboard sits alone in the top row of the bleachers. Coastal Tech. He\'s here for you. Or for the 38.','Coach D, quietly: "He\'s also been to Ridgeline twice."',{if:'went40',t:'"He liked the 40 from last year. Saw it on someone\'s dad\'s tape."'}],
+  ch:[{t:'Go talk to him after the game.',fx:{fan:2},fl:{recruit:'talk'},say:'He shakes your hand and writes something down. You can\'t see what.'},{t:'Let your kicks talk.',fx:{coach:3},fl:{recruit:'wait'},say:'You walk past the bleachers. He doesn\'t look up.'}],go:'s2c8'},
+ s2c8:{bg:'night',who:'Coach D',t:['Week 3 is on the road. The bus is quiet. Coach D looks at you: "Captain."',{if:'cocap',t:'Tank stands up with you. "We both talk. I\'ll go loud, you go short."'},'You don\'t speak. You hold up Old Faithful. The tape catches the bus light.'],
+  ch:[{t:'Pass Old Faithful down the aisle.',fx:{fan:5},fl:{passBall:1},say:'Every hand on the bus touches the tape. It comes back warm.'},{t:'Put it back in your bag. Nod.',fx:{coach:2},say:'Coach D nods back. The bus rolls on.'}],go:'s2w2'},
+ s2w2:{week:2},
+ s2c9:{bg:'night',who:'Coach D',t:['Film room. Coach D freezes the tape on your plant foot.',{if:'work',t:'"You were late. Again. I know why. I\'m not mad. I\'m worried."'},{if:'!work',t:'"Extra film every Saturday. Look at that hip. That\'s a college hip."'},{if:'tip',t:'He asks what Gus Hollander told you last summer. You tell him: "{tip}" He writes it on the whiteboard.'}],
+  ch:[{t:'Tell him the truth about the house.',fx:{coach:3},fl:{toldD:1},say:'He listens to the whole thing. Then he says, "Okay. Leave it with me."'},{t:'"Everything\'s fine, Coach."',fl:{toldD:0},say:'He looks at you a long second. "Okay."'}],go:'s2c10'},
+ s2c10:{bg:'kitchen',who:'Gus',t:['A gray truck in the driveway. Gus Hollander, Harbor City\'s kicker, at your kitchen table with Pop, drinking bad coffee.','"I told you I knew a kicker from Hollow Creek." He looks at Pop. Pop looks at the coffee.',{if:'gus',t:'He sees his own signature on Old Faithful. "Still using it. Good."'}],
+  ch:[{t:'Ask Pop straight out: "You knew him?"',fx:{fam:3},fl:{askPop2:1},say:'Pop: "Letters. That\'s all. Not tonight."'},{t:'Ask Gus to watch you kick.',fx:{coach:3},fl:{gusDrill:1},say:'In the backyard, Gus watches three kicks. "Plant long. Let the hip do the work."'}],go:'s2tx2'},
+ s2tx2:{texts:[['Jojo','PUPPY ATE THE HOMECOMING CROWN. it was cardboard. she\'s fine.'],['Tank','coach says we got Ridgeline then Plowmen. if we beat both we\'re in the regional.'],['Rae','Picked up a Saturday at Mabel\'s. Don\'t argue.',{if:'!work'}]],go:'s2w3'},
+ s2w3:{week:3},
+ s2c11:{bg:'night',who:'Dez',t:['After the game, Dez finds you at the fence. No smirk.','"Coastal Tech\'s got one spot. You know that, right? One."','His dad is filming from the parking lot.'],
+  ch:[{t:'"Then may the best kick win." Shake his hand.',fx:{fan:3},fl:{dez2:'respect'}},{t:'"I know. I\'m taking it."',fx:{coach:3},fl:{dez2:'war'}},{t:'Walk away.',fl:{dez2:'cold'},say:'The camera follows you all the way to the bus.'}],go:'s2c12'},
+ s2c12:{bg:'fog',who:'Pop',t:['Regional final: the Prairie Creek Plowmen. The fog team.',{if:'s1w2',t:'"They remember you," Pop says. "They hate fog now."'},{if:'!s1w2',t:'"They think you\'re scared of fog," Pop says. "Are you?"'},'Pop teaches no new trick. "Three Breaths. Same as last year. Same as always."'],
+  ch:[{t:'Practice in the morning fog by the river.',fl:{fogPrac:1},say:'By the third morning you can feel the posts before you see them.'},{t:'Practice with your eyes closed in the garage.',fl:{blind:1},say:'One. Two. Three. Swing. Pop counts every one.'}],go:'s2w4'},
+ s2w4:{week:4},
+ s2c13w:{bg:'fog',who:'Rae',t:['It goes through the fog. You only know because the Hollow Creek side roars.',{if:'cocap',t:'Tank lifts you onto his shoulders.'},{if:'!cocap',t:'The team pours over the fence.'},'Rae is at the fence in her scrubs, laughing and crying. "I didn\'t need to see it."'],go:'s2c14'},
+ s2c13l:{bg:'fog',who:'Coach D',t:['It drifts. You hear it before you see it: nothing. No roar.','Coach D walks you off, hand on your helmet. "Senior year doesn\'t end on a kick. It ends at a table. Remember that."','Pop is in the empty bleachers, alone, nodding like you did it right anyway.'],go:'s2c14'},
+ s2c14:{bg:'kitchen',who:'Jojo',t:['Jojo pastes the season into the scrapbook: the cardboard jug float, the patch, a blurry fog photo.','Puppy sleeps on page one. Jojo hands you the pen for the caption under the last photo.'],
+  ch:[{t:'"Captain."',fx:{fan:3},fl:{cap2:'Captain.'}},{t:'"Every Friday costs something. Still worth it."',fx:{fam:5},fl:{cap2:'Still worth it.'}},{t:'"See you in the fog."',fx:{coach:3},fl:{cap2:'See you in the fog.'}}],go:'s2c15'},
+ s2c15:{bg:'kitchen',who:'Rae',t:[{if:'toldD',t:'Saturday. Half the Hawks show up at Mabel\'s with Coach D and a sign-up sheet. They\'re doing dishes for free. Mabel cries into the pancake batter.'},{if:'!toldD',t:'Rae finds out from Mabel. She doesn\'t yell. That\'s worse.'},'Rae, at the kitchen table: "We\'re keeping the house."',{if:'work',t:'"And you\'re quitting Saturdays. That\'s not a request."'}],
+  ch:[{t:'Hug her.',fx:{fam:5}},{t:'Promise you\'ll get the scholarship.',fx:{fan:2},fl:{promise:1},say:'Rae holds your face in both hands. She doesn\'t say anything.'}],go:'s2c16'},
+ s2c16:{bg:'night',who:'Coach D',t:['February. Signing Day. The gym has a folding table with a red tablecloth and an empty chair for you.','Coach D\'s phone buzzes. He reads it twice. "Coastal Tech gave the spot to Dez Calloway."',{if:'recruit=talk',t:'"He said he remembered you. Said it was close."'},{if:'recruit=wait',t:'"He admitted he never saw you up close." Coach D puts the phone away. "His loss."'},{if:'dez2=respect',t:'Your phone buzzes too. Dez: "I\'m sorry. I mean it."'},{if:'promise',t:'You think about the promise you made Rae at the kitchen table.'}],go:'s2c17'},
+ s2c17:{bg:'garage',who:'Pop',t:['That night, Pop\'s garage. Old Faithful back on the workbench for the first time in a year. Your hoodie hangs by the door, the Captain\'s Patch sewn on crooked.',{if:'line2',t:'Your second line is under the first.'},{if:'!line2',t:'Pop: "Good. One line. Means you meant it."'},'Pop: "Coastal Tech. Huh." He takes a yellowed envelope from a coffee can and doesn\'t open it. "Walk-on tryouts at Hometown State are in August. Somebody I know is watching."','🎖️ Captain\'s Patch earned.','To be continued in Season 3: "Walk-On".'],go:'s2end'},
+ s2end:{end:2}
+});
+Object.assign(MOOD,{s2c1:'sad',s2c2:'home',s2c3:'home',s2c4:'tense',s2c5:'hopeful',s2c6:'hopeful',s2tx1:'home',s2c7:'mystery',s2c8:'hopeful',s2c9:'home',s2c10:'mystery',s2tx2:'home',s2c11:'rival',s2c12:'tense',s2c13w:'triumph',s2c13l:'sad',s2c14:'home',s2c15:'sad',s2c16:'sad',s2c17:'mystery',s2end:'mystery',s2w0:'tense',s2w1:'tense',s2w2:'tense',s2w3:'rival',s2w4:'rival'});
+['s2c1','s2c2','s2c3','s2c4','s2c5','s2c6','s2tx1','s2c7','s2c8','s2c9','s2c10','s2tx2','s2c11','s2c12','s2c13w','s2c13l','s2c14','s2c15','s2c16','s2c17'].forEach(k=>PIC[k]=k);
+// S2 panels on disk today (add an id when its approved art lands)
+['s2c2','s2c3','s2c4','s2c5','s2c6','s2c7','s2c8','s2c9','s2c10','s2c11','s2c12','s2c13w','s2c15','s2wk1','s2wk4','s2end'].forEach(k=>ART.add(k));
+// HS kicks: every one 38 yds or less (pw 0.45 tier floors power so each stays makeable)
+const WK2=[
+ {n:'Week 1 · Friday Night',opp:'Mill Valley Millers',home:1,intro:'Half of the Millers\' dads worked at the same mill. Nobody in either bleacher is cheering very loud.',k:[[28,'1st quarter · first kick as captain'],[34,'2nd quarter · 0:06 · tied 10-10'],[22,'4th quarter · extra point after the go-ahead TD']],need:2,win:'Hawks win 17-13!',loss:'Millers win 16-13.',go:'s2c6'},
+ {n:'Week 2 · Homecoming',opp:'Cedar Bluff Bobcats',home:1,intro:'Homecoming. The float is a cardboard milk jug. Jojo made it.',k:[[31,'1st quarter · the band is finally in tune'],[35,'3rd quarter · into the wind'],[38,'4th quarter · 0:31 · the long one, like the 40 last year',0,'went40'],[33,'4th quarter · 0:31 · down 1',0,'!went40']],need:2,win:'Hawks win Homecoming 23-20!',loss:'Bobcats win 21-19.',go:'s2c7'},
+ {n:'Week 3 · Friday Night (Road)',opp:'Ironwood Foxes',home:0,intro:['Lumpy field, loud crowd, again.',{if:'work',t:'You came straight from Saturday at the diner to the bus. You smell like bacon. Tank says it\'s motivating.'}],k:[[26,'1st quarter · Foxes student section chanting'],[33,'2nd quarter · 0:02 · halftime kick'],[37,'4th quarter · 0:40 · tied 14-14']],need:2,win:'Hawks win 17-14 on the road!',loss:'Foxes win 21-17.',go:'s2c9'},
+ {n:'Week 4 · Ridgeline, Again',opp:'Ridgeline High Rattlers',home:1,intro:['Dez Calloway\'s last high school game against you.',{if:'dez=fire',t:'Dez: "Hope your grandpa\'s ball still has air in it."'},{if:'dez=nice',t:'Dez nods at you across midfield.'},{if:'dez=quiet',t:'Dez points at the scoreboard first this time.'}],k:[[30,'1st quarter · Dez just made a 42'],[35,'3rd quarter · down 3'],[38,'4th quarter · 0:09 · tied 20-20']],need:2,win:'Hawks beat Ridgeline 23-20!',loss:'Ridgeline wins 27-20.',go:'s2c11'},
+ {n:'Week 5 · Regional Final',opp:'Prairie Creek Plowmen',home:0,wx:'fog',riv:1,intro:'Regional final. Fog rolls in at halftime. Of course it does.',k:[[30,'2nd quarter · the fog is coming'],[34,'3rd quarter · you can\'t see the posts'],[38,'4th quarter · 0:03 · down 2 · THIS IS IT']],need:0,gw:'s2c13w',gl:'s2c13l',otTxt:'The Plowmen miss too, and it\'s OVERTIME. Coach D grabs your face mask: "Shorter one. Same swing."',rwin:'HAWKS WIN THE REGIONAL 16-14!',rwinOT:'HAWKS WIN THE REGIONAL IN OVERTIME!',rloss:'The Plowmen win the regional in overtime.'}
+];
+let SEA=1,WK=WK1;const seaOf=id=>/^s2/.test(id||'')?2:1;function setSea(n){SEA=n===2?2:1;WK=SEA===2?WK2:WK1}
 // ---------------- UI ----------------
 const css=document.createElement('style');css.textContent=`#fgfst{position:fixed;inset:0;z-index:9000;display:flex;flex-direction:column;color:#fff;font-family:system-ui;overflow:auto;-webkit-tap-highlight-color:transparent}
 #fgfst .top{display:flex;justify-content:space-between;align-items:center;padding:12px 14px 4px;font:900 12px system-ui;letter-spacing:.06em}
@@ -119,7 +177,7 @@ const css=document.createElement('style');css.textContent=`#fgfst{position:fixed
 @media (max-height:700px){#fgfst .pic{height:min(42vh,calc((100vw - 24px)*16/9))}#fgfst .card p{font-size:15px}#fgfst button{min-height:44px;padding:10px 12px}}#fgfst>.top+:not(.pic){margin-top:0}#fgfst>h1:first-of-type{margin-top:auto}#fgfst .card{margin-top:auto}#fgfst>h1~.card,#fgfst>h2~.card{margin-top:14px}#fgfst.txt>h2{margin-top:16px}`;document.head.appendChild(css);
 let el=null;
 function shell(bg){if(!el){el=document.createElement('div');el.id='fgfst';el.className='fgfov';document.body.appendChild(el)}el.style.background=BG[bg]||bg||BG.night;el.style.setProperty('--bgc',BGC[bg]||(bg&&bg[0]==='#'?bg:'#050a18'));el.classList.remove('txt');el.style.paddingTop='0';el.innerHTML='';
- const top=document.createElement('div');top.className='top';top.innerHTML='<span><button class="mn" aria-label="Menu">✕</button> 📖 <b>S1</b> · HAWKS</span><span><span class="chip">📣 '+S.fan+'</span><span class="chip">📋 '+S.coach+'</span><span class="chip">🪙 '+CSTR()+'</span></span>';el.appendChild(top);top.querySelector('.mn').onclick=()=>{try{sfxClick()}catch(e){}K=null;close();state='title'};return el}
+ const top=document.createElement('div');top.className='top';top.innerHTML='<span><button class="mn" aria-label="Menu">✕</button> 📖 <b>S'+SEA+'</b> · HAWKS</span><span><span class="chip">📣 '+S.fan+'</span><span class="chip">📋 '+S.coach+'</span><span class="chip">🪙 '+CSTR()+'</span></span>';el.appendChild(top);top.querySelector('.mn').onclick=()=>{try{sfxClick()}catch(e){}K=null;close();state='title'};return el}
 function close(){if(el){el.remove();el=null}mood(null)}
 function card(h){const c=document.createElement('div');c.className='card fade';c.innerHTML=h||'';el.appendChild(c);return c}
 function btn(c,t,f,cls){const b=document.createElement('button');b.textContent=T_(t);if(cls)b.className=cls;b.onclick=()=>{try{sfxClick()}catch(e){}f()};c.appendChild(b);return b}
@@ -129,20 +187,26 @@ const LN=a=>a.filter(x=>typeof x==='string'||OK(x.if)).map(x=>typeof x==='string
 function fx(o){if(!o)return;for(const k in o)S[k]=(S[k]||0)+o[k]}
 function logIt(t){S.log.push(N(t));if(S.log.length>6)S.log.shift()}
 // ---------- screens ----------
-function home(){mood('home');const e=shell('night');e.insertAdjacentHTML('beforeend',pic('field')+'<h1>CAREER STORY</h1><h2>Season 1 · "Milk Jugs and Night Shifts"<br>Hollow Creek High Hawks · Friday Nights</h2>');
+function home(){setSea(S.season===2?2:1);mood('home');const e=shell('night');const s2=SEA===2;e.insertAdjacentHTML('beforeend',pic(s2&&ART.has('s2field')?'s2field':'field')+'<h1>CAREER STORY</h1><h2>'+(s2?'Season 2 · "Captain of the Hawks"':'Season 1 · "Milk Jugs and Night Shifts"')+'<br>Hollow Creek High Hawks · Friday Nights</h2>');
  const c=card();if(!S.name){c.innerHTML=P('A kid from a tired little mill town, a duct-taped milk jug, and a grandpa\'s beat-up lucky football. Sixteen seasons start with one Friday night.');btn(c,'▶ START YOUR STORY',create,'go')}
- else if(S.done){c.innerHTML=P('Season 1 complete. Season 2 "Captain of the Hawks" is coming soon.')+P('Your caption: "'+(S.fl.cap||'')+'"');btn(c,'↺ Replay Season 1 (keeps your kicker)',()=>{const n=S.name,k=S.nick,p=S.pr;S=Object.assign({},S0,{name:n,nick:k,pr:p,fl:{},log:[]});save();go('c1')})}
+ else if(s2&&S.done2){c.innerHTML=P('Season 2 complete. Season 3 is coming soon.')+(S.fl.cap2?P('Your scrapbook caption: "'+S.fl.cap2+'"'):'')}
+ else if(s2){c.innerHTML=P(S.node&&S.node!=='s2c1'?'Your story is waiting, '+S.name+'.':'Senior year, '+S.name+'.');btn(c,'▶ CONTINUE',()=>go(seaOf(S.node)===2?S.node:'s2c1'),'go')}
+ else if(S.done){c.innerHTML=P('Season 1 complete. Season 2 is unlocked.')+P('Your caption: "'+(S.fl.cap||'')+'"');btn(c,'▶ START SEASON 2',startS2,'go');btn(c,'↺ Replay Season 1 (keeps your kicker)',()=>{const n=S.name,k=S.nick,p=S.pr;S=Object.assign({},S0,{name:n,nick:k,pr:p,rw1:S.rw1,jugPaid:S.jugPaid,fl:{},log:[]});save();go('c1')})}
  else{c.innerHTML=P(S.node?'Your story is waiting, '+S.name+'.':'Ready, '+S.name+'?');btn(c,'▶ CONTINUE',()=>go(S.node||'c1'),'go')}
- if(S.name&&(S.node||S.done))btn(c,'↺ RESTART SEASON 1',()=>restartAsk());
+ if(S.name&&(S.node||S.done))btn(c,'↺ RESTART SEASON '+SEA,()=>restartAsk());
  btn(c,'◀ BACK',()=>{close();state='title'})}
+// ---------- Season 2 start: S1 flags the S2 script reads are carried over, meters carry over ----------
+const CARRY=['why','rit','wes','tip','gus','went40','dez','cap','jug'];
+function s2flags(f){const o={};f=f||{};CARRY.forEach(k=>{if(f[k]!=null)o[k]=f[k]});o.s1w2=f.w2?1:0;o.s1w4=f.w4?1:0;return o}
+function startS2(){if(!S.done)return home();if(S.season!==2){S.f1=Object.assign({},S.fl);S.m1={fan:S.fan,coach:S.coach,fam:S.fam};S.log1=S.log}S.season=2;S.fl=s2flags(S.f1);S.log=[];S.wk=0;S.done2=0;save();K=null;go('s2c1')}
 function create(){const e=shell('field');e.insertAdjacentHTML('beforeend','<h1 style="margin-top:14px">CREATE YOUR KICKER</h1><h2>Hollow Creek High · Junior · Age 16</h2>');
  const c=card('<div class="lbl">FIRST NAME</div><input id="stn" maxlength="12" placeholder="Your kicker\'s name"><div class="lbl">NICKNAME (OPTIONAL)</div><input id="stk" maxlength="14" placeholder="What the team calls you"><div class="lbl">YOUR KICKER\'S LOOK</div><p style="font-size:13px;color:#cfe">Uses your look from the Kicker Creator (MY KICKER). You can change it any time.</p>');
  const r=document.createElement('div');r.className='row';c.appendChild(r);
  btn(c,'🧑 OPEN KICKER CREATOR',()=>{S.name=(document.getElementById('stn').value||'').trim()||S.name;save();window.__stMK=1;close();state='mk'});
  btn(c,'✔ BEGIN SEASON 1',()=>{const n=(document.getElementById('stn').value||'').trim();if(!n){document.getElementById('stn').focus();return}S.name=n.slice(0,12);S.nick=(document.getElementById('stk').value||'').trim().slice(0,14);save();go('c1')},'go');
  btn(c,'◀ BACK',home);if(S.name)document.getElementById('stn').value=S.name}
-function go(id){S.node=id;save();const s0=SC[id];if(!s0)return home();const s=Object.assign({},s0,s0.t?{t:LN(s0.t)}:{},s0.ch?{ch:s0.ch.filter(o=>OK(o.if))}:{},s0.texts?{texts:s0.texts.filter(m=>!m[2]||OK(m[2].if))}:{});mood(MOOD[id]);
- if(s.week!=null)return weekGate(s.week);if(s.texts)return texts(Object.assign(s,{id}));if(s.end)return finale();
+function go(id){setSea(seaOf(id));S.node=id;save();const s0=SC[id];if(!s0)return home();const s=Object.assign({},s0,s0.t?{t:LN(s0.t)}:{},s0.ch?{ch:s0.ch.filter(o=>OK(o.if))}:{},s0.texts?{texts:s0.texts.filter(m=>!m[2]||OK(m[2].if))}:{});mood(MOOD[id]);
+ if(s.week!=null)return weekGate(s.week);if(s.texts)return texts(Object.assign(s,{id}));if(s.end)return s.end===2?finale2():finale();
  const e=shell(s.bg);if(PIC[id])e.insertAdjacentHTML('beforeend',pic(PIC[id]));
  const c=card((s.who?'<span class="who">'+s.who+'</span>':''));let i=0;const lines=document.createElement('div');c.appendChild(lines);
  const step=()=>{lines.insertAdjacentHTML('beforeend',P(s.t[i]));i++;nx.innerHTML='';if(i<s.t.length)btn(nx,'▼ CONTINUE',step,'go');else choices()};
@@ -161,15 +225,17 @@ function weekGate(w){rollDay();if(S.wd<FREE_WEEKS+S.ad||window.TESTER)return wee
  btn(c,'🎬 WATCH AN AD TO PLAY IT NOW',()=>{let pr;if(el)el.style.display='none';try{window.FGF_ADPLAYING=1;pr=window.FGF_ADAPTER().rewarded()}catch(x){pr=Promise.resolve(false)}Promise.resolve(pr).then(ok=>{window.FGF_ADPLAYING=0;if(el)el.style.display='';if(ok){S.ad++;save();weekIntro(w)}else{try{toast('Ad not available, try again later')}catch(x){}}})},'go');
  btn(c,'◀ COME BACK TOMORROW',()=>{close();state='title'})}
 let K=null;// current game week run
-function weekIntro(w){mood(WK[w].wx==='fog'?'mystery':WK[w].riv?'rival':'tense');const W_=WK[w];K={w,i:0,res:[],ot:0};const e=shell('night');e.insertAdjacentHTML('beforeend',pic('wk'+(w+1))+'<h1>'+W_.n.toUpperCase()+'</h1><h2>'+(W_.home?'Hollow Creek Hawks vs ':'@ ')+W_.opp+'</h2>');
- const c=card(P(W_.intro)+'<div class="kk">'+W_.k.map(()=>'<span>🏈</span>').join('')+'</div>');btn(c,'🏈 TO THE FIELD',nextKick,'go')}
-function kicksFor(){const W_=WK[K.w];return W_.k.filter(k=>!k[3]||S.fl[k[3]])}
-function nextKick(){mood(K&&WK[K.w].wx==='fog'?'mystery':'tense');const ks=kicksFor(),k=K.ot?[31,'OVERTIME · one more chance · 31 yards']:ks[K.i];if(!k)return weekEnd();
- const e=shell('night');e.insertAdjacentHTML('beforeend',pic(WK[K.w].wx==='fog'?'c10':'field','sm')+'<h1>'+k[0]+' YARDS</h1><h2>Story kick '+(K.ot?'OT':(K.i+1)+' of '+ks.length)+'</h2>');
- const c=card(P(k[1])+(S.fl.rit?'<p class="say">'+({tap:'You tap the tape on Old Faithful twice.',sock:'You tug your left sock.',seat:'You look up at Rae\'s seat.',line:'You whisper: "'+(S.fl.why||'')+'"'})[S.fl.rit]+'</p>':''));btn(c,'SWIPE TIME ▶',()=>play(k),'go');
- const clutch=K.ot||(K.w>=2&&K.i===ks.length-1);if(clutch&&!S.fl.tbUsed&&K.w>=3){btn(c,'🌬️ THREE BREATHS · no meter, just Pop\'s count (once this season)',()=>{S.fl.tbUsed=1;save();ST.tb=1;play(k)})}}
+function weekIntro(w){mood(WK[w].wx==='fog'?'mystery':WK[w].riv?'rival':'tense');const W_=WK[w];K={w,i:0,res:[],ot:0};const e=shell('night');e.insertAdjacentHTML('beforeend',pic((SEA===2?'s2wk':'wk')+(w+1))+'<h1>'+W_.n.toUpperCase()+'</h1><h2>'+(W_.home?'Hollow Creek Hawks vs ':'@ ')+W_.opp+'</h2>');
+ const c=card(LN([].concat(W_.intro)).map(P).join('')+'<div class="kk">'+kicksFor().map(()=>'<span>🏈</span>').join('')+'</div>');btn(c,'🏈 TO THE FIELD',nextKick,'go')}
+function kicksFor(){const W_=WK[K.w];return W_.k.filter(k=>!k[3]||OK(k[3]))}
+function nextKick(){const W_=WK[K.w];mood(K&&W_.wx==='fog'?'mystery':'tense');const ks=kicksFor(),k=K.ot?[31,'OVERTIME · one more chance · 31 yards']:ks[K.i];if(!k)return weekEnd();
+ const fogK=(k[2]||W_.wx)==='fog',kp=fogK?(SEA===2&&ART.has('s2wk5')?'s2wk5':'c10'):(SEA===2&&ART.has('s2field')?'s2field':'field');
+ const e=shell('night');e.insertAdjacentHTML('beforeend',pic(kp,'sm')+'<h1>'+k[0]+' YARDS</h1><h2>Story kick '+(K.ot?'OT':(K.i+1)+' of '+ks.length)+'</h2>');
+ const last=K.ot||K.i===ks.length-1,x2=SEA===2?[S.fl.wes?'Wes kneels beside the spot, laces out, and doesn\'t look up.':'',S.fl.gusDrill&&K.i===0?'Gus, from the backyard: "Plant long. Let the hip do the work."':'',S.fl.passBall&&W_.riv&&last?'The whole team taps the tape on Old Faithful first.':''].filter(Boolean):[];
+ const c=card(P(k[1])+(S.fl.rit?'<p class="say">'+({tap:'You tap the tape on Old Faithful twice.',sock:'You tug your left sock.',seat:'You look up at Rae\'s seat.',line:'You whisper: "'+(S.fl.why||'For Rae. Every Friday.')+'"'})[S.fl.rit]+'</p>':'')+x2.map(t=>'<p class="say">'+N(t).replace(/</g,'&lt;')+'</p>').join(''));btn(c,'SWIPE TIME ▶',()=>play(k),'go');
+ const clutch=K.ot||(K.w>=2&&K.i===ks.length-1),tbLeft=SEA===2?(S.fl.blind?2:1)-(S.fl.tbN||0):(S.fl.tbUsed?0:1);if(clutch&&tbLeft>0&&K.w>=3){btn(c,'🌬️ THREE BREATHS · no meter, just Pop\'s count ('+(tbLeft>1?tbLeft+' left':'once this season')+')',()=>{if(SEA===2)S.fl.tbN=(S.fl.tbN||0)+1;else S.fl.tbUsed=1;save();ST.tb=1;play(k)})}}
 let pend=null;
-function play(k){close();window.__wx=WK[K.w].wx||'clear';newGame('story');dist=k[0];newWind();window.__wx=null;roundN=1;resetBall();ST.kick={d:k[0],lab:K.ot?'OT':(K.i+1)+'/'+kicksFor().length}}
+function play(k){close();window.__wx=(!K.ot&&k[2])||WK[K.w].wx||'clear';newGame('story');dist=k[0];newWind();window.__wx=null;roundN=1;resetBall();ST.kick={d:k[0],lab:K.ot?'OT':(K.i+1)+'/'+kicksFor().length}}
 // ---------- Milk Jug Challenge (outline Ch1: hit the jug from 20 yards three times in a row) ----------
 let JG=null;function jugStart(done){mood('hopeful');JG={n:0,streak:0,done};jugKick()}
 function jugKick(){const e=shell('yard');e.insertAdjacentHTML('beforeend',pic('jq','sm')+'<h1>🥛 MILK JUG CHALLENGE</h1><h2>20 yards · 3 in a row · streak '+JG.streak+'/3</h2>');const c=card(P(JG.streak?'The jug is still swinging. Again.':'Rae watches from the steps, coffee in hand.'));btn(c,JG.last===0?'TRY AGAIN ▶':'SWIPE ▶',()=>{close();newGame('story');dist=20;window.__wx='clear';newWind();window.__wx=null;roundN=1;resetBall();ST.kick={d:20,lab:'JUG '+(JG.streak+1)+'/3',jug:1};ST.hit=0;ST.cross=null},'go');btn(c,'CONTINUE STORY ▶',()=>{const d=JG.done;JG=null;d()})}
@@ -180,23 +246,25 @@ function after(good){mood('tense');const ks=kicksFor(),W_=WK[K.w],last=!K.ot&&K.
  fx(good?{fan:2,coach:1}:{coach:-1});save();
  const e=shell('night');e.insertAdjacentHTML('beforeend','<div class="big '+(good?'ok':'no')+'">'+(good?'✓':'✕')+'</div><h1>'+(good?'GOOD!':'NO GOOD')+'</h1>');
  const c=card(P(lines[Math.random()*3|0])+(!good&&S.fl.tip&&Math.random()<.6?'<p class="say">Gus, in your head: "'+S.fl.tip+'"</p>':''));
- if(W_.riv&&last&&!good&&!K.ot){c.insertAdjacentHTML('beforeend',P('Ridgeline misses too, and it\'s OVERTIME. Coach D grabs your face mask: "Shorter one. Same swing."'));K.ot=1;btn(c,'TO OVERTIME ▶',nextKick,'go');return}
+ if(W_.riv&&last&&!good&&!K.ot){c.insertAdjacentHTML('beforeend',P(W_.otTxt||'Ridgeline misses too, and it\'s OVERTIME. Coach D grabs your face mask: "Shorter one. Same swing."'));K.ot=1;btn(c,'TO OVERTIME ▶',nextKick,'go');return}
  if(K.ot||last){btn(c,'FINAL WHISTLE ▶',weekEnd,'go');return}K.i++;btn(c,'NEXT KICK ▶',nextKick,'go')}
 function weekEnd(){const W_=WK[K.w],mk=K.res.reduce((a,b)=>a+b,0);let win;if(W_.riv){win=!!K.res[K.res.length-1]}else win=mk>=W_.need;
  S.wk=K.w+1;S.wd++;fx(win?{fan:5,coach:3}:{fam:2});S.fl['w'+K.w]=win?1:0;const coinsW=40+mk*20;addC(coinsW);
- const res=W_.riv?(win?(K.ot?'HAWKS WIN IN OVERTIME! The streak ends at 11.':'HAWKS WIN 24-23! The streak ends at 11.'):'Ridgeline wins in overtime. Twelve years.'):(win?W_.win:W_.loss);
+ const res=W_.riv?(win?(K.ot?(W_.rwinOT||'HAWKS WIN IN OVERTIME! The streak ends at 11.'):(W_.rwin||'HAWKS WIN 24-23! The streak ends at 11.')):(W_.rloss||'Ridgeline wins in overtime. Twelve years.')):(win?W_.win:W_.loss);
  logIt(W_.n+' vs '+W_.opp+': '+res+' ('+mk+' of '+K.res.length+' kicks)');save();
- mood(win?'triumph':'sad');const e=shell('night');e.insertAdjacentHTML('beforeend',pic(W_.riv?(win?'c14w':'c14l'):'field',win?'':'dim')+'<h1>'+(win?'WIN':'LOSS')+'</h1><h2>'+W_.opp+'</h2>');
- const c=card(P(res)+P('You made '+mk+' of '+K.res.length+'. 🪙 +'+coinsW+' coins'));const nxt=W_.riv?(win?'c14w':'c14l'):W_.go;K=null;btn(c,'CONTINUE ▶',()=>go(nxt),'go')}
+ mood(win?'triumph':'sad');const e=shell('night');e.insertAdjacentHTML('beforeend',pic(W_.riv?(win?(W_.gw||'c14w'):(W_.gl||'c14l')):'field',win?'':'dim')+'<h1>'+(win?'WIN':'LOSS')+'</h1><h2>'+W_.opp+'</h2>');
+ const c=card(P(res)+P('You made '+mk+' of '+K.res.length+'. 🪙 +'+coinsW+' coins'));const nxt=W_.riv?(win?(W_.gw||'c14w'):(W_.gl||'c14l')):W_.go;K=null;btn(c,'CONTINUE ▶',()=>go(nxt),'go')}
 function finale(){mood('sad');if(!S.done){S.done=1;if(!S.rw1){S.rw1=1;addC(500)}LS.fgfLookMJR='1';save()}const e=shell('#000');e.insertAdjacentHTML('beforeend',pic('end')+'<h1>TO BE CONTINUED…</h1><h2>Season 1 complete · '+(S.fl.w4?'Rivalry won':'Rivalry lost')+'</h2>');
- const c=card(P('🪙 +500 coins')+P('Season 2: "Captain of the Hawks" is coming soon.'));btn(c,'🏠 HOME',()=>{close();state='title'},'go')}
+ const c=card(P('🪙 +500 coins')+P('Season 2 is unlocked.'));btn(c,'▶ START SEASON 2',startS2,'go');btn(c,'🏠 HOME',()=>{close();state='title'})}
+function finale2(){mood('mystery');if(!S.done2){S.done2=1;if(!S.rw2){S.rw2=1;addC(500)}save()}const e=shell('#000');e.insertAdjacentHTML('beforeend',pic('s2end')+'<h1>TO BE CONTINUED…</h1><h2>Season 2 complete · '+(S.fl.w4?'Regional won':'Regional lost')+'</h2>');
+ const c=card(P('🪙 +500 coins')+P('Season 3 is coming soon.'));btn(c,'🏠 HOME',()=>{close();state='title'},'go')}
 // ---------- daily text + previously on ----------
 function dailyText(then){rollDay();if(!S.name||S.td===S.day)return then();S.td=S.day;const m=TXT[(new Date().getDate())%TXT.length];addC(TEXT_GIFT);save();
  const e=shell('#05070c');e.insertAdjacentHTML('beforeend','<h2 style="margin-top:16px">📱 New message</h2>');e.insertAdjacentHTML('beforeend','<div class="phone fade"><div class="bub"><i>'+m[0]+'</i>'+m[1]+'</div><div class="bub" style="background:#3a3010"><i>GIFT</i>🪙 +'+TEXT_GIFT+' coins</div></div>');
  const c=card();btn(c,'CONTINUE ▶',then,'go')}
-function recap(then){if(!S.log.length||S.done)return then();mood('mystery');const e=shell('#000');e.insertAdjacentHTML('beforeend','<h1 style="margin-top:22px">PREVIOUSLY ON…</h1><h2>Field Goal Frenzy · Season 1</h2>');
+function recap(then){if(!S.log.length||(S.season===2?S.done2:S.done))return then();mood('mystery');const e=shell('#000');e.insertAdjacentHTML('beforeend','<h1 style="margin-top:22px">PREVIOUSLY ON…</h1><h2>Field Goal Frenzy · Season '+(S.season===2?2:1)+'</h2>');
  const c=card(S.log.slice(-3).map(l=>'<p>▸ '+l.replace(/</g,'&lt;')+'</p>').join(''));btn(c,'▶ CONTINUE THE STORY',then,'go')}
-function open(){dailyText(()=>recap(home))}
+function open(){setSea(S.season===2?2:1);dailyText(()=>recap(home))}
 // ---------- hooks into the normal kick ----------
 const GP=(x,y,z)=>window.P(x,y,z);// game projection (the local P is the HTML paragraph helper)
 const ST={kick:null};
@@ -211,7 +279,7 @@ const oBG=drawBG;drawBG=function(){const r=oBG.apply(this,arguments);try{if(SKY(
  if(weather==='fog'){ctx.fillStyle='rgba(190,200,208,.55)';ctx.fillRect(0,0,W,hz)}ctx.restore();
  const fs=Math.max(9,19*(window.SCL||1));ctx.save();ctx.fillStyle='rgba(140,22,30,.92)';ctx.fillRect(0,hz,W,fs*0.72);ctx.translate(W/2,hz+fs*0.36);ctx.scale(1,0.6);ctx.fillStyle='#f2c230';ctx.font='900 '+fs+'px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('HOLLOW CREEK HAWKS',0,0);ctx.restore()}}catch(e){}return r};
 // Fog Game: the uprights stay hidden in the mist until the ball is in the air, then fade in
-const oDP=drawPosts;drawPosts=function(){if(!(SKY()&&weather==='fog'))return oDP.apply(this,arguments);ctx.save();let a=0.05;try{if(ball.fly)a=Math.min(1,0.05+Math.max(0,ball.z)/Math.max(1,dist)*1.3)}catch(e){}ctx.globalAlpha=a;const fl=window.FGF_FLAG;if(a<0.5)window.FGF_FLAG=()=>true;let r;try{r=oDP.apply(this,arguments)}finally{window.FGF_FLAG=fl;ctx.restore()}
+const oDP=drawPosts;drawPosts=function(){if(!(SKY()&&weather==='fog'))return oDP.apply(this,arguments);ctx.save();const a0=SEA===2&&S.fl.fogPrac?0.3:0.05;let a=a0;try{if(ball.fly)a=Math.min(1,a0+Math.max(0,ball.z)/Math.max(1,dist)*1.3)}catch(e){}ctx.globalAlpha=a;const fl=window.FGF_FLAG;if(a<0.5)window.FGF_FLAG=()=>true;let r;try{r=oDP.apply(this,arguments)}finally{window.FGF_FLAG=fl;ctx.restore()}
  try{if(a<0.5){const z=dist+0.2,b=GP(0,BAR,z),t=GP(0,POST+1.5,z);if(b&&t){const cx=b.x,cy=(b.y+t.y)/2,rw=Math.max(60,(GP(HALF,BAR,z).x-b.x)*2.6),rh=Math.abs(b.y-t.y)*0.9;ctx.save();const g=ctx.createRadialGradient(cx,cy,4,cx,cy,rw);g.addColorStop(0,'rgba(196,204,212,.92)');g.addColorStop(.7,'rgba(196,204,212,.6)');g.addColorStop(1,'rgba(196,204,212,0)');ctx.fillStyle=g;ctx.beginPath();ctx.ellipse(cx,cy,rw,rh,0,0,7);ctx.fill();ctx.restore()}}}catch(e){}
  return r};
 const oDF=drawFlags;drawFlags=function(){if(!(SKY()&&weather==='fog'))return oDF.apply(this,arguments);let a=0.0;try{if(ball.fly)a=Math.min(1,Math.max(0,ball.z)/Math.max(1,dist)*1.3)}catch(e){}if(a<0.05)return;ctx.save();ctx.globalAlpha=a;try{return oDF.apply(this,arguments)}finally{ctx.restore()}};
@@ -244,12 +312,13 @@ if(typeof frontImg==='function'){const of=frontImg,FMJ={};frontImg=function(ti){
  bx(x0,y0,bw,26,on?'🥛 ROOKIE LOOK: ON':'🥛 ROOKIE LOOK: OFF',()=>{LS.fgfMJROn=on?'0':'1';if(!on)LS.fgfGoldLook='0'},on,10)}}
 
 // ---------- Restart Season (story home + pause menu) ----------
-function restartSeason(){const keep={name:S.name,nick:S.nick,pr:S.pr,day:S.day,wd:S.wd,ad:S.ad,td:S.td,rw1:S.rw1,jugPaid:S.jugPaid||(S.fl&&S.fl.jug?1:0)};
+function restartSeason(){const keep={name:S.name,nick:S.nick,pr:S.pr,day:S.day,wd:S.wd,ad:S.ad,td:S.td,rw1:S.rw1,rw2:S.rw2,jugPaid:S.jugPaid||(S.fl&&S.fl.jug?1:0)};
+ if(S.season===2&&S.done){const m=S.m1||{};S=Object.assign({},S0,keep,{done:1,season:2,f1:S.f1,m1:S.m1,log1:S.log1,fan:m.fan||0,coach:m.coach||0,fam:m.fam||0,fl:s2flags(S.f1),log:[],node:'s2c1',done2:0});save();K=null;JG=null;ST.kick=null;try{paused=false;if(state==='play'||state==='over')state='title'}catch(e){}return go('s2c1')}
  S=Object.assign({},S0,keep,{fl:{},log:[],node:'c1',done:0});save();K=null;JG=null;ST.kick=null;try{paused=false;if(state==='play'||state==='over')state='title'}catch(e){}go('c1')}
 function restartAsk(){if(document.getElementById('fgfrs'))return;const d=document.createElement('div');d.id='fgfrs';d.style.cssText='position:fixed;inset:0;z-index:9600;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;font-family:system-ui';
- d.innerHTML='<div style="background:#fffbea;color:#1a1408;border:3px solid #111;box-shadow:4px 4px 0 #000;border-radius:6px;max-width:320px;margin:16px;padding:18px"><p style="font:500 17px/1.45 Georgia,serif;margin:0 0 14px">Restart Season 1 from the beginning? Your story choices for this season will be cleared.</p><button id="fgfrsY" style="display:block;width:100%;min-height:48px;margin:0 0 8px;border:2px solid #111;border-radius:12px;background:#f2c230;color:#111;font:900 16px system-ui">↺ Restart</button><button id="fgfrsN" style="display:block;width:100%;min-height:48px;border:2px solid #111;border-radius:12px;background:#fff;color:#111;font:800 16px system-ui">Cancel</button></div>';
+ d.innerHTML='<div style="background:#fffbea;color:#1a1408;border:3px solid #111;box-shadow:4px 4px 0 #000;border-radius:6px;max-width:320px;margin:16px;padding:18px"><p style="font:500 17px/1.45 Georgia,serif;margin:0 0 14px">Restart Season '+SEA+' from the beginning? Your story choices for this season will be cleared.</p><button id="fgfrsY" style="display:block;width:100%;min-height:48px;margin:0 0 8px;border:2px solid #111;border-radius:12px;background:#f2c230;color:#111;font:900 16px system-ui">↺ Restart</button><button id="fgfrsN" style="display:block;width:100%;min-height:48px;border:2px solid #111;border-radius:12px;background:#fff;color:#111;font:800 16px system-ui">Cancel</button></div>';
  document.body.appendChild(d);const x=()=>d.remove();d.querySelector('#fgfrsN').onclick=x;d.querySelector('#fgfrsY').onclick=()=>{x();restartSeason()}}
-if(typeof pauseMenu==='function'){const oPM=pauseMenu;pauseMenu=function(){const r=oPM.apply(this,arguments);try{if(mode==='story'&&!setOpen){const bw=Math.min(280,W*0.8),x=W/2-bw/2;bx(x,H*0.36+198,bw,52,'↺ RESTART SEASON 1',()=>restartAsk())}}catch(e){}return r}}
+if(typeof pauseMenu==='function'){const oPM=pauseMenu;pauseMenu=function(){const r=oPM.apply(this,arguments);try{if(mode==='story'&&!setOpen){const bw=Math.min(280,W*0.8),x=W/2-bw/2;bx(x,H*0.36+198,bw,52,'↺ RESTART SEASON '+SEA,()=>restartAsk())}}catch(e){}return r}}
 // =====================================================================
 // Story difficulty tiers (data-driven). Seasons map to a level per BIBLE:
 // S1–S2 high school, S3–S6 college, S7+ pro. Every kick stays makeable:
@@ -366,9 +435,41 @@ function drawJugPost(){const z=dist+0.2,b=GP(0,0,z),arm=GP(0,JUG.arm,z),j=GP(0,J
 const oBG3=drawBG;drawBG=function(){const r=oBG3.apply(this,arguments);try{if(isStory()){if(JG)yard();else if(K&&!WK[K.w].home)awayField()}}catch(e){}return r};
 const oDP3=drawPosts;drawPosts=function(){if(isStory()&&JG){try{drawJugPost()}catch(e){}return}return oDP3.apply(this,arguments)};
 const oDF3=drawFlags;drawFlags=function(){if(isStory()&&JG)return;return oDF3.apply(this,arguments)};
+// ---- S2 holder: Wes kneels beside the ball, off to the side, one finger on the tip (no tee) · story S2 kicks only ----
+function drawHolder(p,r){const u=r*0.6;ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
+ const gx=p.x+u*3.4,gy=p.y+u*1.25;// ground point under the holder's knee
+ ctx.fillStyle='rgba(0,0,0,.28)';ctx.beginPath();ctx.ellipse(gx,gy,u*3.1,u*0.55,0,0,7);ctx.fill();
+ const RED='#a81c28',RED2='#7a1019',WHT='#f2f0ea',SKN='#e0b08e';
+ // back leg: knee down, shin flat behind, cleat
+ limb(gx+u*0.2,gy-u*0.2,gx+u*2.6,gy-u*0.1,u*1.15,WHT);ctx.fillStyle='#151515';ctx.beginPath();ctx.ellipse(gx+u*2.9,gy-u*0.15,u*0.7,u*0.4,0,0,7);ctx.fill();
+ // front leg: thigh forward, shin down to planted foot
+ limb(gx+u*0.4,gy-u*2.2,gx-u*1.2,gy-u*2.0,u*1.3,WHT);limb(gx-u*1.2,gy-u*2.0,gx-u*1.3,gy-u*0.2,u*1.05,WHT);
+ ctx.fillStyle=RED;ctx.fillRect(gx-u*1.8,gy-u*1.25,u*1.0,u*0.55);// red sock
+ ctx.fillStyle='#151515';ctx.beginPath();ctx.ellipse(gx-u*1.6,gy-u*0.15,u*0.85,u*0.38,0,0,7);ctx.fill();
+ // hips + torso leaning toward the ball
+ const hx=gx+u*0.5,hy=gy-u*2.3,sx=gx-u*0.3,sy=gy-u*6.0;
+ const tg=ctx.createLinearGradient(hx-u*1.6,0,hx+u*1.6,0);tg.addColorStop(0,RED);tg.addColorStop(1,RED2);ctx.fillStyle=tg;
+ ctx.beginPath();ctx.moveTo(hx-u*1.25,hy+u*0.2);ctx.lineTo(hx+u*1.3,hy+u*0.1);ctx.quadraticCurveTo(sx+u*2.2,sy+u*1.2,sx+u*1.6,sy-u*0.1);ctx.lineTo(sx-u*1.5,sy+u*0.2);ctx.quadraticCurveTo(sx-u*1.9,sy+u*2.2,hx-u*1.25,hy+u*0.2);ctx.fill();
+ ctx.strokeStyle=WHT;ctx.lineWidth=Math.max(1,u*0.28);ctx.beginPath();ctx.moveTo(sx-u*1.55,sy+u*1.5);ctx.lineTo(sx+u*1.75,sy+u*1.35);ctx.stroke();// sleeve stripe line
+ // arm reaching down to the ball, index finger on the tip
+ const tip={x:p.x+u*0.05,y:p.y-u*0.95};limb(sx-u*1.0,sy+u*0.7,sx-u*1.9,sy+u*3.0,u*0.95,RED);limb(sx-u*1.9,sy+u*3.0,tip.x+u*0.5,tip.y-u*0.3,u*0.8,SKN);
+ // helmet (back/side view, no face shown)
+ const hdx=sx-u*0.2,hdy=sy-u*1.35;const hg=ctx.createRadialGradient(hdx-u*0.4,hdy-u*0.5,u*0.2,hdx,hdy,u*1.5);hg.addColorStop(0,'#c23040');hg.addColorStop(1,RED2);ctx.fillStyle=hg;ctx.beginPath();ctx.ellipse(hdx,hdy,u*1.35,u*1.3,0,0,7);ctx.fill();
+ ctx.strokeStyle=WHT;ctx.lineWidth=Math.max(1,u*0.3);ctx.beginPath();ctx.moveTo(hdx-u*0.1,hdy-u*1.28);ctx.quadraticCurveTo(hdx+u*1.3,hdy-u*0.6,hdx+u*1.0,hdy+u*0.9);ctx.stroke();// center stripe
+ ctx.strokeStyle='#9a9a9a';ctx.lineWidth=Math.max(1,u*0.22);ctx.beginPath();ctx.moveTo(hdx-u*1.3,hdy+u*0.1);ctx.lineTo(hdx-u*1.6,hdy+u*0.9);ctx.stroke();// face-mask edge, turned away
+ ctx.restore();return tip}
+const HOLD=()=>isStory()&&SEA===2&&!JG;let HP=null;
+const odb5=drawBall;drawBall=function(){if(!HOLD())return odb5.apply(this,arguments);let p=null;try{p=SP(ball.x,ball.y,ball.z)}catch(e){}
+ if(!ball.fly&&p){HP={x:p.x,y:p.y,r:Math.max(2.5,p.s*0.19)}}
+ let tip=null;try{if(HP)tip=drawHolder(HP,HP.r)}catch(e){}
+ const of=ctx.fill;if(!ball.fly)ctx.fill=function(){if(this.fillStyle==='#ff7a00')return;return of.apply(this,arguments)};// no tee: the holder holds it
+ let r;try{r=odb5.apply(this,arguments)}finally{delete ctx.fill}
+ try{if(!ball.fly&&tip){ctx.save();ctx.fillStyle='#e0b08e';ctx.beginPath();ctx.ellipse(tip.x+u2(HP),tip.y,HP.r*0.28,HP.r*0.42,0.3,0,7);ctx.fill();ctx.restore()}}catch(e){}
+ return r};
+const u2=h=>h.r*0.15;
 // back from the Kicker Creator during kicker creation -> return to Story
 setInterval(()=>{if(window.__stMK&&state==='title'){window.__stMK=0;create()}},400);
-window.FGF_STORY={open,go,_restart:restartSeason,_restartAsk:restartAsk,state:()=>S,_mu:MU,_after:after,_play:play,_week:weekIntro,_jg:()=>!!JG};
+window.FGF_STORY={open,go,_startS2:startS2,_sea:()=>SEA,_restart:restartSeason,_restartAsk:restartAsk,state:()=>S,_mu:MU,_after:after,_play:play,_week:weekIntro,_jg:()=>!!JG};
 })();
 ;(function(){// ---- backyard jug kicks: plain kid (jeans, white tee, sneakers, bare head) — same sprite frames, clothes/head redrawn only ----
 const hx=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
