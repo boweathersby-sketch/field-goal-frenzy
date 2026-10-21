@@ -189,7 +189,7 @@ function weekEnd(){const W_=WK[K.w],mk=K.res.reduce((a,b)=>a+b,0);let win;if(W_.
  mood(win?'triumph':'sad');const e=shell('night');e.insertAdjacentHTML('beforeend',pic(W_.riv?(win?'c14w':'c14l'):'field',win?'':'dim')+'<h1>'+(win?'WIN':'LOSS')+'</h1><h2>'+W_.opp+'</h2>');
  const c=card(P(res)+P('You made '+mk+' of '+K.res.length+'. 🪙 +'+coinsW+' coins'));const nxt=W_.riv?(win?'c14w':'c14l'):W_.go;K=null;btn(c,'CONTINUE ▶',()=>go(nxt),'go')}
 function finale(){mood('sad');if(!S.done){S.done=1;if(!S.rw1){S.rw1=1;addC(500)}LS.fgfLookMJR='1';save()}const e=shell('#000');e.insertAdjacentHTML('beforeend',pic('end')+'<h1>TO BE CONTINUED…</h1><h2>Season 1 complete · '+(S.fl.w4?'Rivalry won':'Rivalry lost')+'</h2>');
- const c=card(P('🪙 +500 coins')+P('🎁 Exclusive look unlocked: "Milk-Jug Rookie" (gray hoodie, taped cleats, lucky-football charm)')+P('Season 2: "Captain of the Hawks" is coming soon.'));btn(c,'🏠 HOME',()=>{close();state='title'},'go')}
+ const c=card(P('🪙 +500 coins')+P('Season 2: "Captain of the Hawks" is coming soon.'));btn(c,'🏠 HOME',()=>{close();state='title'},'go')}
 // ---------- daily text + previously on ----------
 function dailyText(then){rollDay();if(!S.name||S.td===S.day)return then();S.td=S.day;const m=TXT[(new Date().getDate())%TXT.length];addC(TEXT_GIFT);save();
  const e=shell('#05070c');e.insertAdjacentHTML('beforeend','<h2 style="margin-top:16px">📱 New message</h2>');e.insertAdjacentHTML('beforeend','<div class="phone fade"><div class="bub"><i>'+m[0]+'</i>'+m[1]+'</div><div class="bub" style="background:#3a3010"><i>GIFT</i>🪙 +'+TEXT_GIFT+' coins</div></div>');
@@ -229,7 +229,7 @@ const MJ={};function mjr(src,row){const k=row+'_'+(src.__mj||(src.__mj=Math.rand
   // lucky-football charm
   x.fillStyle='#ff7a00';x.beginPath();x.moveTo(m[0]+m[2]*0.55,m[1]-m[3]*0.2);x.lineTo(m[0]+m[2]*0.85,m[1]-m[3]*0.2);x.lineTo(m[0]+m[2]*0.7,m[1]-m[3]*0.65);x.closePath();x.fill()}
  x.restore();return MJ[k]=c}
-const MJON=()=>!(typeof mode!=='undefined'&&mode==='story')&&LS.fgfLookMJR==='1'&&LS.fgfMJROn==='1'&&LS.fgfGoldLook!=='1';
+const MJON=()=>false;// Milk-Jug Rookie look removed from gameplay (comic art only)
 {const ok=S5.kimg;S5.kimg=function(ti,p2){const s=ok(ti,p2);if(p2||!MJON()||(MK.on&&MK.masc>=0)||s._masc||(typeof KS!=='undefined'&&s===KS))return s;return mjr(s,MK.on?MK.base:ti)}}
 if(typeof frontImg==='function'){const of=frontImg,FMJ={};frontImg=function(ti){const f=of.apply(this,arguments);if(!f||!MJON()||MK.masc>=0)return f;const k=JSON.stringify(MK)+ti;if(FMJ.k===k&&FMJ.src===f)return FMJ.c;const c=document.createElement('canvas');c.width=f.width;c.height=f.height;const x=c.getContext('2d');x.drawImage(f,0,0);const m=BMETA.m[MK.bt]||BMETA.m[0],w=c.width,top=m.fy1+4,cx=m.fx-(MK.bt*BMETA.cw)+0;
  const t0=Math.max(0,m.fy1-34),hh=Math.min(c.height-t0,160);try{const d=x.getImageData(0,t0,w,hh),p=d.data;for(let q=0;q<p.length;q+=4){if(p[q+3]<8)continue;const r=p[q],g2=p[q+1],b=p[q+2],mx=Math.max(r,g2,b),mn=Math.min(r,g2,b);
@@ -240,7 +240,7 @@ if(typeof frontImg==='function'){const of=frontImg,FMJ={};frontImg=function(ti){
  x.fillStyle='rgba(236,236,228,.95)';x.fillRect(0,c.height-22,w,4);x.fillRect(0,c.height-13,w,3);// taped cleats
  x.fillStyle='#ff7a00';x.strokeStyle='#7a3a00';x.lineWidth=1;x.beginPath();x.moveTo(w/2+m.cw*0.16,top+42);x.lineTo(w/2+m.cw*0.32,top+42);x.lineTo(w/2+m.cw*0.24,top+27);x.closePath();x.fill();x.stroke();// lucky-football charm
  x.restore();FMJ.k=k;FMJ.src=f;return FMJ.c=c}}
-{const od=drawMK;drawMK=function(){od();if(LS.fgfLookMJR!=='1')return;const ph=Math.min(H*0.44,W*1.05),pw=Math.min(W*0.9,ph*0.62),bw=Math.min(124,pw*0.46),x0=W/2+pw/2-8-bw,y0=H*0.075+8,on=MJON();
+{const od=drawMK;drawMK=function(){od();return;const ph=Math.min(H*0.44,W*1.05),pw=Math.min(W*0.9,ph*0.62),bw=Math.min(124,pw*0.46),x0=W/2+pw/2-8-bw,y0=H*0.075+8,on=MJON();
  bx(x0,y0,bw,26,on?'🥛 ROOKIE LOOK: ON':'🥛 ROOKIE LOOK: OFF',()=>{LS.fgfMJROn=on?'0':'1';if(!on)LS.fgfGoldLook='0'},on,10)}}
 
 // ---------- Restart Season (story home + pause menu) ----------
