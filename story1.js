@@ -368,7 +368,12 @@ function hawkify(src,ti){if(!src||!src.width)return src;let m=RC.get(src);if(m&&
  for(let i=0;i<a.length;i+=4){if(a[i+3]<20)continue;const H=hsv(a[i],a[i+1],a[i+2]);let to=null,ref=null;if(near(H,P0,26)){to=HAWK.p;ref=P0}else if(near(H,S0,S0[0]>20&&S0[0]<70?10:20)&&H[1]>0.45){to=HAWK.s;ref=S0}
   if(to){const k=Math.max(0.35,Math.min(1.5,H[2]/Math.max(0.15,ref[2])));a[i]=Math.min(255,to[0]*k);a[i+1]=Math.min(255,to[1]*k);a[i+2]=Math.min(255,to[2]*k)}}
  x.putImageData(d,0,0);RC.set(src,{ti,c});return c}
-{const ok=S5.kimg;S5.kimg=function(ti,p2){const s=ok.apply(this,arguments);try{if(isStory()&&!p2&&!(MK.on&&MK.masc>=0))return hawkify(s,ti)}catch(e){}return s}}
+// Story kicker: same sheet with the long hair painted out under the helmet (frames/poses identical; story kicks only)
+const NHI=new Image();NHI.src='story/kickers_nohair.webp?v=1';const NHC={},LONGHAIR=new Set([0,3,5,6,7]);
+function noHair(s,ti){if(MK.on||!LONGHAIR.has(ti)||!NHI.complete||!NHI.naturalWidth||!s||s.width!==812||s.height!==300)return s;if(NHC[ti]&&NHC[ti].__s===s)return NHC[ti];const c=document.createElement('canvas');c.width=812;c.height=300;const x=c.getContext('2d');x.drawImage(s,0,0);if(!NHI.__d){const t=document.createElement('canvas');t.width=812;t.height=NHI.naturalHeight;t.getContext('2d').drawImage(NHI,0,0);NHI.__d=t.getContext('2d').getImageData(0,0,812,NHI.naturalHeight).data}
+ const d=x.getImageData(0,0,812,300),a=d.data,P2=NHI.__d,o=ti*300*812*4;for(let i=0;i<a.length;i+=4){const q=o+i;if(P2[q+3]<128)continue;if(P2[q]<20&&P2[q+1]>230&&P2[q+2]<20){a[i+3]=0;continue}{const mx=Math.max(a[i],a[i+1],a[i+2]),mn=Math.min(a[i],a[i+1],a[i+2]);if(mx>170&&mx-mn<40)continue}// keep the jersey number
+ a[i]=P2[q];a[i+1]=P2[q+1];a[i+2]=P2[q+2]}x.putImageData(d,0,0);c.__s=s;return NHC[ti]=c}
+{const ok=S5.kimg;S5.kimg=function(ti,p2){const s=ok.apply(this,arguments);try{if(isStory()&&!p2&&!(MK.on&&MK.masc>=0))return hawkify(noHair(s,ti),ti)}catch(e){}return s}}
 // ---- Hawks mascot on our sideline: the game's hawk mascot, tinted Hollow Creek red ----
 const HAWKS_T=Math.max(0,TEAMS.findIndex(t=>t.k==='hawks'));
 // Hollow Creek's own hawk (new art, same 193x200 cell + same sideline animation)
@@ -436,27 +441,53 @@ const oBG3=drawBG;drawBG=function(){const r=oBG3.apply(this,arguments);try{if(is
 const oDP3=drawPosts;drawPosts=function(){if(isStory()&&JG){try{drawJugPost()}catch(e){}return}return oDP3.apply(this,arguments)};
 const oDF3=drawFlags;drawFlags=function(){if(isStory()&&JG)return;return oDF3.apply(this,arguments)};
 // ---- S2 holder: Wes kneels beside the ball, off to the side, one finger on the tip (no tee) · story S2 kicks only ----
+function hSeg(x1,y1,x2,y2,w1,w2,cL,cD){const dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy)||1,nx=-dy/L,ny=dx/L,w=(w1+w2)/2;
+ const g=ctx.createLinearGradient((x1+x2)/2+nx*w/2,(y1+y2)/2+ny*w/2,(x1+x2)/2-nx*w/2,(y1+y2)/2-ny*w/2);g.addColorStop(0,cD);g.addColorStop(0.45,cL);g.addColorStop(1,cD);
+ ctx.strokeStyle=g;ctx.lineCap='round';ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke()}
 function drawHolder(p,r){const u=r*0.6;ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
- const gx=p.x+u*3.4,gy=p.y+u*1.25;// ground point under the holder's knee
- ctx.fillStyle='rgba(0,0,0,.28)';ctx.beginPath();ctx.ellipse(gx,gy,u*3.1,u*0.55,0,0,7);ctx.fill();
- const RED='#a81c28',RED2='#7a1019',WHT='#f2f0ea',SKN='#e0b08e';
- // back leg: knee down, shin flat behind, cleat
- limb(gx+u*0.2,gy-u*0.2,gx+u*2.6,gy-u*0.1,u*1.15,WHT);ctx.fillStyle='#151515';ctx.beginPath();ctx.ellipse(gx+u*2.9,gy-u*0.15,u*0.7,u*0.4,0,0,7);ctx.fill();
- // front leg: thigh forward, shin down to planted foot
- limb(gx+u*0.4,gy-u*2.2,gx-u*1.2,gy-u*2.0,u*1.3,WHT);limb(gx-u*1.2,gy-u*2.0,gx-u*1.3,gy-u*0.2,u*1.05,WHT);
- ctx.fillStyle=RED;ctx.fillRect(gx-u*1.8,gy-u*1.25,u*1.0,u*0.55);// red sock
- ctx.fillStyle='#151515';ctx.beginPath();ctx.ellipse(gx-u*1.6,gy-u*0.15,u*0.85,u*0.38,0,0,7);ctx.fill();
- // hips + torso leaning toward the ball
+ const gx=p.x+u*3.4,gy=p.y+u*1.25;
+ // soft contact shadow
+ let sg=ctx.createRadialGradient(gx,gy,0,gx,gy,u*3.4);sg.addColorStop(0,'rgba(0,0,0,.42)');sg.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=sg;ctx.beginPath();ctx.ellipse(gx,gy,u*3.4,u*0.7,0,0,7);ctx.fill();
+ const RED='#b3202e',REDL='#d4434f',REDD='#5e0c14',WL='#fbfaf5',WD='#a9a69c',SL='#e8bf9c',SD='#9c6a4c';
+ 
+ // back leg: knee on the turf, shin flat behind, cleat toe dug in
+ hSeg(gx+u*0.1,gy-u*0.45,gx+u*2.5,gy-u*0.25,u*1.25,u*0.85,WL,WD);
+ hSeg(gx+u*2.4,gy-u*0.3,gx+u*2.75,gy-u*0.25,u*0.75,u*0.7,'#d23a46',REDD);// sock
+ ctx.fillStyle='#141414';ctx.beginPath();ctx.moveTo(gx+u*2.8,gy-u*0.65);ctx.quadraticCurveTo(gx+u*3.7,gy-u*0.55,gx+u*3.6,gy+u*0.05);ctx.lineTo(gx+u*2.75,gy+u*0.08);ctx.fill();
+ // front leg: thigh forward, shin down to the planted cleat
+ hSeg(gx+u*0.5,gy-u*2.2,gx-u*1.15,gy-u*2.05,u*1.45,u*1.1,WL,WD);
+ hSeg(gx-u*1.2,gy-u*2.0,gx-u*1.35,gy-u*0.35,u*1.05,u*0.8,WL,WD);
+ hSeg(gx-u*1.32,gy-u*1.0,gx-u*1.38,gy-u*0.3,u*0.85,u*0.78,'#d23a46',REDD);
+ const cg=ctx.createLinearGradient(0,gy-u*0.6,0,gy);cg.addColorStop(0,'#3a3a3a');cg.addColorStop(1,'#0c0c0c');ctx.fillStyle=cg;ctx.beginPath();ctx.moveTo(gx-u*0.9,gy-u*0.55);ctx.quadraticCurveTo(gx-u*2.6,gy-u*0.6,gx-u*2.5,gy+u*0.05);ctx.lineTo(gx-u*0.85,gy+u*0.08);ctx.closePath();ctx.fill();
+ ctx.strokeStyle='rgba(255,255,255,.5)';ctx.lineWidth=Math.max(.6,u*0.08);ctx.beginPath();ctx.moveTo(gx-u*2.3,gy-u*0.25);ctx.lineTo(gx-u*1.0,gy-u*0.25);ctx.stroke();// cleat stripe
+ ctx.strokeStyle='rgba(120,110,95,.45)';ctx.lineWidth=Math.max(.6,u*0.1);ctx.beginPath();ctx.moveTo(gx-u*0.4,gy-u*2.4);ctx.quadraticCurveTo(gx-u*0.9,gy-u*2.0,gx-u*0.5,gy-u*1.6);ctx.stroke();// pant fold
+ // torso: jersey over shoulder pads, leaning in toward the ball
  const hx=gx+u*0.5,hy=gy-u*2.3,sx=gx-u*0.3,sy=gy-u*6.0;
- const tg=ctx.createLinearGradient(hx-u*1.6,0,hx+u*1.6,0);tg.addColorStop(0,RED);tg.addColorStop(1,RED2);ctx.fillStyle=tg;
- ctx.beginPath();ctx.moveTo(hx-u*1.25,hy+u*0.2);ctx.lineTo(hx+u*1.3,hy+u*0.1);ctx.quadraticCurveTo(sx+u*2.2,sy+u*1.2,sx+u*1.6,sy-u*0.1);ctx.lineTo(sx-u*1.5,sy+u*0.2);ctx.quadraticCurveTo(sx-u*1.9,sy+u*2.2,hx-u*1.25,hy+u*0.2);ctx.fill();
- ctx.strokeStyle=WHT;ctx.lineWidth=Math.max(1,u*0.28);ctx.beginPath();ctx.moveTo(sx-u*1.55,sy+u*1.5);ctx.lineTo(sx+u*1.75,sy+u*1.35);ctx.stroke();// sleeve stripe line
- // arm reaching down to the ball, index finger on the tip
- const tip={x:p.x+u*0.05,y:p.y-u*0.95};limb(sx-u*1.0,sy+u*0.7,sx-u*1.9,sy+u*3.0,u*0.95,RED);limb(sx-u*1.9,sy+u*3.0,tip.x+u*0.5,tip.y-u*0.3,u*0.8,SKN);
- // helmet (back/side view, no face shown)
- const hdx=sx-u*0.2,hdy=sy-u*1.35;const hg=ctx.createRadialGradient(hdx-u*0.4,hdy-u*0.5,u*0.2,hdx,hdy,u*1.5);hg.addColorStop(0,'#c23040');hg.addColorStop(1,RED2);ctx.fillStyle=hg;ctx.beginPath();ctx.ellipse(hdx,hdy,u*1.35,u*1.3,0,0,7);ctx.fill();
- ctx.strokeStyle=WHT;ctx.lineWidth=Math.max(1,u*0.3);ctx.beginPath();ctx.moveTo(hdx-u*0.1,hdy-u*1.28);ctx.quadraticCurveTo(hdx+u*1.3,hdy-u*0.6,hdx+u*1.0,hdy+u*0.9);ctx.stroke();// center stripe
- ctx.strokeStyle='#9a9a9a';ctx.lineWidth=Math.max(1,u*0.22);ctx.beginPath();ctx.moveTo(hdx-u*1.3,hdy+u*0.1);ctx.lineTo(hdx-u*1.6,hdy+u*0.9);ctx.stroke();// face-mask edge, turned away
+ const tg=ctx.createLinearGradient(sx-u*1.8,sy,hx+u*1.6,hy);tg.addColorStop(0,REDL);tg.addColorStop(0.45,RED);tg.addColorStop(1,REDD);ctx.fillStyle=tg;
+ ctx.beginPath();ctx.moveTo(hx-u*1.25,hy+u*0.25);ctx.lineTo(hx+u*1.35,hy+u*0.1);ctx.bezierCurveTo(hx+u*1.8,hy-u*1.5,sx+u*2.4,sy+u*1.6,sx+u*1.9,sy+u*0.1);ctx.quadraticCurveTo(sx+u*0.2,sy-u*0.75,sx-u*1.7,sy+u*0.15);ctx.bezierCurveTo(sx-u*2.2,sy+u*1.4,hx-u*1.9,hy-u*1.2,hx-u*1.25,hy+u*0.25);ctx.fill();
+
+ // jersey folds + back shading
+ ctx.strokeStyle='rgba(60,6,12,.45)';ctx.lineWidth=Math.max(.6,u*0.14);[[0.1,4.6,0.5,3.4],[0.9,4.2,1.1,2.9],[-0.6,3.6,-0.2,2.6]].forEach(a=>{ctx.beginPath();ctx.moveTo(sx+u*a[0],sy+u*a[1]-u*2.4);ctx.quadraticCurveTo(sx+u*(a[0]+0.4),sy+u*(a[1]-1.2),sx+u*a[2],sy+u*a[3]+u*0.6);ctx.stroke()});
+ 
+ // sleeve stripes (white/gold trim)
+ ctx.strokeStyle=WL;ctx.lineWidth=Math.max(1,u*0.26);ctx.beginPath();ctx.moveTo(sx-u*1.55,sy+u*1.45);ctx.quadraticCurveTo(sx,sy+u*1.15,sx+u*1.75,sy+u*1.35);ctx.stroke();
+ ctx.strokeStyle='#d8b14a';ctx.lineWidth=Math.max(.6,u*0.12);ctx.beginPath();ctx.moveTo(sx-u*1.55,sy+u*1.8);ctx.quadraticCurveTo(sx,sy+u*1.5,sx+u*1.75,sy+u*1.7);ctx.stroke();
+ // belt line at the waist
+ ctx.fillStyle='rgba(30,10,10,.55)';ctx.beginPath();ctx.ellipse(hx,hy+u*0.15,u*1.35,u*0.22,-0.05,0,7);ctx.fill();
+ // arm: jersey sleeve, bare forearm, hand on the ball tip
+ const tip={x:p.x+u*0.05,y:p.y-u*0.95};
+ hSeg(sx-u*1.0,sy+u*0.7,sx-u*1.9,sy+u*2.9,u*1.15,u*0.95,REDL,REDD);
+ hSeg(sx-u*1.9,sy+u*2.9,tip.x+u*0.55,tip.y-u*0.35,u*0.85,u*0.62,SL,SD);
+ ctx.fillStyle=SL;ctx.beginPath();ctx.ellipse(tip.x+u*0.35,tip.y-u*0.2,u*0.5,u*0.36,0.5,0,7);ctx.fill();ctx.fillStyle='rgba(120,70,45,.5)';ctx.beginPath();ctx.ellipse(tip.x+u*0.45,tip.y-u*0.05,u*0.35,u*0.14,0.5,0,7);ctx.fill();
+ // helmet: glossy shell, gold/white stripe, grey face mask edge turned away (face never shown)
+ const hdx=sx-u*0.2,hdy=sy-u*1.35;
+ ctx.fillStyle='rgba(0,0,0,.35)';ctx.beginPath();ctx.ellipse(hdx+u*0.3,hdy+u*1.1,u*0.9,u*0.5,0,0,7);ctx.fill();// neck shadow
+ const hg=ctx.createRadialGradient(hdx-u*0.55,hdy-u*0.6,u*0.1,hdx,hdy,u*1.6);hg.addColorStop(0,'#e0606a');hg.addColorStop(0.35,'#b52432');hg.addColorStop(1,'#4a0910');ctx.fillStyle=hg;ctx.beginPath();ctx.ellipse(hdx,hdy,u*1.38,u*1.3,0,0,7);ctx.fill();
+ ctx.strokeStyle=WL;ctx.lineWidth=Math.max(1,u*0.26);ctx.beginPath();ctx.moveTo(hdx-u*0.15,hdy-u*1.27);ctx.quadraticCurveTo(hdx+u*1.3,hdy-u*0.6,hdx+u*1.0,hdy+u*0.9);ctx.stroke();
+ ctx.strokeStyle='#d8b14a';ctx.lineWidth=Math.max(.6,u*0.1);ctx.beginPath();ctx.moveTo(hdx-u*0.45,hdy-u*1.2);ctx.quadraticCurveTo(hdx+u*0.95,hdy-u*0.7,hdx+u*0.7,hdy+u*1.0);ctx.stroke();
+ ctx.fillStyle='rgba(255,255,255,.55)';ctx.beginPath();ctx.ellipse(hdx-u*0.6,hdy-u*0.65,u*0.32,u*0.16,-0.6,0,7);ctx.fill();// gloss
+ ctx.strokeStyle='#8f9398';ctx.lineWidth=Math.max(1,u*0.2);ctx.beginPath();ctx.moveTo(hdx-u*1.25,hdy+u*0.05);ctx.quadraticCurveTo(hdx-u*1.75,hdy+u*0.6,hdx-u*1.45,hdy+u*1.05);ctx.stroke();
+ ctx.fillStyle='#2a2a2a';ctx.beginPath();ctx.arc(hdx-u*0.1,hdy+u*0.3,u*0.18,0,7);ctx.fill();// ear hole
  ctx.restore();return tip}
 const HOLD=()=>isStory()&&SEA===2&&!JG;let HP=null;
 const odb5=drawBall;drawBall=function(){if(!HOLD())return odb5.apply(this,arguments);let p=null;try{p=SP(ball.x,ball.y,ball.z)}catch(e){}
@@ -469,7 +500,7 @@ const odb5=drawBall;drawBall=function(){if(!HOLD())return odb5.apply(this,argume
 const u2=h=>h.r*0.15;
 // back from the Kicker Creator during kicker creation -> return to Story
 setInterval(()=>{if(window.__stMK&&state==='title'){window.__stMK=0;create()}},400);
-window.FGF_STORY={open,go,_startS2:startS2,_sea:()=>SEA,_restart:restartSeason,_restartAsk:restartAsk,state:()=>S,_mu:MU,_after:after,_play:play,_week:weekIntro,_jg:()=>!!JG};
+window.FGF_STORY={open,go,_startS2:startS2,_hawk:(s,t)=>hawkify(noHair(s,t),t),_sea:()=>SEA,_restart:restartSeason,_restartAsk:restartAsk,state:()=>S,_mu:MU,_after:after,_play:play,_week:weekIntro,_jg:()=>!!JG};
 })();
 ;(function(){// ---- backyard jug kicks: plain kid (jeans, white tee, sneakers, bare head) — same sprite frames, clothes/head redrawn only ----
 const hx=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
