@@ -271,8 +271,9 @@ const ST={kick:null};
 const oR=S3.onResult;S3.onResult=function(good){const r=oR.apply(this,arguments);try{if(mode==='story'&&ST.kick){lives=3;prevLives=3;const j=ST.kick.jug;ST.kick=null;ST.tb=0;setTimeout(()=>j&&JG?jugAfter(!!good):after(!!good),1700)}}catch(e){}return r};
 const odb=drawBall;drawBall=function(){const r=odb.apply(this,arguments);try{if(state==='play'&&mode==='story'&&(ST.kick||ball.fly)){ctx.save();ctx.fillStyle='rgba(0,0,0,.55)';const w=210,x=W/2-w/2,y=H*0.2;ctx.beginPath();ctx.roundRect(x,y,w,26,12);ctx.fill();ctx.strokeStyle=GOLD;ctx.lineWidth=1.5;ctx.stroke();ctx.fillStyle=GOLD;ctx.font='900 12px system-ui';ctx.textAlign='center';ctx.fillText(JG?'📖 STORY · KICK THE JUG '+Math.min(3,JG.streak+1)+'/3':'📖 STORY · '+(K?WK[K.w].opp.split(' ').slice(-1)[0].toUpperCase()+' · ':'')+'KICK '+(ST.kick?ST.kick.lab:''),W/2,y+17,w-10);ctx.restore()}}catch(e){}return r};
 // ---------- Hollow Creek field: Friday night lights + small bleachers (story kicks only) ----------
-const HC=new Image();if(ART.has('field'))HC.src=IMG('field');const SKY=()=>state==='play'&&mode==='story';
-const oBG=drawBG;drawBG=function(){const r=oBG.apply(this,arguments);try{if(SKY()&&!JG&&(!K||WK[K.w].home)&&HC.complete&&HC.naturalWidth){const b=GP(0,0,dist+0.2),hz=(window.EZ||(b&&b.y)||H*0.42)-((window.SCL||1)*7);
+const HC1=new Image();if(ART.has('field'))HC1.src=IMG('field');const HC2=new Image();HC2.src='story/field_s2.webp?v=1792610000';// S2: same field, mill closed (smoke painted out)
+let HC=HC1;const SKY=()=>state==='play'&&mode==='story';
+const oBG=drawBG;drawBG=function(){HC=(SEA===2&&HC2.complete&&HC2.naturalWidth)?HC2:HC1;const r=oBG.apply(this,arguments);try{if(SKY()&&!JG&&(!K||WK[K.w].home)&&HC.complete&&HC.naturalWidth){const b=GP(0,0,dist+0.2),hz=(window.EZ||(b&&b.y)||H*0.42)-((window.SCL||1)*7);
  // painted backdrop above the end line: sky, mill chimneys, water tower, light tower and the little home bleachers
  const iw=HC.naturalWidth,ih=HC.naturalHeight,sy=ih*0.53,sc=Math.max(W/iw,hz/sy);ctx.save();ctx.beginPath();ctx.rect(0,0,W,hz);ctx.clip();ctx.drawImage(HC,0,0,iw,sy,W/2-iw*sc/2,hz-sy*sc,iw*sc,sy*sc);
  const g=ctx.createLinearGradient(0,hz-40,0,hz);g.addColorStop(0,'rgba(10,40,20,0)');g.addColorStop(1,'rgba(10,40,20,.55)');ctx.fillStyle=g;ctx.fillRect(0,hz-40,W,40);
@@ -369,11 +370,13 @@ function hawkify(src,ti){if(!src||!src.width)return src;let m=RC.get(src);if(m&&
   if(to){const k=Math.max(0.35,Math.min(1.5,H[2]/Math.max(0.15,ref[2])));a[i]=Math.min(255,to[0]*k);a[i+1]=Math.min(255,to[1]*k);a[i+2]=Math.min(255,to[2]*k)}}
  x.putImageData(d,0,0);RC.set(src,{ti,c});return c}
 // Story kicker: same sheet with the long hair painted out under the helmet (frames/poses identical; story kicks only)
-const NHI=new Image();NHI.src='story/kickers_nohair.webp?v=1792600000';const NHC={},LONGHAIR=new Set([0,3,5,6,7]);
+const NHI={complete:false};const NHC={},LONGHAIR=new Set([0,3,5,6,7]);
 function noHair(s,ti){if(MK.on||!LONGHAIR.has(ti)||!NHI.complete||!NHI.naturalWidth||!s||s.width!==812||s.height!==300)return s;if(NHC[ti]&&NHC[ti].__s===s)return NHC[ti];const c=document.createElement('canvas');c.width=812;c.height=300;const x=c.getContext('2d');x.drawImage(s,0,0);if(!NHI.__d){const t=document.createElement('canvas');t.width=812;t.height=NHI.naturalHeight;t.getContext('2d').drawImage(NHI,0,0);NHI.__d=t.getContext('2d').getImageData(0,0,812,NHI.naturalHeight).data}
  const d=x.getImageData(0,0,812,300),a=d.data,P2=NHI.__d,o=ti*300*812*4;for(let i=0;i<a.length;i+=4){const q=o+i;if(P2[q+3]<128)continue;if(P2[q]<20&&P2[q+1]>230&&P2[q+2]<20){a[i+3]=0;continue}
  a[i]=P2[q];a[i+1]=P2[q+1];a[i+2]=P2[q+2];a[i+3]=Math.min(255,(P2[q+3]-128)*2)}/* retouched neck: rgb + feathered alpha */x.putImageData(d,0,0);c.__s=s;return NHC[ti]=c}
-{const ok=S5.kimg;S5.kimg=function(ti,p2){const s=ok.apply(this,arguments);try{if(isStory()&&!p2&&!(MK.on&&MK.masc>=0))return hawkify(noHair(s,ti),ti)}catch(e){}return s}}
+// Story kicker: a short-hair row of kickers.webp (row 1) recoloured to Hawks maroon/gold; same 4 frames, size and timing (story only)
+const SKI=new Image();SKI.src='story/kicker_story.webp?v=1792610000';let SKC=null;
+{const ok=S5.kimg;S5.kimg=function(ti,p2){const s=ok.apply(this,arguments);try{if(isStory()&&!p2&&!(MK.on&&MK.masc>=0)&&s&&s.width===812){if(SKI.complete&&SKI.naturalWidth){if(!SKC){SKC=document.createElement('canvas');SKC.width=812;SKC.height=300;SKC.getContext('2d').drawImage(SKI,0,0)}return SKC}return hawkify(s,ti)}}catch(e){}return s}}
 // ---- Hawks mascot on our sideline: the game's hawk mascot, tinted Hollow Creek red ----
 const HAWKS_T=Math.max(0,TEAMS.findIndex(t=>t.k==='hawks'));
 // Hollow Creek's own hawk (new art, same 193x200 cell + same sideline animation)
@@ -400,7 +403,7 @@ function yard(){const hz=hz0();ctx.save();
  const g=ctx.createLinearGradient(0,0,0,hz);g.addColorStop(0,'#3a4c6e');g.addColorStop(0.55,'#c99a78');g.addColorStop(1,'#e9c79a');ctx.fillStyle=g;ctx.fillRect(0,0,W,hz);
  // mill chimneys with smoke, far away in the haze
  ctx.fillStyle='rgba(84,90,98,.85)';[[0.66,0.58],[0.72,0.54]].forEach(([u,t])=>{ctx.fillRect(W*u,hz*t,W*0.022,hz*(1-t))});
- ctx.fillStyle='rgba(200,200,205,.35)';for(let i=0;i<7;i++){ctx.beginPath();ctx.arc(W*0.735+i*W*0.035,hz*0.5-i*hz*0.025,6+i*3,0,7);ctx.fill()}
+ ctx.fillStyle='rgba(200,200,205,.35)';if(SEA!==2)for(let i=0;i<7;i++){ctx.beginPath();ctx.arc(W*0.735+i*W*0.035,hz*0.5-i*hz*0.025,6+i*3,0,7);ctx.fill()}
  ctx.fillStyle='rgba(120,128,130,.7)';ctx.fillRect(0,hz*0.8,W,hz*0.2);// far rooftops
  ctx.fillStyle='rgba(225,215,200,.45)';ctx.fillRect(0,hz*0.72,W,hz*0.28);// morning fog
  // wooden backyard fence
@@ -501,6 +504,10 @@ const odb5=drawBall;drawBall=function(){if(!HOLD())return odb5.apply(this,argume
  try{if(!ball.fly&&HP&&HIMG.h.complete&&HIMG.h.naturalWidth&&!tip)hImg(HIMG.h,HP)}catch(e){}
  try{if(!ball.fly&&tip){ctx.save();ctx.fillStyle='#e0b08e';ctx.beginPath();ctx.ellipse(tip.x+u2(HP),tip.y,HP.r*0.28,HP.r*0.42,0.3,0,7);ctx.fill();ctx.restore()}}catch(e){}
  return r};
+// S2 kicks: lift the SWIPE UP / TO KICK! hint above the holder so it never covers Wes (story only)
+{const op=panel,ot=txt;let sh=0,y0=0,n=0;
+ panel=function(x,y,w,h){sh=0;try{if(HOLD()&&state==='play'&&!ball.fly&&h===58&&Math.abs(w-W*0.4)<1){const ny=H*0.30;sh=ny-y;y0=y;n=0;y=ny}}catch(e){}return op.call(this,x,y,w,h)};
+ txt=function(t,x,y){if(sh&&y>=y0&&y<=y0+58&&n<2){arguments[2]=y+sh;if(++n>=2)sh=0}return ot.apply(this,arguments)}}
 const u2=h=>h.r*0.15;
 // back from the Kicker Creator during kicker creation -> return to Story
 setInterval(()=>{if(window.__stMK&&state==='title'){window.__stMK=0;create()}},400);
