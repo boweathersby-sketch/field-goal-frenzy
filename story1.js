@@ -268,7 +268,9 @@ function open(){setSea(S.season===2?2:1);dailyText(()=>recap(home))}
 // ---------- hooks into the normal kick ----------
 const GP=(x,y,z)=>window.P(x,y,z);// game projection (the local P is the HTML paragraph helper)
 const ST={kick:null};
-const oR=S3.onResult;S3.onResult=function(good){const r=oR.apply(this,arguments);try{if(mode==='story'&&ST.kick){lives=3;prevLives=3;const j=ST.kick.jug;ST.kick=null;ST.tb=0;setTimeout(()=>j&&JG?jugAfter(!!good):after(!!good),1700)}}catch(e){}return r};
+window.FGF_SGAME=()=>{try{return state==='play'&&mode==='story'&&!!ST.kick&&!ST.kick.jug&&!JG&&!!K}catch(e){return false}};
+const oR=S3.onResult;S3.onResult=function(good){const r=oR.apply(this,arguments);try{if(mode==='story'&&ST.kick&&!good&&!ST.kick.jug&&typeof rough!=='undefined'&&rough){rough=null;if(msg)msg.s='🚩 ROUGHING THE KICKER! Re-kick 15 yds closer';lives=3;prevLives=3;setTimeout(()=>{dist=Math.max(10,dist-15);if(ST.kick)ST.kick.d=dist},1200);return r}/* roughing: re-kick, never costs the kick */
+ if(mode==='story'&&ST.kick){lives=3;prevLives=3;const j=ST.kick.jug;ST.kick=null;ST.tb=0;setTimeout(()=>j&&JG?jugAfter(!!good):after(!!good),1700)}}catch(e){}return r};
 const odb=drawBall;drawBall=function(){const r=odb.apply(this,arguments);try{if(state==='play'&&mode==='story'&&(ST.kick||ball.fly)){ctx.save();ctx.fillStyle='rgba(0,0,0,.55)';const w=210,x=W/2-w/2,y=H*0.2;ctx.beginPath();ctx.roundRect(x,y,w,26,12);ctx.fill();ctx.strokeStyle=GOLD;ctx.lineWidth=1.5;ctx.stroke();ctx.fillStyle=GOLD;ctx.font='900 12px system-ui';ctx.textAlign='center';ctx.fillText(JG?'📖 STORY · KICK THE JUG '+Math.min(3,JG.streak+1)+'/3':'📖 STORY · '+(K?WK[K.w].opp.split(' ').slice(-1)[0].toUpperCase()+' · ':'')+'KICK '+(ST.kick?ST.kick.lab:''),W/2,y+17,w-10);ctx.restore()}}catch(e){}return r};
 // ---------- Hollow Creek field: Friday night lights + small bleachers (story kicks only) ----------
 const HC1=new Image();if(ART.has('field'))HC1.src=IMG('field');const HC=HC1;const SKY=()=>state==='play'&&mode==='story';
