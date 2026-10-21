@@ -53,7 +53,7 @@ const SC={
  c11:{bg:'porch',art:'🧓☕🌫️',who:'Pop',t:['Pop is waiting on the porch when the bus drops you off.','"I kicked in fog like that once," he says. Then he stops, like he said too much.',{if:'gus',t:'His eyes land on Gus Hollander\'s signature on Old Faithful. He traces it with his thumb and says nothing.'},'Instead he teaches you something. "When it gets loud, forget the meter. In through the nose. One. Two. Three. Then swing."','"Three breaths. Use it when it counts. Not before."'],
   ch:[{t:'"When? Where?"',fx:{fam:3},fl:{askPop:1},say:'"Long time ago." He stands up. "Go to bed, kid."'},{t:'Let it go. Sit with him.',fx:{fam:5},say:'He hums an old song you don\'t know. The porch light buzzes.'}],go:'tx2'},
  tx2:{texts:[['Jojo','scrapbook page 3 is YOU in the fog 👻'],['Tank','road trip to ironwood. bring snacks or walk'],['Rae','Double shift Friday. I\'ll make the second half. I swear.']],go:'c12'},
- c12:{bg:'night',art:'🚌🦊',who:'Coach D',t:['Week 4. A road game at Ironwood. Their crowd is loud and their field is lumpy.','Late in the first half, 4th and 6 from the 23. That\'s a 40-yard try. You\'ve never made one in a game.','Coach D looks at you. "Your call, {nick}."'],
+ c12:{bg:'night',art:'🚌🦊',who:'Coach D',t:['Week 4. A road game at Ironwood. Their crowd is loud and their field is lumpy.','Late in the first half, 4th and 6 from the 21. That\'s a 38-yard try. You\'ve never made one in a game.','Coach D looks at you. "Your call, {nick}."'],
   ch:[{t:'"I\'ve got it. Send me out."',fx:{coach:5,fan:3},fl:{went40:1},say:'You jog out. Old Faithful hits the grass.'},{t:'"Not yet, Coach. Go for it on 4th."',fx:{coach:-3},fl:{went40:0},say:'The play gets stuffed. Coach D nods anyway. "Honest. I can work with honest."'}],go:'w3'},
  w3:{week:3},
  c13:{bg:'night',art:'🐏📹',who:'',t:['Rivalry week. Ridgeline High has beaten Hollow Creek eleven years straight.','Their kicker, Dez Calloway, already has college letters and a dad who films every practice.','At midfield in warm-ups, Dez looks at Old Faithful. "Cute ball. Did your grandpa find it in a museum?"'],
@@ -71,7 +71,7 @@ const WK=[
  {n:'Week 1 · Friday Night',opp:'Mill Valley Millers',home:1,intro:'First varsity game. The whole town in the bleachers, and the marching band is slightly out of tune.',k:[[20,'Extra point after the opening TD. "Welcome to the Hawks."'],[28,'2nd quarter · 0:09 · tied 7-7'],[33,'4th quarter · up 4 · make it a two-score game']],need:2,win:'Hawks win 20-13!',loss:'Millers win 17-14.',go:'c7'},
  {n:'Week 2 · Friday Night',opp:'Cedar Bluff Bobcats',home:1,intro:'Coach D\'s goal for you: three field goals from 30+ tonight.',k:[[25,'1st quarter · stalled drive'],[32,'2nd quarter · 0:03 · halftime kick'],[36,'3rd quarter · into the wind'],[30,'4th quarter · 1:10 · up 1']],need:3,win:'Hawks win 26-21!',loss:'Bobcats win 24-19.',go:'c9'},
  {n:'Week 3 · The Fog Game',opp:'Prairie Creek Plowmen',home:0,wx:'fog',intro:'Make 2 field goals by feel. You won\'t see the uprights until the ball is in the air.',k:[[27,'1st quarter · you can\'t see the posts'],[31,'3rd quarter · fog getting thicker'],[34,'4th quarter · 0:40 · down 1']],need:2,win:'Hawks win 9-7 in the fog!',loss:'Plowmen win 7-6.',go:'c11'},
- {n:'Week 4 · Friday Night (Road)',opp:'Ironwood Foxes',home:0,intro:'Lumpy field, loud crowd. Pop drove separately just to be here.',k:[[24,'1st quarter · Foxes student section chanting'],[40,'2nd quarter · the 40-yarder you chose',0,'went40'],[35,'4th quarter · 0:22 · tied 17-17']],need:2,win:'Hawks win 20-17 on the road!',loss:'Foxes win 23-17.',go:'c13'},
+ {n:'Week 4 · Friday Night (Road)',opp:'Ironwood Foxes',home:0,intro:'Lumpy field, loud crowd. Pop drove separately just to be here.',k:[[24,'1st quarter · Foxes student section chanting'],[38,'2nd quarter · the 38-yarder you chose',0,'went40'],[35,'4th quarter · 0:22 · tied 17-17']],need:2,win:'Hawks win 20-17 on the road!',loss:'Foxes win 23-17.',go:'c13'},
  {n:'Week 5 · RIVALRY NIGHT',opp:'Ridgeline High Rattlers',home:1,riv:1,intro:'Eleven straight losses to Ridgeline. Rae is coming at halftime, straight off a double shift.',k:[[24,'2nd quarter · Dez just made a 45'],[35,'3rd quarter · down 21-17'],[38,'4th quarter · 0:04 left · down 2 · THIS IS IT']],need:0,go:'c14w'}
 ];
 const TXT=[['Pop','Old Faithful says hi. Here\'s a little something for gas money.'],['Rae','Packed you a lunch. And a few coins. Don\'t tell Jojo.'],['Jojo','I found coins in the couch!! they are yours if you win friday'],['Coach D','Kickers who show up get paid in respect. And this.'],['Wes','found these under the bleachers lol 🪙'],['Mabel (Diner)','Free pie Friday if you make the long one. Coins on the house today.']];
@@ -255,7 +255,7 @@ if(typeof pauseMenu==='function'){const oPM=pauseMenu;pauseMenu=function(){const
 // S1–S2 high school, S3–S6 college, S7+ pro. Every kick stays makeable:
 // max power is floored so it always clears the bar at the kick's distance with margin.
 const TIERS={
- hs:     {name:'High school',pw:0.55,aim:1.30,curve:1.30,windMax:10},
+ hs:     {name:'High school',pw:0.45,aim:1.30,curve:1.30,windMax:10},
  college:{name:'College',    pw:0.90,aim:1.15,curve:1.15,windMax:16},
  pro:    {name:'Pro',        pw:1.00,aim:1.00,curve:1.00,windMax:null}};
 const SEASON=1,tierOf=n=>n<=2?'hs':n<=6?'college':'pro',TIER=()=>TIERS[tierOf(SEASON)];
