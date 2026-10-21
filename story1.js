@@ -369,10 +369,10 @@ function hawkify(src,ti){if(!src||!src.width)return src;let m=RC.get(src);if(m&&
   if(to){const k=Math.max(0.35,Math.min(1.5,H[2]/Math.max(0.15,ref[2])));a[i]=Math.min(255,to[0]*k);a[i+1]=Math.min(255,to[1]*k);a[i+2]=Math.min(255,to[2]*k)}}
  x.putImageData(d,0,0);RC.set(src,{ti,c});return c}
 // Story kicker: same sheet with the long hair painted out under the helmet (frames/poses identical; story kicks only)
-const NHI=new Image();NHI.src='story/kickers_nohair.webp?v=1';const NHC={},LONGHAIR=new Set([0,3,5,6,7]);
+const NHI=new Image();NHI.src='story/kickers_nohair.webp?v=1792600000';const NHC={},LONGHAIR=new Set([0,3,5,6,7]);
 function noHair(s,ti){if(MK.on||!LONGHAIR.has(ti)||!NHI.complete||!NHI.naturalWidth||!s||s.width!==812||s.height!==300)return s;if(NHC[ti]&&NHC[ti].__s===s)return NHC[ti];const c=document.createElement('canvas');c.width=812;c.height=300;const x=c.getContext('2d');x.drawImage(s,0,0);if(!NHI.__d){const t=document.createElement('canvas');t.width=812;t.height=NHI.naturalHeight;t.getContext('2d').drawImage(NHI,0,0);NHI.__d=t.getContext('2d').getImageData(0,0,812,NHI.naturalHeight).data}
- const d=x.getImageData(0,0,812,300),a=d.data,P2=NHI.__d,o=ti*300*812*4;for(let i=0;i<a.length;i+=4){const q=o+i;if(P2[q+3]<128)continue;if(P2[q]<20&&P2[q+1]>230&&P2[q+2]<20){a[i+3]=0;continue}{const mx=Math.max(a[i],a[i+1],a[i+2]),mn=Math.min(a[i],a[i+1],a[i+2]);if(mx>170&&mx-mn<40)continue}// keep the jersey number
- a[i]=P2[q];a[i+1]=P2[q+1];a[i+2]=P2[q+2]}x.putImageData(d,0,0);c.__s=s;return NHC[ti]=c}
+ const d=x.getImageData(0,0,812,300),a=d.data,P2=NHI.__d,o=ti*300*812*4;for(let i=0;i<a.length;i+=4){const q=o+i;if(P2[q+3]<128)continue;if(P2[q]<20&&P2[q+1]>230&&P2[q+2]<20){a[i+3]=0;continue}
+ a[i]=P2[q];a[i+1]=P2[q+1];a[i+2]=P2[q+2];a[i+3]=Math.min(255,(P2[q+3]-128)*2)}/* retouched neck: rgb + feathered alpha */x.putImageData(d,0,0);c.__s=s;return NHC[ti]=c}
 {const ok=S5.kimg;S5.kimg=function(ti,p2){const s=ok.apply(this,arguments);try{if(isStory()&&!p2&&!(MK.on&&MK.masc>=0))return hawkify(noHair(s,ti),ti)}catch(e){}return s}}
 // ---- Hawks mascot on our sideline: the game's hawk mascot, tinted Hollow Creek red ----
 const HAWKS_T=Math.max(0,TEAMS.findIndex(t=>t.k==='hawks'));
@@ -489,12 +489,16 @@ function drawHolder(p,r){const u=r*0.6;ctx.save();ctx.lineCap='round';ctx.lineJo
  ctx.strokeStyle='#8f9398';ctx.lineWidth=Math.max(1,u*0.2);ctx.beginPath();ctx.moveTo(hdx-u*1.25,hdy+u*0.05);ctx.quadraticCurveTo(hdx-u*1.75,hdy+u*0.6,hdx-u*1.45,hdy+u*1.05);ctx.stroke();
  ctx.fillStyle='#2a2a2a';ctx.beginPath();ctx.arc(hdx-u*0.1,hdy+u*0.3,u*0.18,0,7);ctx.fill();// ear hole
  ctx.restore();return tip}
+// painted holder sprite (Wes): ball centre in sprite at (69.2,611.5), ball height 183.4px
+const HIMG={b:new Image(),h:new Image()};HIMG.b.src='story/holder_s2.webp?v=1792600000';HIMG.h.src='story/holder_s2_hand.webp?v=1792600000';
+function hImg(im,p){const k=2*p.r/183.4;ctx.drawImage(im,p.x-69.2*k,p.y-611.5*k,im.naturalWidth*k,im.naturalHeight*k)}
 const HOLD=()=>isStory()&&SEA===2&&!JG;let HP=null;
 const odb5=drawBall;drawBall=function(){if(!HOLD())return odb5.apply(this,arguments);let p=null;try{p=SP(ball.x,ball.y,ball.z)}catch(e){}
  if(!ball.fly&&p){HP={x:p.x,y:p.y,r:Math.max(2.5,p.s*0.19)}}
- let tip=null;try{if(HP)tip=drawHolder(HP,HP.r)}catch(e){}
+ let tip=null;try{if(HP){if(HIMG.b.complete&&HIMG.b.naturalWidth)hImg(HIMG.b,HP);else tip=drawHolder(HP,HP.r)}}catch(e){}
  const of=ctx.fill;if(!ball.fly)ctx.fill=function(){if(this.fillStyle==='#ff7a00')return;return of.apply(this,arguments)};// no tee: the holder holds it
  let r;try{r=odb5.apply(this,arguments)}finally{delete ctx.fill}
+ try{if(!ball.fly&&HP&&HIMG.h.complete&&HIMG.h.naturalWidth&&!tip)hImg(HIMG.h,HP)}catch(e){}
  try{if(!ball.fly&&tip){ctx.save();ctx.fillStyle='#e0b08e';ctx.beginPath();ctx.ellipse(tip.x+u2(HP),tip.y,HP.r*0.28,HP.r*0.42,0.3,0,7);ctx.fill();ctx.restore()}}catch(e){}
  return r};
 const u2=h=>h.r*0.15;
