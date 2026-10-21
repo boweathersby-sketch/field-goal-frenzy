@@ -353,15 +353,15 @@ function drawYardRae(){const p=GP(-3.6,0,Math.max(3,dist*0.42));if(!p)return;con
  ctx.fillStyle='#2a1d17';ctx.beginPath();ctx.arc(x,y-s*2.04,s*0.22,Math.PI*0.95,Math.PI*2.05);ctx.fill();ctx.beginPath();ctx.arc(x+s*0.04,y-s*2.26,s*0.13,0,7);ctx.fill();// hair + messy bun
  ctx.fillRect(x-s*0.22,y-s*2.02,s*0.07,s*0.22);ctx.restore()}
 function drawJugPost(){const z=dist+0.2,b=GP(0,0,z),arm=GP(0,JUG.arm,z),j=GP(0,JUG.y,z);if(!b||!arm||!j)return;const s=b.s,pw=Math.max(5,s*0.32);ctx.save();
- ctx.fillStyle='#6e543a';ctx.fillRect(b.x-pw/2,arm.y,pw,b.y-arm.y);ctx.fillStyle='rgba(0,0,0,.18)';ctx.fillRect(b.x+pw*0.15,arm.y,pw*0.35,b.y-arm.y);// 4x4 post
- ctx.fillStyle='#6e543a';ctx.fillRect(b.x-s*1.6,arm.y-pw*0.2,s*3.2,pw*0.7);// cross-arm
- ctx.strokeStyle='rgba(235,235,230,.8)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(b.x+s*1.5,arm.y+pw*0.2);ctx.quadraticCurveTo(b.x+W*0.35,arm.y+s*0.9,W+20,arm.y+s*0.4);ctx.stroke();// clothesline wire
+ const pw2=Math.max(10,s*1.5),top=arm.y-s*1.2;ctx.fillStyle='#6a6058';ctx.fillRect(b.x-pw2/2,top,pw2,b.y-top);ctx.fillStyle='rgba(0,0,0,.28)';ctx.fillRect(b.x+pw2*0.18,top,pw2*0.32,b.y-top);ctx.fillStyle='rgba(120,95,70,.35)';ctx.fillRect(b.x-pw2*0.42,top,pw2*0.12,b.y-top);ctx.strokeStyle='rgba(20,12,6,.45)';ctx.lineWidth=1;for(const f of[-.25,.05,.32]){ctx.beginPath();ctx.moveTo(b.x+pw2*f,top+s*0.3);ctx.lineTo(b.x+pw2*(f+.03),b.y-s*0.2);ctx.stroke()}// thick weathered pole
+ const tw=(y,h)=>{ctx.fillStyle='rgba(150,154,158,.97)';ctx.fillRect(b.x-pw2*0.62,y,pw2*1.24,h);ctx.fillStyle='rgba(95,98,102,.6)';ctx.fillRect(b.x-pw2*0.62,y+h*0.45,pw2*1.24,1);ctx.fillRect(b.x-pw2*0.62,y+h-1,pw2*1.24,1)};
+ ctx.strokeStyle='rgba(225,222,212,.85)';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(b.x+pw2*0.5,top+s*0.4);ctx.quadraticCurveTo(b.x+W*0.35,top+s*1.6,W+20,top+s*0.9);ctx.stroke();// clothesline off the pole top
  // the jug, duct-taped to the post (knocked spinning when hit)
  let jx=j.x,jy=j.y,rot=0;const ht=ST.hit?(performance.now()-ST.hit)/1000:0;if(ST.hit&&ht<2.5){jx+=ht*s*2.2;jy+=-s*1.5*ht+s*2.4*ht*ht;rot=ht*9}else if(ST.hit)jy=-999;
  const js=s*1.25;ctx.translate(jx,jy);ctx.rotate(rot);ctx.fillStyle='#f6f4ee';ctx.strokeStyle='#8a8f94';ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(-js*0.45,-js*0.55,js*0.9,js*1.1,js*0.18);ctx.fill();ctx.stroke();
  ctx.fillStyle='#f6f4ee';ctx.fillRect(-js*0.14,-js*0.8,js*0.28,js*0.28);ctx.fillStyle='#d9d9d2';ctx.fillRect(-js*0.16,-js*0.86,js*0.32,js*0.1);// neck + cap
  ctx.strokeStyle='#b8bcc0';ctx.beginPath();ctx.moveTo(js*0.22,-js*0.4);ctx.quadraticCurveTo(js*0.62,-js*0.1,js*0.22,js*0.2);ctx.stroke();// handle
- if(!ST.hit){ctx.fillStyle='rgba(150,155,160,.95)';ctx.fillRect(-js*0.6,-js*0.12,js*1.2,js*0.22)}// silver duct tape band
+ ctx.restore();ctx.save();{const js2=s*1.25,th=js2*0.24;if(!ST.hit){tw(j.y-js2*0.62,th);tw(j.y+js2*0.28,th)}else{tw(j.y-js2*0.62,th*0.5);tw(j.y+js2*0.28,th*0.5)}}// two duct-tape wraps
  ctx.restore()}
 const oBG3=drawBG;drawBG=function(){const r=oBG3.apply(this,arguments);try{if(isStory()){if(JG)yard();else if(K&&!WK[K.w].home)awayField()}}catch(e){}return r};
 const oDP3=drawPosts;drawPosts=function(){if(isStory()&&JG){try{drawJugPost()}catch(e){}return}return oDP3.apply(this,arguments)};
