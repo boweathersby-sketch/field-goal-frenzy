@@ -184,12 +184,13 @@ function btn(c,t,f,cls){const b=document.createElement('button');b.textContent=T
 const P=s=>'<p>'+N(s).replace(/</g,'&lt;')+'</p>';// story prose stays English: the word-map translator garbles full sentences
 const OK=c=>{if(!c)return true;const neg=c[0]==='!',k=neg?c.slice(1):c,[f,v]=k.split('=');const hit=v!=null?String(S.fl[f])===v:!!S.fl[f];return neg?!hit:hit};
 const LN=a=>a.filter(x=>typeof x==='string'||OK(x.if)).map(x=>typeof x==='string'?x:x.t);
-function fx(o){if(!o)return;for(const k in o)S[k]=(S[k]||0)+o[k]}
+const MCLAMP={fan:[-100,100],coach:[-100,100],fam:[0,100]};function clampM(){for(const k in MCLAMP){const [a,b]=MCLAMP[k];if(typeof S[k]==='number')S[k]=Math.max(a,Math.min(b,S[k]))}}
+function fx(o){if(!o)return;for(const k in o)S[k]=(S[k]||0)+o[k];clampM()}
 function logIt(t){S.log.push(N(t));if(S.log.length>6)S.log.shift()}
 // ---------- screens ----------
 function home(){setSea(S.season===2?2:1);mood('home');const e=shell('night');const s2=SEA===2;e.insertAdjacentHTML('beforeend',pic(s2&&ART.has('s2field')?'s2field':'field')+'<h1>CAREER STORY</h1><h2>'+(s2?'Season 2 · "Captain of the Hawks"':'Season 1 · "Milk Jugs and Night Shifts"')+'<br>Hollow Creek High Hawks · Friday Nights</h2>');
  const c=card();if(!S.name){c.innerHTML=P('A kid from a tired little mill town, a duct-taped milk jug, and a grandpa\'s beat-up lucky football. Sixteen seasons start with one Friday night.');btn(c,'▶ START YOUR STORY',create,'go')}
- else if(s2&&S.done2){c.innerHTML=P('Season 2 complete. Season 3 is coming soon.')+(S.fl.cap2?P('Your scrapbook caption: "'+S.fl.cap2+'"'):'')}
+ else if(s2&&S.done2){c.innerHTML=P('High school complete. College chapters are coming soon.');btn(c,'🎓 HIGH SCHOOL RECAP',finale2,'go')}
  else if(s2){c.innerHTML=P(S.node&&S.node!=='s2c1'?'Your story is waiting, '+S.name+'.':'Senior year, '+S.name+'.');btn(c,'▶ CONTINUE',()=>go(seaOf(S.node)===2?S.node:'s2c1'),'go')}
  else if(S.done){c.innerHTML=P('Season 1 complete. Season 2 is unlocked.')+P('Your caption: "'+(S.fl.cap||'')+'"');btn(c,'▶ START SEASON 2',startS2,'go');btn(c,'↺ Replay Season 1 (keeps your kicker)',()=>{const n=S.name,k=S.nick,p=S.pr;S=Object.assign({},S0,{name:n,nick:k,pr:p,rw1:S.rw1,jugPaid:S.jugPaid,fl:{},log:[]});save();go('c1')})}
  else{c.innerHTML=P(S.node?'Your story is waiting, '+S.name+'.':'Ready, '+S.name+'?');btn(c,'▶ CONTINUE',()=>go(S.node||'c1'),'go')}
@@ -256,8 +257,12 @@ function weekEnd(){const W_=WK[K.w],mk=K.res.reduce((a,b)=>a+b,0);let win;if(W_.
  const c=card(P(res)+P('You made '+mk+' of '+K.res.length+'. 🪙 +'+coinsW+' coins'));const nxt=W_.riv?(win?(W_.gw||'c14w'):(W_.gl||'c14l')):W_.go;K=null;btn(c,'CONTINUE ▶',()=>go(nxt),'go')}
 function finale(){mood('sad');if(!S.done){S.done=1;if(!S.rw1){S.rw1=1;addC(500)}LS.fgfLookMJR='1';save()}const e=shell('#000');e.insertAdjacentHTML('beforeend',pic('end')+'<h1>TO BE CONTINUED…</h1><h2>Season 1 complete · '+(S.fl.w4?'Rivalry won':'Rivalry lost')+'</h2>');
  const c=card(P('🪙 +500 coins')+P('Season 2 is unlocked.'));btn(c,'▶ START SEASON 2',startS2,'go');btn(c,'🏠 HOME',()=>{close();state='title'})}
-function finale2(){mood('mystery');if(!S.done2){S.done2=1;if(!S.rw2){S.rw2=1;addC(500)}save()}const e=shell('#000');e.insertAdjacentHTML('beforeend',pic('s2end')+'<h1>TO BE CONTINUED…</h1><h2>Season 2 complete · '+(S.fl.w4?'Regional won':'Regional lost')+'</h2>');
- const c=card(P('🪙 +500 coins')+P('Season 3 is coming soon.'));btn(c,'🏠 HOME',()=>{close();state='title'},'go')}
+function hsNick(){if(S.fl.nick&&S.nick)return S.nick;if(S.fam>=40)return 'Night Shift';if(S.fan>=90)return 'Hollow Creek Hammer';return 'Milk Jug'}
+function mWord(v,hi,lo){return v>=hi?'high':v>=lo?'steady':'low'}
+function finale2(){mood('mystery');clampM();if(!S.done2){S.done2=1;if(!S.rw2){S.rw2=1;addC(500)}save()}const e=shell('#000');e.insertAdjacentHTML('beforeend',pic('s2end')+'<h1>END OF HIGH SCHOOL</h1><h2>Hollow Creek High Hawks · Seasons 1–2 complete</h2>');
+ const f1=S.f1||{},f2=S.fl,w1=[0,1,2,3,4].filter(i=>f1['w'+i]).length,w2=[0,1,2,3,4].filter(i=>f2['w'+i]).length;const fam=S.fam>=50?'Close. You kept showing up.':S.fam>=25?'Steady. Rae noticed the Fridays.':'Stretched thin. Rae misses you.';
+ const L=['🏷️ The town calls you "'+hsNick()+'"','📣 Fan Rep '+S.fan+' ('+mWord(S.fan,80,30)+') · 📋 Coach Trust '+S.coach+' ('+mWord(S.coach,60,20)+')','❤️ Family: '+fam,'🏈 Junior year '+w1+'-'+(5-w1)+' · Rivalry '+(f1.w4?'won':'lost'),'🏈 Senior year '+w2+'-'+(5-w2)+' · Regional '+(f2.w4?'won':'lost')+' · 🎖️ Captain\'s Patch','🎓 Signing Day: Coastal Tech took Dez. Your hat: Hometown State, as a walk-on'+(f2.promise?' (and a promise to Rae)':'')];
+ const c=card(L.map(P).join('')+(f2.cap2?'<p class="say">'+N('Scrapbook: "'+f2.cap2+'"').replace(/</g,'&lt;')+'</p>':'')+P('🪙 +500 coins')+'<p><b>'+N('College chapters coming soon.')+'</b> '+N('Season 3, "Walk-On", picks up in August.')+'</p>');btn(c,'🏠 HOME',()=>{close();state='title'},'go')}
 // ---------- daily text + previously on ----------
 function dailyText(then){rollDay();if(!S.name||S.td===S.day)return then();S.td=S.day;const m=TXT[(new Date().getDate())%TXT.length];addC(TEXT_GIFT);save();
  const e=shell('#05070c');e.insertAdjacentHTML('beforeend','<h2 style="margin-top:16px">📱 New message</h2>');e.insertAdjacentHTML('beforeend','<div class="phone fade"><div class="bub"><i>'+m[0]+'</i>'+m[1]+'</div><div class="bub" style="background:#3a3010"><i>GIFT</i>🪙 +'+TEXT_GIFT+' coins</div></div>');
